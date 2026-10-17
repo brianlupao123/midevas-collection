@@ -16,6 +16,8 @@ import {
   FileText
 } from 'lucide-react';
 import { STORE_CONFIG } from '../data/products';
+import { saveOrder } from '../utils/orders';
+import { trackEvent } from '../utils/analytics';
 
 export default function QuoteDrawer({ isOpen, onClose, cartItems, onUpdateQuantity, onRemoveItem, onClearCart, currency }) {
   const [customerName, setCustomerName] = useState('');
@@ -80,6 +82,21 @@ export default function QuoteDrawer({ isOpen, onClose, cartItems, onUpdateQuanti
   };
 
   const handleSendWhatsApp = () => {
+    // Save order record to store for Mideva's admin tracker
+    saveOrder({
+      customerName,
+      deliveryLocation,
+      notes,
+      items: cartItems,
+      totalUsd
+    });
+
+    trackEvent('whatsapp_order', {
+      totalUsd,
+      itemCount: cartItems.length,
+      customerName
+    });
+
     const orderText = generateOrderText();
     const encoded = encodeURIComponent(orderText);
     const url = `https://wa.me/${STORE_CONFIG.whatsappNumber}?text=${encoded}`;
@@ -88,6 +105,19 @@ export default function QuoteDrawer({ isOpen, onClose, cartItems, onUpdateQuanti
 
   const handleCopyOrderText = async () => {
     try {
+      saveOrder({
+        customerName,
+        deliveryLocation,
+        notes,
+        items: cartItems,
+        totalUsd
+      });
+
+      trackEvent('copy_quote', {
+        totalUsd,
+        itemCount: cartItems.length
+      });
+
       await navigator.clipboard.writeText(generateOrderText());
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);

@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
-import { ShoppingBag, MessageCircle, Check, Star, Tag } from 'lucide-react';
+import { ShoppingBag, MessageCircle, Check, Star, Tag, MessageSquare } from 'lucide-react';
 import { STORE_CONFIG } from '../data/products';
+import { trackEvent } from '../utils/analytics';
 
-export default function ProductCard({ product, onAddToCart, currency }) {
+const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=600&q=80';
+
+export default function ProductCard({ product, onAddToCart, currency, onOpenReviews }) {
   const [added, setAdded] = useState(false);
+  const [imgSrc, setImgSrc] = useState(product.image);
   const [selectedVariant, setSelectedVariant] = useState(
     product.sizes ? product.sizes[0] : (product.colors ? product.colors[0] : null)
   );
@@ -21,12 +25,14 @@ export default function ProductCard({ product, onAddToCart, currency }) {
       ...product,
       selectedVariant
     });
+    trackEvent('add_to_cart', { productId: product.id, name: product.name, price: product.price });
     setAdded(true);
     setTimeout(() => setAdded(false), 1200);
   };
 
   // Direct single-item WhatsApp link
   const getWhatsAppDirectLink = () => {
+    trackEvent('whatsapp_order', { productId: product.id, name: product.name });
     const variantText = selectedVariant ? ` (Option: ${selectedVariant})` : '';
     const text = encodeURIComponent(
       `Hello Mideva! ❤️ I want to buy this item from your collection:\n\n` +
@@ -43,8 +49,9 @@ export default function ProductCard({ product, onAddToCart, currency }) {
       {/* Product Image & Badges */}
       <div className="relative aspect-4/3 w-full overflow-hidden bg-slate-100">
         <img
-          src={product.image}
+          src={imgSrc}
           alt={product.name}
+          onError={() => setImgSrc(FALLBACK_IMAGE)}
           className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
           loading="lazy"
         />
@@ -65,8 +72,13 @@ export default function ProductCard({ product, onAddToCart, currency }) {
 
         {/* Stock status indicator */}
         <div className="absolute bottom-2.5 right-2.5">
-          <span className="bg-white/95 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-200/80 shadow-xs flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> In Stock
+          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border shadow-xs flex items-center gap-1 ${
+            product.inStock !== false
+              ? 'bg-white/95 text-emerald-800 border-emerald-200/80'
+              : 'bg-white/95 text-rose-800 border-rose-200/80'
+          }`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${product.inStock !== false ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
+            {product.inStock !== false ? 'In Stock' : 'Out of Stock'}
           </span>
         </div>
       </div>
@@ -74,14 +86,24 @@ export default function ProductCard({ product, onAddToCart, currency }) {
       {/* Content Section */}
       <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-3">
         <div>
-          {/* Rating */}
-          <div className="flex items-center gap-1.5 text-xs text-slate-500 mb-1">
-            <div className="flex items-center text-amber-500">
-              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-              <span className="font-bold ml-1 text-slate-800">{product.rating}</span>
-            </div>
-            <span>•</span>
-            <span>{product.reviews} reviews</span>
+          {/* Rating & Reviews Trigger */}
+          <div className="flex items-center justify-between mb-1">
+            <button
+              type="button"
+              onClick={() => onOpenReviews && onOpenReviews(product)}
+              className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-amber-600 transition"
+            >
+              <div className="flex items-center text-amber-500">
+                <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                <span className="font-bold ml-1 text-slate-800">{product.rating}</span>
+              </div>
+              <span>•</span>
+              <span className="underline decoration-slate-300 underline-offset-2">{product.reviews} reviews</span>
+            </button>
+
+            <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+              {product.category}
+            </span>
           </div>
 
           {/* Title */}

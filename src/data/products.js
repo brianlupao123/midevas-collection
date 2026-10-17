@@ -1,7 +1,8 @@
 // =========================================================================
-// MIDEVA'S COLLECTION — REAL PRODUCT CATALOG
-// Harvested from Tuckshop project (86 items) + Provision Assistance data
-// + Original Mideva WhatsApp group items, organized into business categories
+// MIDEVA'S COLLECTION — REAL PRODUCT CATALOG & DYNAMIC STORE
+// Harvested from Tuckshop project + Provision Assistance data
+// + Original Mideva WhatsApp group items, organized into business categories.
+// Includes high-fidelity realistic product imagery & dynamic localStorage sync.
 // =========================================================================
 
 export const STORE_CONFIG = {
@@ -13,32 +14,28 @@ export const STORE_CONFIG = {
   currency: "$",
   secondaryCurrency: "KSh",
   exchangeRate: 130,
-  deliveryNotice: "🚀 Free delivery around campus hostels & student halls! Fast town drop-off available.",
+  deliveryNotice: "🚀 Free delivery around campus hostels & student halls! Fast drop-off available.",
   paymentMethods: ["M-Pesa", "Cash on Delivery", "EcoCash", "Bank Transfer"],
 };
 
 export const CATEGORIES = [
-  { id: "all",       name: "All Items",           icon: "Sparkles",     emoji: "✨" },
-  { id: "fashion",   name: "Men's Fashion",       icon: "Shirt",        emoji: "👔" },
-  { id: "bags",      name: "Ladies' Bags",        icon: "ShoppingBag",  emoji: "👜" },
-  { id: "beauty",    name: "Perfumes & Beauty",   icon: "Droplets",     emoji: "🌸" },
-  { id: "hygiene",   name: "Hygiene & Care",      icon: "Heart",        emoji: "🧼" },
-  { id: "snacks",    name: "Snacks & Drinks",     icon: "Coffee",       emoji: "🍫" },
-  { id: "groceries", name: "Groceries & Kitchen",  icon: "UtensilsCrossed", emoji: "🍳" },
-  { id: "stationery",name: "Stationery & Study",   icon: "BookOpen",     emoji: "📚" },
-  { id: "essentials",name: "Campus Essentials",    icon: "Package",      emoji: "🎒" },
+  { id: "all",       name: "All Items",           icon: "Sparkles",        emoji: "✨" },
+  { id: "fashion",   name: "Men's Fashion",       icon: "Shirt",           emoji: "👔" },
+  { id: "bags",      name: "Ladies' Bags",        icon: "ShoppingBag",     emoji: "👜" },
+  { id: "beauty",    name: "Perfumes & Beauty",   icon: "Droplets",        emoji: "🌸" },
+  { id: "hygiene",   name: "Hygiene & Care",      icon: "Heart",           emoji: "🧼" },
+  { id: "snacks",    name: "Snacks & Drinks",     icon: "Coffee",          emoji: "🍫" },
+  { id: "groceries", name: "Groceries & Kitchen", icon: "UtensilsCrossed",  emoji: "🍳" },
+  { id: "stationery",name: "Stationery & Study",  icon: "BookOpen",        emoji: "📚" },
+  { id: "essentials",name: "Campus Essentials",   icon: "Package",         emoji: "🎒" },
 ];
 
-// Utility for generating IDs
-let _idCounter = 0;
-const nextId = (prefix) => `${prefix}-${String(++_idCounter).padStart(2, '0')}`;
-
-export const PRODUCTS = [
+export const BASELINE_PRODUCTS = [
   // ═══════════════════════════════════════════════════════════
-  // CATEGORY: MEN'S FASHION (from Mideva WhatsApp group)
+  // CATEGORY: MEN'S FASHION
   // ═══════════════════════════════════════════════════════════
   {
-    id: nextId("fsh"),
+    id: "fsh-01",
     name: "Classic Button-Up Cotton Shirt",
     category: "fashion",
     price: 7.50,
@@ -54,7 +51,7 @@ export const PRODUCTS = [
     inStock: true,
   },
   {
-    id: nextId("fsh"),
+    id: "fsh-02",
     name: "Heavyweight Graphic Streetwear Tee",
     category: "fashion",
     price: 3.80,
@@ -70,7 +67,7 @@ export const PRODUCTS = [
     inStock: true,
   },
   {
-    id: nextId("fsh"),
+    id: "fsh-03",
     name: "Essential Plain Crewneck Tee",
     category: "fashion",
     price: 3.50,
@@ -86,7 +83,7 @@ export const PRODUCTS = [
     inStock: true,
   },
   {
-    id: nextId("fsh"),
+    id: "fsh-04",
     name: "Textured Casual Polo Shirt",
     category: "fashion",
     price: 6.90,
@@ -103,10 +100,10 @@ export const PRODUCTS = [
   },
 
   // ═══════════════════════════════════════════════════════════
-  // CATEGORY: LADIES' BAGS (from Mideva WhatsApp group)
+  // CATEGORY: LADIES' BAGS
   // ═══════════════════════════════════════════════════════════
   {
-    id: nextId("bag"),
+    id: "bag-05",
     name: "Executive Structured Shoulder Handbag",
     category: "bags",
     price: 10.00,
@@ -121,7 +118,7 @@ export const PRODUCTS = [
     inStock: true,
   },
   {
-    id: nextId("bag"),
+    id: "bag-06",
     name: "Compact Quilted Crossbody Sling Bag",
     category: "bags",
     price: 6.00,
@@ -130,13 +127,13 @@ export const PRODUCTS = [
     isComradeDeal: true,
     rating: 4.9,
     reviews: 92,
-    description: "Chic diamond-quilted sling bag with adjustable chain strap. Lightweight for parties and walks.",
+    description: "Chic diamond-quilted sling bag with adjustable chain strap. Lightweight for parties, church, and walks.",
     colors: ["Pastel Pink", "Classic Black", "Cherry Red"],
     image: "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
-    id: nextId("bag"),
+    id: "bag-07",
     name: "Campus Canvas Multi-Pocket Tote",
     category: "bags",
     price: 6.00,
@@ -151,7 +148,7 @@ export const PRODUCTS = [
     inStock: true,
   },
   {
-    id: nextId("bag"),
+    id: "bag-08",
     name: "Evening Envelope Clutch with Strap",
     category: "bags",
     price: 10.00,
@@ -167,10 +164,10 @@ export const PRODUCTS = [
   },
 
   // ═══════════════════════════════════════════════════════════
-  // CATEGORY: PERFUMES & BEAUTY (from Mideva group)
+  // CATEGORY: PERFUMES & BEAUTY
   // ═══════════════════════════════════════════════════════════
   {
-    id: nextId("bty"),
+    id: "bty-09",
     name: "Luxury Oil-Based Pocket Perfume (35ml)",
     category: "beauty",
     price: 4.50,
@@ -185,7 +182,7 @@ export const PRODUCTS = [
     inStock: true,
   },
   {
-    id: nextId("bty"),
+    id: "bty-10",
     name: "Gentleman Amber Woody Eau de Parfum",
     category: "beauty",
     price: 4.90,
@@ -200,7 +197,7 @@ export const PRODUCTS = [
     inStock: true,
   },
   {
-    id: nextId("bty"),
+    id: "bty-11",
     name: "All-Day Fresh Body & Hair Mist Spray",
     category: "beauty",
     price: 3.80,
@@ -215,7 +212,7 @@ export const PRODUCTS = [
     inStock: true,
   },
   {
-    id: nextId("bty"),
+    id: "bty-12",
     name: "Strong Hold Nourishing Hair Spray",
     category: "beauty",
     price: 3.50,
@@ -229,8 +226,8 @@ export const PRODUCTS = [
     inStock: true,
   },
   {
-    id: nextId("bty"),
-    name: "Clere for Men Moisturizing Lotion",
+    id: "bty-13",
+    name: "Clere for Men Moisturizing Body Lotion",
     category: "beauty",
     price: 2.50,
     comradePrice: 2.30,
@@ -243,8 +240,8 @@ export const PRODUCTS = [
     inStock: true,
   },
   {
-    id: nextId("bty"),
-    name: "Hair Remover Cream (Quick Action)",
+    id: "bty-14",
+    name: "Quick Action Gentle Hair Remover Cream",
     category: "beauty",
     price: 0.50,
     comradePrice: 0.50,
@@ -253,16 +250,16 @@ export const PRODUCTS = [
     rating: 4.3,
     reviews: 22,
     description: "Fast-acting gentle hair removal cream. Smooth skin in under 10 minutes.",
-    image: "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=600&q=80",
+    image: "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
 
   // ═══════════════════════════════════════════════════════════
-  // CATEGORY: HYGIENE & PERSONAL CARE (Tuckshop + Provision)
+  // CATEGORY: HYGIENE & PERSONAL CARE
   // ═══════════════════════════════════════════════════════════
   {
-    id: nextId("hyg"),
-    name: "Soft Care Pads (6 Pack)",
+    id: "hyg-15",
+    name: "Soft Care Sanitary Pads (6 Pack)",
     category: "hygiene",
     price: 3.40,
     comradePrice: 3.20,
@@ -271,12 +268,12 @@ export const PRODUCTS = [
     rating: 4.9,
     reviews: 95,
     description: "Ultra-soft absorbent sanitary pads. 6-pack for reliable monthly protection.",
-    image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=600&q=80",
+    image: "https://images.unsplash.com/photo-1583947215259-38e31be8751f?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
-    id: nextId("hyg"),
-    name: "Always Pads (Standard)",
+    id: "hyg-16",
+    name: "Always Ultra Thin Pads with Wings",
     category: "hygiene",
     price: 1.50,
     comradePrice: 1.30,
@@ -285,12 +282,12 @@ export const PRODUCTS = [
     rating: 4.8,
     reviews: 120,
     description: "Everyday protection with ultra-thin design and leak-guard wings.",
-    image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=600&q=80",
+    image: "https://images.unsplash.com/photo-1584017911766-d451b3d0e843?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
-    id: nextId("hyg"),
-    name: "Baby Soft Tissue (18 Ply)",
+    id: "hyg-17",
+    name: "Baby Soft White Tissue (18 Ply Pack)",
     category: "hygiene",
     price: 7.50,
     comradePrice: 7.00,
@@ -298,13 +295,13 @@ export const PRODUCTS = [
     isComradeDeal: false,
     rating: 4.7,
     reviews: 55,
-    description: "Premium soft tissue paper. 18-ply bulk pack perfect for the semester.",
-    image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=600&q=80",
+    description: "Premium soft tissue paper. 18-ply bulk pack perfect for the whole semester.",
+    image: "https://images.unsplash.com/photo-1584556812952-905ffd0c611a?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
-    id: nextId("hyg"),
-    name: "Lifebuoy Soap (6 Pack)",
+    id: "hyg-18",
+    name: "Lifebuoy Antibacterial Soap (6 Pack)",
     category: "hygiene",
     price: 4.00,
     comradePrice: 3.80,
@@ -312,13 +309,13 @@ export const PRODUCTS = [
     isComradeDeal: true,
     rating: 4.9,
     reviews: 78,
-    description: "Trusted antibacterial soap for daily hygiene. 6-bar value pack.",
-    image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=600&q=80",
+    description: "Trusted antibacterial soap for daily hygiene. 6-bar value pack for roommates.",
+    image: "https://images.unsplash.com/photo-1607006314644-77a835567c94?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
-    id: nextId("hyg"),
-    name: "Colgate Toothpaste (Standard)",
+    id: "hyg-19",
+    name: "Colgate Triple Action Toothpaste",
     category: "hygiene",
     price: 1.00,
     comradePrice: 0.90,
@@ -326,13 +323,13 @@ export const PRODUCTS = [
     isComradeDeal: true,
     rating: 4.8,
     reviews: 150,
-    description: "Cavity protection fluoride toothpaste. Fresh minty breath all day.",
+    description: "Cavity protection fluoride toothpaste. Fresh minty breath throughout lectures.",
     image: "https://images.unsplash.com/photo-1559591937-e1032b49c716?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
-    id: nextId("hyg"),
-    name: "Toothbrush Triple Pack (Charcoal)",
+    id: "hyg-20",
+    name: "Active Charcoal Toothbrush Triple Pack",
     category: "hygiene",
     price: 1.40,
     comradePrice: 1.20,
@@ -341,12 +338,12 @@ export const PRODUCTS = [
     rating: 4.9,
     reviews: 135,
     description: "Ultra-soft micro-bristles with active charcoal. 3 premium toothbrushes for incredible value!",
-    image: "https://images.unsplash.com/photo-1559591937-e1032b49c716?auto=format&fit=crop&w=600&q=80",
+    image: "https://images.unsplash.com/photo-1607613009820-a29f7bb81c04?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
-    id: nextId("hyg"),
-    name: "Vaseline Petroleum Jelly",
+    id: "hyg-21",
+    name: "Pure Vaseline Petroleum Jelly",
     category: "hygiene",
     price: 1.00,
     comradePrice: 0.90,
@@ -355,12 +352,12 @@ export const PRODUCTS = [
     rating: 4.6,
     reviews: 88,
     description: "Multi-purpose moisture barrier. Heals dry lips, knees, elbows, and minor cuts.",
-    image: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=600&q=80",
+    image: "https://images.unsplash.com/photo-1608248597359-2521e64906a2?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
-    id: nextId("hyg"),
-    name: "Lux Beauty Soap Bar",
+    id: "hyg-22",
+    name: "Lux Silk Fragrance Beauty Soap Bar",
     category: "hygiene",
     price: 1.50,
     comradePrice: 1.30,
@@ -369,12 +366,12 @@ export const PRODUCTS = [
     rating: 4.7,
     reviews: 62,
     description: "Luxurious scented beauty soap bar for soft, silky smooth skin.",
-    image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=600&q=80",
+    image: "https://images.unsplash.com/photo-1600857544200-b2f666a9a2ec?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
-    id: nextId("hyg"),
-    name: "Boom Washing Powder (1kg)",
+    id: "hyg-23",
+    name: "Boom Washing Powder (1kg Laundry Pack)",
     category: "hygiene",
     price: 1.90,
     comradePrice: 1.80,
@@ -383,12 +380,12 @@ export const PRODUCTS = [
     rating: 4.8,
     reviews: 97,
     description: "Powerful stain-busting laundry powder. 1kg pack handles 2+ weeks of hostel laundry.",
-    image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=600&q=80",
+    image: "https://images.unsplash.com/photo-1610557892470-55d9e80c0bce?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
-    id: nextId("hyg"),
-    name: "Britelite Soap (1kg)",
+    id: "hyg-24",
+    name: "Britelite Heavy Duty Green Bar Soap (1kg)",
     category: "hygiene",
     price: 1.10,
     comradePrice: 1.00,
@@ -396,13 +393,13 @@ export const PRODUCTS = [
     isComradeDeal: true,
     rating: 4.5,
     reviews: 44,
-    description: "Heavy-duty green bar soap. Washes everything from hands to hostel floors.",
-    image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=600&q=80",
+    description: "Heavy-duty green bar soap. Washes everything from dishes to hostel laundry.",
+    image: "https://images.unsplash.com/photo-1585670210693-e7fdd16b142e?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
-    id: nextId("hyg"),
-    name: "Fun 'n Fresh Roll-on Deodorant",
+    id: "hyg-25",
+    name: "Fun 'n Fresh 48-Hour Roll-on Deodorant",
     category: "hygiene",
     price: 2.00,
     comradePrice: 1.80,
@@ -411,16 +408,16 @@ export const PRODUCTS = [
     rating: 4.6,
     reviews: 33,
     description: "48-hour freshness roll-on. Confidence from lecture hall to night out.",
-    image: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=600&q=80",
+    image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
 
   // ═══════════════════════════════════════════════════════════
-  // CATEGORY: SNACKS & DRINKS (from Tuckshop)
+  // CATEGORY: SNACKS & DRINKS
   // ═══════════════════════════════════════════════════════════
   {
-    id: nextId("snk"),
-    name: "Lays Potato Chips (Regular)",
+    id: "snk-26",
+    name: "Lays Crispy Potato Chips (Regular)",
     category: "snacks",
     price: 0.50,
     comradePrice: 0.50,
@@ -433,8 +430,8 @@ export const PRODUCTS = [
     inStock: true,
   },
   {
-    id: nextId("snk"),
-    name: "Coca-Cola 500ml",
+    id: "snk-27",
+    name: "Ice Cold Coca-Cola (500ml Bottle)",
     category: "snacks",
     price: 1.00,
     comradePrice: 0.90,
@@ -442,13 +439,13 @@ export const PRODUCTS = [
     isComradeDeal: true,
     rating: 4.9,
     reviews: 300,
-    description: "Ice-cold classic Coca-Cola in a 500ml bottle. Nothing beats it on a hot day.",
-    image: "https://images.unsplash.com/photo-1554866585-cd94860890b7?auto=format&fit=crop&w=600&q=80",
+    description: "Ice-cold classic Coca-Cola in a 500ml bottle. Nothing beats it on a hot afternoon.",
+    image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
-    id: nextId("snk"),
-    name: "Coca-Cola 2 Litre",
+    id: "snk-28",
+    name: "Coca-Cola 2 Litre Sharing Bottle",
     category: "snacks",
     price: 2.50,
     comradePrice: 2.30,
@@ -461,8 +458,8 @@ export const PRODUCTS = [
     inStock: true,
   },
   {
-    id: nextId("snk"),
-    name: "Mazoe Orange Crush Concentrate",
+    id: "snk-29",
+    name: "Mazoe Orange Crush Concentrate (2L)",
     category: "snacks",
     price: 4.50,
     comradePrice: 4.20,
@@ -470,13 +467,13 @@ export const PRODUCTS = [
     isComradeDeal: false,
     rating: 5.0,
     reviews: 165,
-    description: "Zimbabwe's iconic orange drink concentrate. One bottle makes 20+ refreshing glasses.",
-    image: "https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?auto=format&fit=crop&w=600&q=80",
+    description: "Iconic orange drink concentrate. One bottle makes 20+ refreshing glasses for study sessions.",
+    image: "https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
-    id: nextId("snk"),
-    name: "Minute Maid Juice (Small)",
+    id: "snk-30",
+    name: "Minute Maid Tropical Fruit Juice",
     category: "snacks",
     price: 0.50,
     comradePrice: 0.50,
@@ -484,13 +481,13 @@ export const PRODUCTS = [
     isComradeDeal: true,
     rating: 4.5,
     reviews: 72,
-    description: "Fruity juice box in assorted tropical flavors. Perfect for a quick lecture break.",
-    image: "https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?auto=format&fit=crop&w=600&q=80",
+    description: "Fruity juice in assorted tropical flavors. Perfect for a quick lecture break.",
+    image: "https://images.unsplash.com/photo-1600271886742-f049cd451bba?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
-    id: nextId("snk"),
-    name: "Irish Biscuits Assorted",
+    id: "snk-31",
+    name: "Crunchy Irish Tea Biscuits (Assorted)",
     category: "snacks",
     price: 1.00,
     comradePrice: 0.90,
@@ -498,13 +495,13 @@ export const PRODUCTS = [
     isComradeDeal: true,
     rating: 4.6,
     reviews: 89,
-    description: "Crunchy assorted biscuits for tea time. A campus classic.",
+    description: "Crunchy assorted biscuits for tea time. A campus breakfast favorite.",
     image: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
-    id: nextId("snk"),
-    name: "Maputi (Popcorn) Bucket",
+    id: "snk-32",
+    name: "Fresh Salted Maputi (Popcorn) Bucket",
     category: "snacks",
     price: 0.50,
     comradePrice: 0.50,
@@ -512,13 +509,13 @@ export const PRODUCTS = [
     isComradeDeal: true,
     rating: 4.9,
     reviews: 210,
-    description: "Freshly popped salted maputi. The ultimate campus study fuel!",
-    image: "https://images.unsplash.com/photo-1585735039925-068a9abf1ab8?auto=format&fit=crop&w=600&q=80",
+    description: "Freshly popped salted maputi. The ultimate campus study and movie fuel!",
+    image: "https://images.unsplash.com/photo-1578849278619-e73505e9610f?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
-    id: nextId("snk"),
-    name: "Polony Sliced Roll",
+    id: "snk-33",
+    name: "Sliced Polony Deli Cold Cut Roll",
     category: "snacks",
     price: 1.00,
     comradePrice: 0.90,
@@ -527,16 +524,16 @@ export const PRODUCTS = [
     rating: 4.4,
     reviews: 58,
     description: "Sliced polony cold meat. Quick protein for sandwiches and bread rolls.",
-    image: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=600&q=80",
+    image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
 
   // ═══════════════════════════════════════════════════════════
-  // CATEGORY: GROCERIES & KITCHEN (from Tuckshop)
+  // CATEGORY: GROCERIES & KITCHEN
   // ═══════════════════════════════════════════════════════════
   {
-    id: nextId("grc"),
-    name: "White Sugar (2kg)",
+    id: "grc-34",
+    name: "Pure Refined White Sugar (2kg Pack)",
     category: "groceries",
     price: 3.50,
     comradePrice: 3.30,
@@ -544,13 +541,13 @@ export const PRODUCTS = [
     isComradeDeal: false,
     rating: 4.8,
     reviews: 130,
-    description: "Pure white sugar. 2kg bag lasts a full month for daily tea and cooking.",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?auto=format&fit=crop&w=600&q=80",
+    description: "Pure white sugar. 2kg bag lasts a full month for daily tea, porridge, and baking.",
+    image: "https://images.unsplash.com/photo-1581441363689-1f3c3c414635?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
-    id: nextId("grc"),
-    name: "Cerevita Porridge Mix",
+    id: "grc-35",
+    name: "Cerevita Instant Nutritious Porridge Mix",
     category: "groceries",
     price: 3.50,
     comradePrice: 3.30,
@@ -558,13 +555,13 @@ export const PRODUCTS = [
     isComradeDeal: false,
     rating: 4.7,
     reviews: 77,
-    description: "Nutritious instant breakfast porridge. Just add hot water for a filling start to the day.",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?auto=format&fit=crop&w=600&q=80",
+    description: "Nutritious instant breakfast porridge. Just add warm water or milk for a quick filling start.",
+    image: "https://images.unsplash.com/photo-1517093157656-b9ec81646277?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
-    id: nextId("grc"),
-    name: "Sun Jam Spread",
+    id: "grc-36",
+    name: "Sweet Sun Jam Fruit Spread",
     category: "groceries",
     price: 1.50,
     comradePrice: 1.40,
@@ -572,13 +569,13 @@ export const PRODUCTS = [
     isComradeDeal: true,
     rating: 4.6,
     reviews: 65,
-    description: "Sweet fruit jam in a jar. Perfect on bread for quick hostel breakfasts.",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?auto=format&fit=crop&w=600&q=80",
+    description: "Sweet fruit jam in a jar. Perfect on bread and scones for quick hostel mornings.",
+    image: "https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
-    id: nextId("grc"),
-    name: "Tinned Fish (Pilchards in Tomato)",
+    id: "grc-37",
+    name: "Pilchards in Rich Tomato Sauce (Tinned)",
     category: "groceries",
     price: 1.50,
     comradePrice: 1.40,
@@ -586,13 +583,13 @@ export const PRODUCTS = [
     isComradeDeal: true,
     rating: 4.5,
     reviews: 90,
-    description: "Pilchards in rich tomato sauce. Protein-packed, pairs perfectly with sadza or rice.",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?auto=format&fit=crop&w=600&q=80",
+    description: "Pilchards in rich tomato sauce. Protein-packed, pairs delicious with sadza, rice or bread.",
+    image: "https://images.unsplash.com/photo-1534483509719-3feaee7c30da?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
-    id: nextId("grc"),
-    name: "Baked Beans in Tomato Sauce",
+    id: "grc-38",
+    name: "Baked Beans in Rich Tomato Sauce",
     category: "groceries",
     price: 1.00,
     comradePrice: 0.90,
@@ -600,13 +597,13 @@ export const PRODUCTS = [
     isComradeDeal: true,
     rating: 4.7,
     reviews: 105,
-    description: "Ready-to-eat baked beans in rich tomato sauce. Just heat and eat with bread!",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?auto=format&fit=crop&w=600&q=80",
+    description: "Ready-to-eat baked beans in rich tomato sauce. Just heat and enjoy with toast or eggs!",
+    image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
-    id: nextId("grc"),
-    name: "Ricoffy Instant Coffee",
+    id: "grc-39",
+    name: "Ricoffy Instant Granule Coffee",
     category: "groceries",
     price: 2.00,
     comradePrice: 1.80,
@@ -614,13 +611,13 @@ export const PRODUCTS = [
     isComradeDeal: true,
     rating: 4.8,
     reviews: 140,
-    description: "South Africa's favourite instant coffee. Essential for late-night study sessions.",
+    description: "Iconic rich instant coffee. An absolute must-have for late-night study and early mornings.",
     image: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
-    id: nextId("grc"),
-    name: "Rooibos Tea Bags (20 Pack)",
+    id: "grc-40",
+    name: "Rooibos Pure Herbal Tea Bags (20 Pack)",
     category: "groceries",
     price: 2.00,
     comradePrice: 1.80,
@@ -628,13 +625,13 @@ export const PRODUCTS = [
     isComradeDeal: true,
     rating: 4.6,
     reviews: 48,
-    description: "Naturally caffeine-free red bush tea. Antioxidant-rich and soothing.",
-    image: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&w=600&q=80",
+    description: "Naturally caffeine-free red bush tea. Soothing aroma and high in antioxidants.",
+    image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
-    id: nextId("grc"),
-    name: "Mayonnaise (Squeeze Bottle)",
+    id: "grc-41",
+    name: "Creamy Mayonnaise (Squeeze Bottle)",
     category: "groceries",
     price: 3.00,
     comradePrice: 2.80,
@@ -642,17 +639,17 @@ export const PRODUCTS = [
     isComradeDeal: false,
     rating: 4.5,
     reviews: 39,
-    description: "Creamy mayonnaise in a squeeze bottle. Essential for sandwiches, chips, and salads.",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?auto=format&fit=crop&w=600&q=80",
+    description: "Creamy mayonnaise in a clean squeeze bottle. Essential for chips, sandwiches, and salads.",
+    image: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
 
   // ═══════════════════════════════════════════════════════════
-  // CATEGORY: STATIONERY & STUDY (from Tuckshop + Provision)
+  // CATEGORY: STATIONERY & STUDY
   // ═══════════════════════════════════════════════════════════
   {
-    id: nextId("stn"),
-    name: "2 Quire Exercise Book",
+    id: "stn-42",
+    name: "2 Quire Hardcover Ruled Exercise Book",
     category: "stationery",
     price: 2.50,
     comradePrice: 2.30,
@@ -660,13 +657,13 @@ export const PRODUCTS = [
     isComradeDeal: true,
     rating: 4.8,
     reviews: 180,
-    description: "Ruled 96-page exercise book for lecture notes. Durable cover survives backpack life.",
-    image: "https://images.unsplash.com/photo-1531346878377-a5be20888e57?auto=format&fit=crop&w=600&q=80",
+    description: "Durable 96-page ruled exercise book. Hardcover protects notes throughout semester backpack life.",
+    image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
-    id: nextId("stn"),
-    name: "Edumax Ballpoint Pens (10 Pack)",
+    id: "stn-43",
+    name: "Edumax Blue Ballpoint Pens (10 Pack)",
     category: "stationery",
     price: 0.85,
     comradePrice: 0.80,
@@ -674,13 +671,13 @@ export const PRODUCTS = [
     isComradeDeal: true,
     rating: 4.7,
     reviews: 95,
-    description: "Smooth-writing blue ballpoint pens. 10-pack that lasts through exams.",
-    image: "https://images.unsplash.com/photo-1531346878377-a5be20888e57?auto=format&fit=crop&w=600&q=80",
+    description: "Smooth glide blue ink ballpoint pens. 10-pack will last you and your study group through exams.",
+    image: "https://images.unsplash.com/photo-1585336261026-7f57a9e320d7?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
-    id: nextId("stn"),
-    name: "Single Ballpoint Pen",
+    id: "stn-44",
+    name: "Single Blue Medium Ballpoint Pen",
     category: "stationery",
     price: 0.25,
     comradePrice: 0.25,
@@ -688,13 +685,13 @@ export const PRODUCTS = [
     isComradeDeal: true,
     rating: 4.5,
     reviews: 220,
-    description: "Classic blue ballpoint pen. Quick grab before your next lecture.",
-    image: "https://images.unsplash.com/photo-1531346878377-a5be20888e57?auto=format&fit=crop&w=600&q=80",
+    description: "Reliable blue ballpoint pen. Quick pickup right before your next lecture.",
+    image: "https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
-    id: nextId("stn"),
-    name: "Pencils (Pack of 5)",
+    id: "stn-45",
+    name: "HB Graphite Pencils (Pack of 5)",
     category: "stationery",
     price: 0.50,
     comradePrice: 0.50,
@@ -702,13 +699,13 @@ export const PRODUCTS = [
     isComradeDeal: true,
     rating: 4.6,
     reviews: 85,
-    description: "HB drawing and writing pencils. 5-pack for lectures, exams, and sketching.",
-    image: "https://images.unsplash.com/photo-1531346878377-a5be20888e57?auto=format&fit=crop&w=600&q=80",
+    description: "HB drawing and writing pencils. 5-pack for multiple-choice exams, math, and sketches.",
+    image: "https://images.unsplash.com/photo-1516962215378-7fa2e137ae93?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
-    id: nextId("stn"),
-    name: "30cm Ruler (Clear Plastic)",
+    id: "stn-46",
+    name: "Clear Metric 30cm Study Ruler",
     category: "stationery",
     price: 0.50,
     comradePrice: 0.50,
@@ -716,17 +713,17 @@ export const PRODUCTS = [
     isComradeDeal: true,
     rating: 4.4,
     reviews: 42,
-    description: "Transparent 30cm ruler with metric markings. Essential for technical drawings.",
-    image: "https://images.unsplash.com/photo-1531346878377-a5be20888e57?auto=format&fit=crop&w=600&q=80",
+    description: "Transparent 30cm shatter-resistant ruler with metric measurements.",
+    image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
 
   // ═══════════════════════════════════════════════════════════
-  // CATEGORY: CAMPUS ESSENTIALS (mixed sources)
+  // CATEGORY: CAMPUS ESSENTIALS
   // ═══════════════════════════════════════════════════════════
   {
-    id: nextId("ess"),
-    name: "Plush Velvet Hot Water Bottle",
+    id: "ess-47",
+    name: "Plush Velvet Cover Hot Water Bottle",
     category: "essentials",
     price: 4.00,
     comradePrice: 3.80,
@@ -734,14 +731,14 @@ export const PRODUCTS = [
     isComradeDeal: true,
     rating: 5.0,
     reviews: 97,
-    description: "2-litre leak-proof rubber hot water bottle with washable fleece cover. Lifesaver for cold nights.",
+    description: "2-litre leak-proof rubber bottle with cozy velvet fleece cover. Campus savior for chilly nights.",
     colors: ["Baby Pink", "Cozy Grey", "Sky Blue"],
-    image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=600&q=80",
+    image: "https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
-    id: nextId("ess"),
-    name: "Insulated Travel Tumbler (500ml)",
+    id: "ess-48",
+    name: "Insulated Stainless Travel Tumbler (500ml)",
     category: "essentials",
     price: 4.50,
     comradePrice: 4.00,
@@ -749,14 +746,14 @@ export const PRODUCTS = [
     isComradeDeal: true,
     rating: 4.8,
     reviews: 62,
-    description: "Keeps tea hot for 8 hours or water ice-cold for 12 hours. Fits backpack side pockets.",
+    description: "Keeps tea hot for 8 hours or ice water chilled for 12 hours. Fits all backpack bottle pockets.",
     colors: ["Matte Black", "Stainless Silver", "Pastel Lilac"],
     image: "https://images.unsplash.com/photo-1517256064527-09c73fc73e38?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
-    id: nextId("ess"),
-    name: "Microfiber Quick-Dry Towel",
+    id: "ess-49",
+    name: "Compact Microfiber Quick-Dry Towel",
     category: "essentials",
     price: 3.00,
     comradePrice: 2.80,
@@ -764,14 +761,14 @@ export const PRODUCTS = [
     isComradeDeal: true,
     rating: 4.7,
     reviews: 55,
-    description: "Dries 3x faster than normal towels and takes almost no space in your gym bag.",
+    description: "Dries 3x faster than cotton and takes negligible room in your gym or class backpack.",
     colors: ["Cobalt Blue", "Charcoal Grey", "Teal"],
     image: "https://images.unsplash.com/photo-1616627547584-bf28cee262db?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
-    id: nextId("ess"),
-    name: "Bottled Water (500ml)",
+    id: "ess-50",
+    name: "Pure Natural Bottled Water (500ml)",
     category: "essentials",
     price: 0.25,
     comradePrice: 0.25,
@@ -779,13 +776,13 @@ export const PRODUCTS = [
     isComradeDeal: true,
     rating: 4.9,
     reviews: 500,
-    description: "Pure purified drinking water. Stay hydrated through every lecture and study session.",
+    description: "Pure purified drinking water. Stay hydrated throughout long lectures.",
     image: "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
-    id: nextId("ess"),
-    name: "Panado Pain Relief Tablets",
+    id: "ess-51",
+    name: "Panado Paracetamol Pain Relief (Blister Pack)",
     category: "essentials",
     price: 0.50,
     comradePrice: 0.50,
@@ -793,13 +790,13 @@ export const PRODUCTS = [
     isComradeDeal: true,
     rating: 4.7,
     reviews: 140,
-    description: "Fast-acting paracetamol tablets for headaches and mild pain. Campus essential.",
+    description: "Fast-acting pain and headache relief. Keep a pack in your dorm drawer.",
     image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
-    id: nextId("ess"),
-    name: "Shaving Razor (Pack of 5)",
+    id: "ess-52",
+    name: "Twin-Blade Shaving Razors (Pack of 5)",
     category: "essentials",
     price: 0.50,
     comradePrice: 0.50,
@@ -807,11 +804,99 @@ export const PRODUCTS = [
     isComradeDeal: true,
     rating: 4.3,
     reviews: 35,
-    description: "Disposable twin-blade razors for clean shaving. 5-pack for the month.",
-    image: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=600&q=80",
+    description: "Disposable twin-blade precision razors with lubricating strip for a smooth clean shave.",
+    image: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
 ];
+
+// LocalStorage key for admin modified / added products
+const CATALOG_STORAGE_KEY = 'midevas_catalog_products';
+
+export function getStoredProducts() {
+  try {
+    const raw = localStorage.getItem(CATALOG_STORAGE_KEY);
+    if (!raw) {
+      localStorage.setItem(CATALOG_STORAGE_KEY, JSON.stringify(BASELINE_PRODUCTS));
+      return BASELINE_PRODUCTS;
+    }
+    return JSON.parse(raw);
+  } catch (err) {
+    return BASELINE_PRODUCTS;
+  }
+}
+
+export function saveCustomProduct(product) {
+  try {
+    const prods = getStoredProducts();
+    const newProd = {
+      ...product,
+      id: product.id || 'cust-' + Math.random().toString(36).substring(2, 8),
+      rating: product.rating || 5.0,
+      reviews: product.reviews || 1,
+      inStock: product.inStock !== false,
+      isComradeDeal: product.isComradeDeal !== false,
+      price: Number(product.price) || 1.0,
+      comradePrice: Number(product.comradePrice) || Number(product.price) || 1.0
+    };
+    prods.unshift(newProd);
+    localStorage.setItem(CATALOG_STORAGE_KEY, JSON.stringify(prods));
+    return prods;
+  } catch (err) {
+    console.error('Error saving product:', err);
+    return getStoredProducts();
+  }
+}
+
+export function updateProductPrice(id, newPrice, newComradePrice) {
+  try {
+    const prods = getStoredProducts();
+    const updated = prods.map((p) => {
+      if (p.id === id) {
+        return {
+          ...p,
+          price: Number(newPrice),
+          comradePrice: newComradePrice ? Number(newComradePrice) : Number(newPrice)
+        };
+      }
+      return p;
+    });
+    localStorage.setItem(CATALOG_STORAGE_KEY, JSON.stringify(updated));
+    return updated;
+  } catch (err) {
+    return getStoredProducts();
+  }
+}
+
+export function toggleProductStock(id) {
+  try {
+    const prods = getStoredProducts();
+    const updated = prods.map((p) => (p.id === id ? { ...p, inStock: !p.inStock } : p));
+    localStorage.setItem(CATALOG_STORAGE_KEY, JSON.stringify(updated));
+    return updated;
+  } catch (err) {
+    return getStoredProducts();
+  }
+}
+
+export function deleteProduct(id) {
+  try {
+    const prods = getStoredProducts();
+    const filtered = prods.filter((p) => p.id !== id);
+    localStorage.setItem(CATALOG_STORAGE_KEY, JSON.stringify(filtered));
+    return filtered;
+  } catch (err) {
+    return getStoredProducts();
+  }
+}
+
+export function resetProducts() {
+  localStorage.setItem(CATALOG_STORAGE_KEY, JSON.stringify(BASELINE_PRODUCTS));
+  return BASELINE_PRODUCTS;
+}
+
+// Active default products array for backwards compatibility
+export const PRODUCTS = BASELINE_PRODUCTS;
 
 // Computed category counts
 CATEGORIES.forEach((cat) => {

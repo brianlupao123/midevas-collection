@@ -2,7 +2,7 @@ import React from 'react';
 import { STORE_CONFIG } from '../data/products';
 import { ShoppingBag, MessageCircle, Heart, ShieldCheck, Truck, CreditCard } from 'lucide-react';
 
-export default function Footer({ onCategoryClick }) {
+export default function Footer({ onCategoryClick, onOpenAdmin }) {
   return (
     <footer className="bg-slate-900 text-slate-300 pt-12 pb-8 border-t border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
@@ -46,12 +46,12 @@ export default function Footer({ onCategoryClick }) {
             </h4>
             <ul className="space-y-2 text-xs">
               <li>
-                <button onClick={() => onCategoryClick('mens')} className="hover:text-amber-400 transition">
-                  👔 Men's Shirts &amp; T-Shirts (&lt; $8, &lt; $4)
+                <button onClick={() => onCategoryClick('fashion')} className="hover:text-amber-400 transition">
+                  👔 Men's Fashion &amp; Tees (&lt; $8, &lt; $4)
                 </button>
               </li>
               <li>
-                <button onClick={() => onCategoryClick('ladies')} className="hover:text-amber-400 transition">
+                <button onClick={() => onCategoryClick('bags')} className="hover:text-amber-400 transition">
                   👜 Ladies' Handbags ($6 &amp; $10)
                 </button>
               </li>
@@ -61,8 +61,13 @@ export default function Footer({ onCategoryClick }) {
                 </button>
               </li>
               <li>
-                <button onClick={() => onCategoryClick('basics')} className="hover:text-amber-400 transition">
-                  🪥 Daily Campus Essentials &amp; Bottles
+                <button onClick={() => onCategoryClick('hygiene')} className="hover:text-amber-400 transition">
+                  🧼 Hygiene &amp; Personal Care
+                </button>
+              </li>
+              <li>
+                <button onClick={() => onCategoryClick('snacks')} className="hover:text-amber-400 transition">
+                  🍫 Snacks &amp; Drinks
                 </button>
               </li>
             </ul>
@@ -90,12 +95,20 @@ export default function Footer({ onCategoryClick }) {
           </div>
         </div>
 
-        {/* Copyright */}
-        <div className="pt-6 border-t border-slate-800 text-center text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-2">
+        {/* Copyright & Admin Link */}
+        <div className="pt-6 border-t border-slate-800 text-center text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p>© {new Date().getFullYear()} Mideva's Collection. All Rights Reserved.</p>
-          <p className="flex items-center gap-1 text-slate-400">
-            Powered by modern catalog &amp; WhatsApp quote technology ❤️
-          </p>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={onOpenAdmin}
+              className="text-slate-400 hover:text-amber-400 transition font-semibold text-xs flex items-center gap-1"
+            >
+              🔒 Admin Portal
+            </button>
+            <p className="flex items-center gap-1 text-slate-400">
+              Powered by modern catalog &amp; WhatsApp quote technology ❤️
+            </p>
+          </div>
         </div>
 
       </div>

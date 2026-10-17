@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import AnnouncementBar from './components/AnnouncementBar';
 import Navbar from './components/Navbar';
 import HeroBanner from './components/HeroBanner';
@@ -6,10 +6,15 @@ import CategoryPills from './components/CategoryPills';
 import ProductGrid from './components/ProductGrid';
 import QuoteDrawer from './components/QuoteDrawer';
 import WhatsAppFloat from './components/WhatsAppFloat';
+import MobileBottomBar from './components/MobileBottomBar';
+import ReviewsModal from './components/ReviewsModal';
+import AdminModal from './components/AdminModal';
 import Footer from './components/Footer';
-import { PRODUCTS, STORE_CONFIG } from './data/products';
+import { getStoredProducts, STORE_CONFIG } from './data/products';
+import { trackEvent } from './utils/analytics';
 
 export default function App() {
+  const [productsList, setProductsList] = useState(() => getStoredProducts());
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [priceFilter, setPriceFilter] = useState('all');
@@ -18,7 +23,31 @@ export default function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState([]);
 
+  // Modals state
+  const [reviewProduct, setReviewProduct] = useState(null);
+  const [isAdminOpen, setIsAdminOpen] = useState(false);
+
   const catalogRef = useRef(null);
+
+  // Log page view on mount
+  useEffect(() => {
+    trackEvent('page_view', { path: window.location.pathname });
+  }, []);
+
+  // Track search query with debounce
+  useEffect(() => {
+    if (searchTerm.trim().length >= 3) {
+      const timer = setTimeout(() => {
+        trackEvent('search', { query: searchTerm.trim() });
+      }, 600);
+      return () => clearTimeout(timer);
+    }
+  }, [searchTerm]);
+
+  // Refresh products from storage
+  const handleCatalogUpdated = () => {
+    setProductsList(getStoredProducts());
+  };
 
   // Cart operations
   const handleAddToCart = (product) => {
@@ -60,7 +89,11 @@ export default function App() {
   };
 
   const handleToggleCurrency = () => {
-    setCurrency((prev) => (prev === '$' ? 'KSh' : '$'));
+    setCurrency((prev) => {
+      const next = prev === '$' ? 'KSh' : '$';
+      trackEvent('currency_toggle', { to: next });
+      return next;
+    });
   };
 
   const handleResetFilters = () => {
@@ -74,9 +107,14 @@ export default function App() {
     catalogRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const handleCategorySelect = (catId) => {
+    setActiveCategory(catId);
+    trackEvent('category_select', { categoryId: catId });
+  };
+
   // Filtered products list
   const filteredProducts = useMemo(() => {
-    return PRODUCTS.filter((item) => {
+    return productsList.filter((item) => {
       // Category filter
       if (activeCategory !== 'all' && item.category !== activeCategory) {
         return false;
@@ -86,7 +124,7 @@ export default function App() {
       if (searchTerm.trim()) {
         const query = searchTerm.toLowerCase();
         const matchName = item.name.toLowerCase().includes(query);
-        const matchDesc = item.description.toLowerCase().includes(query);
+        const matchDesc = item.description?.toLowerCase().includes(query);
         const matchBadge = item.badge?.toLowerCase().includes(query);
         if (!matchName && !matchDesc && !matchBadge) return false;
       }
@@ -101,12 +139,13 @@ export default function App() {
 
       return true;
     });
-  }, [activeCategory, searchTerm, priceFilter, comradeDealsOnly]);
+  }, [productsList, activeCategory, searchTerm, priceFilter, comradeDealsOnly]);
 
   const totalCartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const cartTotalUsd = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 pb-16 sm:pb-0">
       
       {/* Top Banner */}
       <AnnouncementBar />
@@ -119,6 +158,7 @@ export default function App() {
         onSearchChange={setSearchTerm}
         currency={currency}
         onToggleCurrency={handleToggleCurrency}
+        onOpenAdmin={() => setIsAdminOpen(true)}
       />
 
       {/* Hero Section */}
@@ -137,7 +177,7 @@ export default function App() {
               Featured Collection &amp; Catalog
             </h2>
             <p className="text-xs sm:text-sm text-slate-500">
-              Browse comrade-friendly fashion, scents, and everyday essentials
+              Browse comrade-friendly fashion, scents, and everyday essentials ({filteredProducts.length} items available)
             </p>
           </div>
           <div className="text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 self-start sm:self-auto">
@@ -148,7 +188,7 @@ export default function App() {
         {/* Category & Sub-filters Tabs */}
         <CategoryPills
           activeCategory={activeCategory}
-          onSelectCategory={setActiveCategory}
+          onSelectCategory={handleCategorySelect}
           priceFilter={priceFilter}
           onSelectPriceFilter={setPriceFilter}
           comradeDealsOnly={comradeDealsOnly}
@@ -162,6 +202,7 @@ export default function App() {
           onAddToCart={handleAddToCart}
           currency={currency}
           onResetFilters={handleResetFilters}
+          onOpenReviews={(prod) => setReviewProduct(prod)}
         />
 
       </main>
@@ -180,11 +221,37 @@ export default function App() {
       {/* Floating WhatsApp Chat Assistant */}
       <WhatsAppFloat />
 
+      {/* Sticky Mobile Bottom Bar for touch navigation */}
+      <MobileBottomBar
+        cartCount={totalCartCount}
+        cartTotal={cartTotalUsd}
+        currency={currency}
+        onOpenCart={() => setIsCartOpen(true)}
+        onExploreCatalog={scrollToCatalog}
+      />
+
+      {/* Customer Reviews Modal */}
+      <ReviewsModal
+        isOpen={!!reviewProduct}
+        onClose={() => setReviewProduct(null)}
+        product={reviewProduct}
+      />
+
+      {/* Store Admin & Orders Manager Modal */}
+      <AdminModal
+        isOpen={isAdminOpen}
+        onClose={() => setIsAdminOpen(false)}
+        onCatalogUpdated={handleCatalogUpdated}
+      />
+
       {/* Footer */}
-      <Footer onCategoryClick={(cat) => {
-        setActiveCategory(cat);
-        scrollToCatalog();
-      }} />
+      <Footer 
+        onCategoryClick={(cat) => {
+          setActiveCategory(cat);
+          scrollToCatalog();
+        }} 
+        onOpenAdmin={() => setIsAdminOpen(true)}
+      />
 
     </div>
   );

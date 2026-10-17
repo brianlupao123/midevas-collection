@@ -1,8 +1,8 @@
 import React from 'react';
-import { ShoppingBag, Search, Sparkles, MessageCircle, Heart } from 'lucide-react';
+import { ShoppingBag, Search, Sparkles, MessageCircle, Heart, Lock } from 'lucide-react';
 import { STORE_CONFIG } from '../data/products';
 
-export default function Navbar({ cartCount, onOpenCart, searchTerm, onSearchChange, currency, onToggleCurrency }) {
+export default function Navbar({ cartCount, onOpenCart, searchTerm, onSearchChange, currency, onToggleCurrency, onOpenAdmin }) {
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 py-3 flex items-center justify-between gap-4">
@@ -57,6 +57,16 @@ export default function Navbar({ cartCount, onOpenCart, searchTerm, onSearchChan
 
         {/* Right action buttons */}
         <div className="flex items-center gap-2 sm:gap-3">
+          {/* Admin Lock Button */}
+          <button
+            onClick={onOpenAdmin}
+            title="Store Admin (Mideva Only)"
+            className="p-2 text-xs font-bold rounded-lg border border-slate-200 bg-slate-50 hover:bg-amber-50 hover:text-amber-800 hover:border-amber-300 text-slate-600 transition flex items-center gap-1"
+          >
+            <Lock className="w-3.5 h-3.5 text-amber-600" />
+            <span className="hidden xl:inline text-[11px]">Admin</span>
+          </button>
+
           {/* Currency Switcher */}
           <button
             onClick={onToggleCurrency}
