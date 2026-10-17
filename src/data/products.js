@@ -8,8 +8,8 @@ export const STORE_CONFIG = {
   storeName: "Mideva's Collection",
   tagline: "Great Quality Everyday",
   subTagline: "Comrade Affordable Fashion & Daily Essentials for Ladies & Gentlemen",
-  whatsappNumber: "254700000000", // TODO: Update with Mideva's actual WhatsApp number
-  whatsappGroupInvite: "https://chat.whatsapp.com/invite/midevas-collection", // TODO: Update with real invite link
+  whatsappNumber: "254748094795",
+  whatsappGroupInvite: "https://chat.whatsapp.com/GuRW4nzqO251oyPcC5MRwH",
   currency: "$",
   secondaryCurrency: "KSh",
   exchangeRate: 130,
