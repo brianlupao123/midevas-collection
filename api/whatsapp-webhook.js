@@ -113,6 +113,12 @@ export default async function handler(req, res) {
     try {
       const body = req.body;
 
+      // Direct simulator / developer test payload
+      if (body?.text) {
+        const reply = generateReply(body.text, body.customerName || 'Comrade');
+        return res.status(200).json({ status: 'success', replyText: reply });
+      }
+
       if (body.object === 'whatsapp_business_account') {
         const entry = body.entry?.[0];
         const changes = entry?.changes?.[0];
