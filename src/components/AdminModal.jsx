@@ -36,9 +36,10 @@ import {
   resetProducts 
 } from '../data/products';
 import { getOrders, updateOrderStatus, deleteOrder } from '../utils/orders';
-import { getAnalyticsSummary } from '../utils/analytics';
 import { getReviews } from '../utils/reviews';
 import { getStoreConfig, saveStoreConfig, resetStoreConfig } from '../utils/storeConfig';
+import { getAgentConfig, saveAgentConfig, processWhatsAppMessage } from '../utils/whatsappAgentEngine';
+import { Bot, Copy, Send, Smartphone } from 'lucide-react';
 
 const ADMIN_EMAIL = 'monalisamideva@gmail.com';
 const ADMIN_PASSCODE = 'mideva2026';
@@ -76,6 +77,20 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
   const [settingsForm, setSettingsForm] = useState(() => getStoreConfig());
   const [settingsSaved, setSettingsSaved] = useState(false);
 
+  // WhatsApp Agent states
+  const [agentConfig, setAgentConfigState] = useState(() => getAgentConfig());
+  const [agentSaved, setAgentSaved] = useState(false);
+  const [simMessages, setSimMessages] = useState([
+    {
+      sender: 'bot',
+      text: "👋 Hi comrade! I am Mideva's automated WhatsApp sales bot.\n\nType *menu*, *1*, *handbag*, *delivery*, *mpesa*, or ask about any product to test me live!",
+      time: 'Just now'
+    }
+  ]);
+  const [simInput, setSimInput] = useState('');
+  const [copiedWebhook, setCopiedWebhook] = useState(false);
+  const [copiedToken, setCopiedToken] = useState(false);
+
   // Refresh data
   const refreshData = () => {
     const loadedProds = getStoredProducts();
@@ -86,6 +101,7 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
     setReviews(getReviews());
     setStoreConfigState(loadedConfig);
     setSettingsForm(loadedConfig);
+    setAgentConfigState(getAgentConfig());
   };
 
   useEffect(() => {
@@ -225,6 +241,82 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
     if (onCatalogUpdated) onCatalogUpdated();
   };
 
+  // WhatsApp Agent Config Save handler
+  const handleSaveAgentConfig = (e) => {
+    e.preventDefault();
+    const updated = saveAgentConfig(agentConfig);
+    setAgentConfigState(updated);
+    setAgentSaved(true);
+    setTimeout(() => setAgentSaved(false), 2500);
+  };
+
+  // WhatsApp Simulator Message Send handler
+  const handleSimSend = (e) => {
+    if (e) e.preventDefault();
+    if (!simInput.trim()) return;
+
+    const userText = simInput.trim();
+    const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    setSimMessages((prev) => [
+      ...prev,
+      { sender: 'user', text: userText, time: nowTime }
+    ]);
+    setSimInput('');
+
+    // Process with WhatsApp Agent Engine
+    const result = processWhatsAppMessage({
+      from: '254700000000',
+      text: userText,
+      customerName: 'Comrade'
+    });
+
+    setTimeout(() => {
+      setSimMessages((prev) => [
+        ...prev,
+        {
+          sender: 'bot',
+          text: result.replyText,
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        }
+      ]);
+    }, 350);
+  };
+
+  const handleQuickSim = (text) => {
+    const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    setSimMessages((prev) => [
+      ...prev,
+      { sender: 'user', text, time: nowTime }
+    ]);
+    const result = processWhatsAppMessage({
+      from: '254700000000',
+      text,
+      customerName: 'Comrade'
+    });
+    setTimeout(() => {
+      setSimMessages((prev) => [
+        ...prev,
+        {
+          sender: 'bot',
+          text: result.replyText,
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        }
+      ]);
+    }, 350);
+  };
+
+  const copyToClipboard = (text, type) => {
+    navigator.clipboard.writeText(text);
+    if (type === 'webhook') {
+      setCopiedWebhook(true);
+      setTimeout(() => setCopiedWebhook(false), 2000);
+    } else if (type === 'token') {
+      setCopiedToken(true);
+      setTimeout(() => setCopiedToken(false), 2000);
+    }
+  };
+
   // Calculate order stats
   const totalRevenueUsd = orders.reduce((sum, o) => sum + (o.totalUsd || 0), 0);
   const pendingOrdersCount = orders.filter((o) => o.status === 'Pending').length;
@@ -345,6 +437,7 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
                 {[
                   { id: 'orders', label: 'Orders & Quotes', icon: ShoppingBag, count: pendingOrdersCount ? `${pendingOrdersCount} new` : null },
                   { id: 'products', label: 'Product Catalog', icon: Package, count: products.length },
+                  { id: 'whatsappAgent', label: '🤖 WhatsApp Bot Agent', icon: Bot },
                   { id: 'settings', label: 'Store Content & Announcements', icon: Settings },
                   { id: 'analytics', label: 'Traffic & Conversion', icon: BarChart3 },
                   { id: 'reviews', label: 'Reviews', icon: Star, count: reviews.length },
@@ -883,6 +976,309 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
                       ))}
                     </div>
 
+                  </div>
+                )}
+
+                {/* ═══════════════════════════════════════════ */}
+                {/* TAB: WHATSAPP BOT AGENT & SIMULATOR         */}
+                {/* ═══════════════════════════════════════════ */}
+                {activeTab === 'whatsappAgent' && (
+                  <div className="space-y-6">
+                    {/* Header */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div>
+                        <h4 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                          <Bot className="w-4 h-4 text-emerald-600" />
+                          <span>WhatsApp Conversational AI Agent &amp; Live Simulator</span>
+                        </h4>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          Simulate customer inquiries in real time, customize automated responses, and configure your Meta Cloud API webhook.
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5 ${
+                          agentConfig.enabled 
+                            ? 'bg-emerald-100 text-emerald-800' 
+                            : 'bg-rose-100 text-rose-800'
+                        }`}>
+                          <span className={`w-2 h-2 rounded-full ${agentConfig.enabled ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`} />
+                          {agentConfig.enabled ? 'Bot Active & Responding' : 'Bot Offline'}
+                        </span>
+                      </div>
+                    </div>
+
+                    {agentSaved && (
+                      <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center gap-2">
+                        <Check className="w-4 h-4 text-emerald-600" />
+                        <span>WhatsApp bot configuration saved and applied immediately!</span>
+                      </div>
+                    )}
+
+                    {/* Main 2-column layout */}
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                      
+                      {/* Left: Interactive WhatsApp Phone Simulator (7 cols) */}
+                      <div className="lg:col-span-7 rounded-2xl border border-slate-300 overflow-hidden shadow-md bg-[#efeae2] flex flex-col">
+                        
+                        {/* WhatsApp Top Bar */}
+                        <div className="bg-[#075e54] text-white px-4 py-3 flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="w-9 h-9 rounded-full bg-emerald-700/80 border border-emerald-500/40 flex items-center justify-center font-bold text-white shadow-xs">
+                              <Bot className="w-5 h-5 text-emerald-200" />
+                            </div>
+                            <div>
+                              <div className="text-xs font-bold leading-tight flex items-center gap-1.5">
+                                <span>{agentConfig.agentName || "Mideva's Campus Assistant"}</span>
+                                <span className="bg-emerald-400 text-emerald-950 text-[9px] font-black px-1.5 py-0.2 rounded-full">BOT</span>
+                              </div>
+                              <span className="text-[10px] text-emerald-200 block leading-tight">
+                                {agentConfig.enabled ? 'online • instant auto-reply' : 'offline'}
+                              </span>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setSimMessages([
+                              {
+                                sender: 'bot',
+                                text: "👋 Hi comrade! I am Mideva's automated WhatsApp sales bot.\n\nType *menu*, *1*, *handbag*, *delivery*, *mpesa*, or ask about any product to test me live!",
+                                time: 'Just now'
+                              }
+                            ])}
+                            className="text-[11px] text-emerald-200 hover:text-white px-2 py-1 rounded hover:bg-emerald-800/50 transition flex items-center gap-1"
+                            title="Reset Simulator Chat"
+                          >
+                            <RefreshCw className="w-3 h-3" />
+                            <span>Reset Chat</span>
+                          </button>
+                        </div>
+
+                        {/* WhatsApp Messages Scroll Canvas */}
+                        <div className="p-4 space-y-3 min-h-[340px] max-h-[420px] overflow-y-auto flex flex-col">
+                          {simMessages.map((msg, idx) => {
+                            const isUser = msg.sender === 'user';
+                            return (
+                              <div
+                                key={idx}
+                                className={`flex flex-col ${isUser ? 'items-end' : 'items-start'}`}
+                              >
+                                <div
+                                  className={`p-3 rounded-xl max-w-[88%] text-xs shadow-xs space-y-1 ${
+                                    isUser
+                                      ? 'bg-[#d9fdd3] text-slate-900 rounded-tr-none'
+                                      : 'bg-white text-slate-800 rounded-tl-none border border-slate-200/60'
+                                  }`}
+                                >
+                                  <p className="whitespace-pre-line leading-relaxed font-sans">{msg.text}</p>
+                                  <div className="flex items-center justify-end gap-1 text-[9px] text-slate-400 pt-0.5">
+                                    <span>{msg.time}</span>
+                                    {isUser && <span className="text-blue-500 font-bold">✓✓</span>}
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        {/* Quick Test Prompt Chips */}
+                        <div className="px-3 py-2 bg-slate-100/90 border-t border-slate-200 flex items-center gap-1.5 overflow-x-auto scrollbar-none">
+                          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex-shrink-0">
+                            Quick Test:
+                          </span>
+                          {[
+                            { label: 'Menu', query: 'menu' },
+                            { label: '🔥 Deals (1)', query: '1' },
+                            { label: '👜 Handbags', query: 'handbags' },
+                            { label: '👔 Shirts', query: 'men shirts' },
+                            { label: '🌸 Scents', query: 'perfumes' },
+                            { label: '🚚 Delivery & M-Pesa', query: 'delivery info' },
+                            { label: '👩 Speak to Mideva', query: 'human' },
+                          ].map((chip) => (
+                            <button
+                              key={chip.label}
+                              type="button"
+                              onClick={() => handleQuickSim(chip.query)}
+                              className="text-[11px] font-medium bg-white hover:bg-emerald-50 hover:text-emerald-800 hover:border-emerald-300 text-slate-700 px-2.5 py-1 rounded-full border border-slate-200 transition flex-shrink-0 shadow-2xs"
+                            >
+                              {chip.label}
+                            </button>
+                          ))}
+                        </div>
+
+                        {/* Input bar */}
+                        <form onSubmit={handleSimSend} className="p-2.5 bg-slate-200/70 border-t border-slate-300 flex items-center gap-2">
+                          <input
+                            type="text"
+                            value={simInput}
+                            onChange={(e) => setSimInput(e.target.value)}
+                            placeholder="Type a message as a WhatsApp customer..."
+                            className="flex-1 px-3.5 py-2 text-xs bg-white border border-slate-300 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                          />
+                          <button
+                            type="submit"
+                            disabled={!simInput.trim()}
+                            className="w-9 h-9 rounded-full bg-[#00a884] hover:bg-[#008f6f] disabled:opacity-40 text-white flex items-center justify-center shadow-xs transition"
+                          >
+                            <Send className="w-4 h-4 ml-0.5" />
+                          </button>
+                        </form>
+                      </div>
+
+                      {/* Right: Settings & Webhook Connection (5 cols) */}
+                      <div className="lg:col-span-5 space-y-4">
+                        
+                        {/* Card 1: Bot Settings */}
+                        <form onSubmit={handleSaveAgentConfig} className="p-4 rounded-xl border border-slate-200 bg-slate-50 space-y-3">
+                          <h5 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                            <Settings className="w-3.5 h-3.5 text-slate-600" />
+                            <span>Bot Automation Settings</span>
+                          </h5>
+
+                          <div className="flex items-center justify-between p-2.5 bg-white rounded-lg border border-slate-200">
+                            <div>
+                              <span className="text-xs font-bold text-slate-800 block">Auto-Reply Enabled</span>
+                              <span className="text-[10px] text-slate-500">Automate replies on WhatsApp 24/7</span>
+                            </div>
+                            <input
+                              type="checkbox"
+                              checked={agentConfig.enabled}
+                              onChange={(e) => setAgentConfigState({ ...agentConfig, enabled: e.target.checked })}
+                              className="w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[11px] font-bold text-slate-700 block mb-1">
+                              Bot Display Name
+                            </label>
+                            <input
+                              type="text"
+                              required
+                              value={agentConfig.agentName}
+                              onChange={(e) => setAgentConfigState({ ...agentConfig, agentName: e.target.value })}
+                              className="w-full px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[11px] font-bold text-slate-700 block mb-1">
+                              M-Pesa Till / Paybill Number (shown in receipts)
+                            </label>
+                            <input
+                              type="text"
+                              value={agentConfig.mpesaTillNumber || ''}
+                              onChange={(e) => setAgentConfigState({ ...agentConfig, mpesaTillNumber: e.target.value })}
+                              className="w-full px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500 font-mono"
+                              placeholder="e.g. 254748094795"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[11px] font-bold text-slate-700 block mb-1">
+                              Business / Operating Hours
+                            </label>
+                            <input
+                              type="text"
+                              value={agentConfig.businessHours || ''}
+                              onChange={(e) => setAgentConfigState({ ...agentConfig, businessHours: e.target.value })}
+                              className="w-full px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                              placeholder="e.g. 8:00 AM - 10:00 PM"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[11px] font-bold text-slate-700 block mb-1">
+                              Out of Office / Lecture Notice
+                            </label>
+                            <textarea
+                              rows={2}
+                              value={agentConfig.outOfOfficeMessage || ''}
+                              onChange={(e) => setAgentConfigState({ ...agentConfig, outOfOfficeMessage: e.target.value })}
+                              className="w-full px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500 resize-none"
+                              placeholder="Message sent when Mideva is attending lectures..."
+                            />
+                          </div>
+
+                          <button
+                            type="submit"
+                            className="w-full py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-1.5"
+                          >
+                            <Save className="w-3.5 h-3.5" />
+                            <span>Save Bot Settings</span>
+                          </button>
+                        </form>
+
+                        {/* Card 2: Production Meta Webhook Details */}
+                        <div className="p-4 rounded-xl border border-blue-200 bg-blue-50/70 space-y-3">
+                          <div className="flex items-center justify-between">
+                            <h5 className="text-xs font-bold text-blue-900 uppercase tracking-wider flex items-center gap-1.5">
+                              <Smartphone className="w-3.5 h-3.5 text-blue-600" />
+                              <span>Meta Cloud API Webhook</span>
+                            </h5>
+                            <span className="text-[10px] font-extrabold bg-blue-100 text-blue-800 border border-blue-200 px-2 py-0.5 rounded-full">
+                              Vercel Live
+                            </span>
+                          </div>
+
+                          <p className="text-[11px] text-slate-600 leading-relaxed">
+                            Connect your WhatsApp Business Account (via Meta Developers or Baileys/Twilio) to this live endpoint:
+                          </p>
+
+                          <div className="space-y-2">
+                            <div>
+                              <span className="text-[10px] font-bold text-slate-500 block mb-0.5">Webhook URL (HTTPS POST):</span>
+                              <div className="flex items-center gap-1.5">
+                                <input
+                                  type="text"
+                                  readOnly
+                                  value="https://midevas-collection.vercel.app/api/whatsapp-webhook"
+                                  className="w-full px-2.5 py-1.5 text-[11px] font-mono bg-white border border-slate-300 rounded-lg select-all"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => copyToClipboard('https://midevas-collection.vercel.app/api/whatsapp-webhook', 'webhook')}
+                                  className="px-2.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold transition flex items-center gap-1"
+                                >
+                                  {copiedWebhook ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                                  <span>{copiedWebhook ? 'Copied' : 'Copy'}</span>
+                                </button>
+                              </div>
+                            </div>
+
+                            <div>
+                              <span className="text-[10px] font-bold text-slate-500 block mb-0.5">Webhook Verify Token:</span>
+                              <div className="flex items-center gap-1.5">
+                                <input
+                                  type="text"
+                                  readOnly
+                                  value={agentConfig.verifyToken || "mideva_campus_secret_token_2026"}
+                                  className="w-full px-2.5 py-1.5 text-[11px] font-mono bg-white border border-slate-300 rounded-lg select-all"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => copyToClipboard(agentConfig.verifyToken || 'mideva_campus_secret_token_2026', 'token')}
+                                  className="px-2.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold transition flex items-center gap-1"
+                                >
+                                  {copiedToken ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                                  <span>{copiedToken ? 'Copied' : 'Copy'}</span>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="p-2.5 rounded-lg bg-white border border-blue-100 text-[11px] text-slate-600 space-y-1">
+                            <span className="font-bold text-slate-800 block">⚡ How it works:</span>
+                            <ol className="list-decimal list-inside space-y-0.5 text-[10px] text-slate-600">
+                              <li>In Meta App Dashboard &gt; WhatsApp &gt; Configuration, paste the Webhook URL &amp; Verify Token.</li>
+                              <li>Subscribe to the <code className="text-blue-700 font-mono">messages</code> webhook event.</li>
+                              <li>When a customer messages <code className="text-blue-700 font-mono">+254 748 094795</code>, the bot replies instantly with comrade prices and deals!</li>
+                            </ol>
+                          </div>
+                        </div>
+
+                      </div>
+
+                    </div>
                   </div>
                 )}
 
