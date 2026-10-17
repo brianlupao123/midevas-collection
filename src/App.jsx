@@ -5,16 +5,18 @@ import HeroBanner from './components/HeroBanner';
 import CategoryPills from './components/CategoryPills';
 import ProductGrid from './components/ProductGrid';
 import QuoteDrawer from './components/QuoteDrawer';
-import WhatsAppFloat from './components/WhatsAppFloat';
+import ChatWidget from './components/ChatWidget';
 import MobileBottomBar from './components/MobileBottomBar';
 import ReviewsModal from './components/ReviewsModal';
 import AdminModal from './components/AdminModal';
 import Footer from './components/Footer';
-import { getStoredProducts, STORE_CONFIG } from './data/products';
+import { getStoredProducts } from './data/products';
+import { getStoreConfig } from './utils/storeConfig';
 import { trackEvent } from './utils/analytics';
 
 export default function App() {
   const [productsList, setProductsList] = useState(() => getStoredProducts());
+  const [storeConfig, setStoreConfig] = useState(() => getStoreConfig());
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [priceFilter, setPriceFilter] = useState('all');
@@ -44,9 +46,10 @@ export default function App() {
     }
   }, [searchTerm]);
 
-  // Refresh products from storage
+  // Refresh products & store settings from storage
   const handleCatalogUpdated = () => {
     setProductsList(getStoredProducts());
+    setStoreConfig(getStoreConfig());
   };
 
   // Cart operations
@@ -110,6 +113,7 @@ export default function App() {
   const handleCategorySelect = (catId) => {
     setActiveCategory(catId);
     trackEvent('category_select', { categoryId: catId });
+    scrollToCatalog();
   };
 
   // Filtered products list
@@ -147,8 +151,8 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 pb-16 sm:pb-0">
       
-      {/* Top Banner */}
-      <AnnouncementBar />
+      {/* Top Banner with dynamic editable announcement */}
+      <AnnouncementBar config={storeConfig} />
 
       {/* Main Navbar */}
       <Navbar
@@ -159,12 +163,14 @@ export default function App() {
         currency={currency}
         onToggleCurrency={handleToggleCurrency}
         onOpenAdmin={() => setIsAdminOpen(true)}
+        config={storeConfig}
       />
 
-      {/* Hero Section */}
+      {/* Hero Category Slides Carousel */}
       <HeroBanner
         onExploreClick={scrollToCatalog}
-        onOpenCart={() => setIsCartOpen(true)}
+        onSelectCategory={handleCategorySelect}
+        config={storeConfig}
       />
 
       {/* Main Catalog Workspace */}
@@ -188,7 +194,10 @@ export default function App() {
         {/* Category & Sub-filters Tabs */}
         <CategoryPills
           activeCategory={activeCategory}
-          onSelectCategory={handleCategorySelect}
+          onSelectCategory={(catId) => {
+            setActiveCategory(catId);
+            trackEvent('category_select', { categoryId: catId });
+          }}
           priceFilter={priceFilter}
           onSelectPriceFilter={setPriceFilter}
           comradeDealsOnly={comradeDealsOnly}
@@ -196,7 +205,7 @@ export default function App() {
           totalMatching={filteredProducts.length}
         />
 
-        {/* Product Cards Grid */}
+        {/* Product Cards Grid with Like hearts and Reviews */}
         <ProductGrid
           products={filteredProducts}
           onAddToCart={handleAddToCart}
@@ -218,8 +227,12 @@ export default function App() {
         currency={currency}
       />
 
-      {/* Floating WhatsApp Chat Assistant */}
-      <WhatsAppFloat />
+      {/* Interactive Floating Chatbot Assistant */}
+      <ChatWidget
+        onAddToCart={handleAddToCart}
+        onSelectCategory={handleCategorySelect}
+        config={storeConfig}
+      />
 
       {/* Sticky Mobile Bottom Bar for touch navigation */}
       <MobileBottomBar
@@ -230,7 +243,7 @@ export default function App() {
         onExploreCatalog={scrollToCatalog}
       />
 
-      {/* Customer Reviews Modal */}
+      {/* Customer Reviews & Comments Modal */}
       <ReviewsModal
         isOpen={!!reviewProduct}
         onClose={() => setReviewProduct(null)}
@@ -246,10 +259,7 @@ export default function App() {
 
       {/* Footer */}
       <Footer 
-        onCategoryClick={(cat) => {
-          setActiveCategory(cat);
-          scrollToCatalog();
-        }} 
+        onCategoryClick={handleCategorySelect} 
         onOpenAdmin={() => setIsAdminOpen(true)}
       />
 

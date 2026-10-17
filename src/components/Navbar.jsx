@@ -2,7 +2,9 @@ import React from 'react';
 import { ShoppingBag, Search, Sparkles, MessageCircle, Heart, Lock } from 'lucide-react';
 import { STORE_CONFIG } from '../data/products';
 
-export default function Navbar({ cartCount, onOpenCart, searchTerm, onSearchChange, currency, onToggleCurrency, onOpenAdmin }) {
+export default function Navbar({ cartCount, onOpenCart, searchTerm, onSearchChange, currency, onToggleCurrency, onOpenAdmin, config }) {
+  const catalogUrl = config?.whatsappCatalogUrl || "https://wa.me/c/254748094795";
+  const groupLink = config?.whatsappGroupInvite || STORE_CONFIG.whatsappGroupInvite;
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 py-3 flex items-center justify-between gap-4">
@@ -77,15 +79,26 @@ export default function Navbar({ cartCount, onOpenCart, searchTerm, onSearchChan
             <span className="text-[10px] text-slate-400">{currency === '$' ? 'USD' : 'KSh'}</span>
           </button>
 
-          {/* Join WhatsApp Group button */}
+          {/* WhatsApp Catalog button */}
           <a
-            href={STORE_CONFIG.whatsappGroupInvite}
+            href={catalogUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden lg:inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 hover:bg-emerald-100 transition"
+            title="View Mideva's WhatsApp Business Catalog"
+            className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 hover:bg-emerald-100 transition"
           >
             <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Join 110+ Group</span>
+            <span>WA Catalog</span>
+          </a>
+
+          {/* Join WhatsApp Group button */}
+          <a
+            href={groupLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden lg:inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 transition"
+          >
+            <span>Group (110+)</span>
           </a>
 
           {/* Quote / Order Cart Trigger */}

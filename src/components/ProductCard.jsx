@@ -1,16 +1,29 @@
 import React, { useState } from 'react';
-import { ShoppingBag, MessageCircle, Check, Star, Tag, MessageSquare } from 'lucide-react';
+import { ShoppingBag, MessageCircle, Check, Star, Tag, MessageSquare, Heart } from 'lucide-react';
 import { STORE_CONFIG } from '../data/products';
 import { trackEvent } from '../utils/analytics';
+import { getLikes, isProductLikedByUser, toggleProductLike } from '../utils/likes';
 
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=600&q=80';
 
 export default function ProductCard({ product, onAddToCart, currency, onOpenReviews }) {
   const [added, setAdded] = useState(false);
   const [imgSrc, setImgSrc] = useState(product.image);
+  const [likeCount, setLikeCount] = useState(() => (getLikes()[product.id] || 0));
+  const [isLiked, setIsLiked] = useState(() => isProductLikedByUser(product.id));
   const [selectedVariant, setSelectedVariant] = useState(
     product.sizes ? product.sizes[0] : (product.colors ? product.colors[0] : null)
   );
+
+  const handleLikeClick = (e) => {
+    e.stopPropagation();
+    const res = toggleProductLike(product.id);
+    setLikeCount(res.count);
+    setIsLiked(res.isLiked);
+    if (res.isLiked) {
+      trackEvent('product_liked', { productId: product.id, name: product.name });
+    }
+  };
 
   const displayPrice = currency === '$' 
     ? `$${product.price.toFixed(2)}`
@@ -69,6 +82,19 @@ export default function ProductCard({ product, onAddToCart, currency, onOpenRevi
             </span>
           )}
         </div>
+
+        {/* Heart Like Button & Counter */}
+        <button
+          type="button"
+          onClick={handleLikeClick}
+          aria-label="Like product"
+          className="absolute top-2.5 right-2.5 z-10 flex items-center gap-1 bg-white/90 hover:bg-white backdrop-blur-xs px-2 py-1 rounded-full shadow-md text-xs font-bold transition transform active:scale-90"
+        >
+          <Heart className={`w-3.5 h-3.5 transition ${isLiked ? 'fill-rose-500 text-rose-500 scale-110' : 'text-slate-400 hover:text-rose-500'}`} />
+          <span className={`text-[10px] font-extrabold ${isLiked ? 'text-rose-600' : 'text-slate-600'}`}>
+            {likeCount}
+          </span>
+        </button>
 
         {/* Stock status indicator */}
         <div className="absolute bottom-2.5 right-2.5">

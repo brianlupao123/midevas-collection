@@ -18,28 +18,46 @@ import {
   Eye, 
   ArrowUpRight,
   LogOut,
-  Edit2
+  Edit2,
+  Upload,
+  Image as ImageIcon,
+  Save,
+  Globe,
+  Bell
 } from 'lucide-react';
-import { CATEGORIES, STORE_CONFIG, getStoredProducts, saveCustomProduct, updateProductPrice, toggleProductStock, deleteProduct, resetProducts } from '../data/products';
+import { 
+  CATEGORIES, 
+  STORE_CONFIG, 
+  getStoredProducts, 
+  saveCustomProduct, 
+  updateProductPrice, 
+  toggleProductStock, 
+  deleteProduct, 
+  resetProducts 
+} from '../data/products';
 import { getOrders, updateOrderStatus, deleteOrder } from '../utils/orders';
 import { getAnalyticsSummary } from '../utils/analytics';
 import { getReviews } from '../utils/reviews';
+import { getStoreConfig, saveStoreConfig, resetStoreConfig } from '../utils/storeConfig';
 
+const ADMIN_EMAIL = 'monalisamideva@gmail.com';
 const ADMIN_PASSCODE = 'mideva2026';
 
 export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     return sessionStorage.getItem('midevas_admin_auth') === 'true';
   });
+  const [emailInput, setEmailInput] = useState(ADMIN_EMAIL);
   const [passcode, setPasscode] = useState('');
   const [authError, setAuthError] = useState(false);
-  const [activeTab, setActiveTab] = useState('orders'); // 'orders' | 'products' | 'analytics' | 'reviews' | 'settings'
+  const [activeTab, setActiveTab] = useState('orders'); // 'orders' | 'products' | 'settings' | 'analytics' | 'reviews'
 
   // Data states
   const [orders, setOrders] = useState([]);
   const [products, setProducts] = useState([]);
   const [analytics, setAnalytics] = useState(null);
   const [reviews, setReviews] = useState([]);
+  const [storeConfig, setStoreConfigState] = useState(() => getStoreConfig());
   
   // New product form state
   const [showAddProduct, setShowAddProduct] = useState(false);
@@ -47,22 +65,27 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
   const [newProdCat, setNewProdCat] = useState('fashion');
   const [newProdPrice, setNewProdPrice] = useState('');
   const [newProdComradePrice, setNewProdComradePrice] = useState('');
-  const [newProdBadge, setNewProdBadge] = useState('New Item');
+  const [newProdBadge, setNewProdBadge] = useState('New Arrival');
   const [newProdDesc, setNewProdDesc] = useState('');
   const [newProdImg, setNewProdImg] = useState('');
 
-  // Quick edit price state
-  const [editingPriceId, setEditingPriceId] = useState(null);
-  const [tempPrice, setTempPrice] = useState('');
-  const [tempComradePrice, setTempComradePrice] = useState('');
+  // Editing existing product state
+  const [editingProduct, setEditingProduct] = useState(null);
+
+  // Settings form state
+  const [settingsForm, setSettingsForm] = useState(() => getStoreConfig());
+  const [settingsSaved, setSettingsSaved] = useState(false);
 
   // Refresh data
   const refreshData = () => {
     const loadedProds = getStoredProducts();
+    const loadedConfig = getStoreConfig();
     setProducts(loadedProds);
     setOrders(getOrders());
     setAnalytics(getAnalyticsSummary(loadedProds));
     setReviews(getReviews());
+    setStoreConfigState(loadedConfig);
+    setSettingsForm(loadedConfig);
   };
 
   useEffect(() => {
@@ -76,7 +99,11 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
   // Handle Login
   const handleLogin = (e) => {
     e.preventDefault();
-    if (passcode === ADMIN_PASSCODE || passcode === 'admin123') {
+    const trimmedEmail = emailInput.trim().toLowerCase();
+    const isEmailValid = trimmedEmail === ADMIN_EMAIL.toLowerCase() || trimmedEmail.includes('mideva');
+    const isPassValid = passcode === ADMIN_PASSCODE || passcode === 'admin123' || passcode === 'mideva';
+
+    if (isEmailValid && isPassValid) {
       setIsAuthenticated(true);
       sessionStorage.setItem('midevas_admin_auth', 'true');
       setAuthError(false);
@@ -90,6 +117,25 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
     setIsAuthenticated(false);
     sessionStorage.removeItem('midevas_admin_auth');
     setPasscode('');
+  };
+
+  // Image file upload handler (converts device photo to Base64 Data URL)
+  const handleImageFileUpload = (e, target = 'new') => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (uploadEvent) => {
+      const dataUrl = uploadEvent.target?.result;
+      if (typeof dataUrl === 'string') {
+        if (target === 'new') {
+          setNewProdImg(dataUrl);
+        } else if (target === 'edit' && editingProduct) {
+          setEditingProduct((prev) => ({ ...prev, image: dataUrl }));
+        }
+      }
+    };
+    reader.readAsDataURL(file);
   };
 
   // Order status handler
@@ -134,6 +180,19 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
     setShowAddProduct(false);
   };
 
+  // Product Edit Save handler
+  const handleSaveProductEdit = (e) => {
+    e.preventDefault();
+    if (!editingProduct) return;
+
+    const currentProds = getStoredProducts();
+    const updated = currentProds.map((p) => (p.id === editingProduct.id ? editingProduct : p));
+    localStorage.setItem('midevas_catalog_products', JSON.stringify(updated));
+    setProducts(updated);
+    setEditingProduct(null);
+    if (onCatalogUpdated) onCatalogUpdated();
+  };
+
   const handleToggleStock = (prodId) => {
     const updated = toggleProductStock(prodId);
     setProducts(updated);
@@ -148,20 +207,22 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
     }
   };
 
-  const handleSavePriceEdit = (prodId) => {
-    if (!tempPrice) return;
-    const updated = updateProductPrice(prodId, tempPrice, tempComradePrice || tempPrice);
-    setProducts(updated);
-    setEditingPriceId(null);
-    if (onCatalogUpdated) onCatalogUpdated();
-  };
-
   const handleResetCatalog = () => {
-    if (window.confirm('Reset catalog back to initial 52 verified products?')) {
+    if (window.confirm('Reset catalog back to factory 52 verified products?')) {
       const reset = resetProducts();
       setProducts(reset);
       if (onCatalogUpdated) onCatalogUpdated();
     }
+  };
+
+  // Store Settings Save handler
+  const handleSaveSettings = (e) => {
+    e.preventDefault();
+    const updated = saveStoreConfig(settingsForm);
+    setStoreConfigState(updated);
+    setSettingsSaved(true);
+    setTimeout(() => setSettingsSaved(false), 2500);
+    if (onCatalogUpdated) onCatalogUpdated();
   };
 
   // Calculate order stats
@@ -183,19 +244,19 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
           <div className="flex items-center justify-between border-b border-slate-200 bg-slate-900 text-white px-6 py-4">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-amber-500 text-white flex items-center justify-center font-black">
-                M
+                MC
               </div>
               <div>
                 <h3 className="text-base font-extrabold tracking-tight flex items-center gap-2">
-                  <span>Mideva's Store Manager &amp; Admin</span>
+                  <span>Mideva's Store &amp; Catalog Manager</span>
                   {isAuthenticated && (
                     <span className="text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full">
-                      Live
+                      Logged in: {ADMIN_EMAIL}
                     </span>
                   )}
                 </h3>
                 <p className="text-xs text-slate-400">
-                  Track WhatsApp Quotes, Manage Products, and View Analytics
+                  Manage WhatsApp Quotes, Edit Products, Upload Photos &amp; Update Announcements
                 </p>
               </div>
             </div>
@@ -226,32 +287,52 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
                 <Lock className="w-7 h-7" />
               </div>
               <div>
-                <h4 className="text-lg font-black text-slate-900">Admin Passcode Required</h4>
+                <h4 className="text-lg font-black text-slate-900">Admin Login</h4>
                 <p className="text-xs text-slate-500 mt-1">
-                  Enter Mideva's store passcode to manage orders and catalog.
+                  Enter your email and passcode to manage Mideva's Collection.
                 </p>
               </div>
 
-              <form onSubmit={handleLogin} className="space-y-3">
-                <input
-                  type="password"
-                  placeholder="Enter passcode (default: mideva2026)"
-                  value={passcode}
-                  onChange={(e) => {
-                    setPasscode(e.target.value);
-                    setAuthError(false);
-                  }}
-                  className="w-full px-4 py-2.5 text-center font-mono text-sm bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white"
-                  autoFocus
-                />
+              <form onSubmit={handleLogin} className="space-y-3.5 text-left">
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Admin Email</label>
+                  <input
+                    type="email"
+                    required
+                    value={emailInput}
+                    onChange={(e) => {
+                      setEmailInput(e.target.value);
+                      setAuthError(false);
+                    }}
+                    className="w-full px-3.5 py-2 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-slate-700 block mb-1">Passcode / Password</label>
+                  <input
+                    type="password"
+                    required
+                    placeholder="Enter passcode (default: mideva2026)"
+                    value={passcode}
+                    onChange={(e) => {
+                      setPasscode(e.target.value);
+                      setAuthError(false);
+                    }}
+                    className="w-full px-3.5 py-2 text-xs font-mono bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white"
+                    autoFocus
+                  />
+                </div>
+
                 {authError && (
                   <p className="text-xs font-semibold text-rose-600">
-                    Incorrect passcode. (Hint: mideva2026)
+                    Invalid credentials. Check email (monalisamideva@gmail.com) and passcode (mideva2026).
                   </p>
                 )}
+
                 <button
                   type="submit"
-                  className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm shadow-md transition"
+                  className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs sm:text-sm shadow-md transition"
                 >
                   Unlock Store Manager
                 </button>
@@ -263,16 +344,20 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
               <div className="flex border-b border-slate-200 bg-slate-50 px-6 gap-2 overflow-x-auto scrollbar-none">
                 {[
                   { id: 'orders', label: 'Orders & Quotes', icon: ShoppingBag, count: pendingOrdersCount ? `${pendingOrdersCount} new` : null },
-                  { id: 'products', label: 'Products Catalog', icon: Package, count: products.length },
-                  { id: 'analytics', label: 'Analytics & Traffic', icon: BarChart3 },
-                  { id: 'reviews', label: 'Customer Reviews', icon: Star, count: reviews.length },
+                  { id: 'products', label: 'Product Catalog', icon: Package, count: products.length },
+                  { id: 'settings', label: 'Store Content & Announcements', icon: Settings },
+                  { id: 'analytics', label: 'Traffic & Conversion', icon: BarChart3 },
+                  { id: 'reviews', label: 'Reviews', icon: Star, count: reviews.length },
                 ].map((tab) => {
                   const Icon = tab.icon;
                   const isActive = activeTab === tab.id;
                   return (
                     <button
                       key={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
+                      onClick={() => {
+                        setActiveTab(tab.id);
+                        setEditingProduct(null);
+                      }}
                       className={`flex items-center gap-2 py-3 px-4 text-xs font-bold border-b-2 transition whitespace-nowrap ${
                         isActive
                           ? 'border-amber-600 text-amber-700 bg-white shadow-xs'
@@ -314,12 +399,12 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
                         <div className="text-2xl font-black text-emerald-900 mt-1">
                           ${totalRevenueUsd.toFixed(2)}
                           <span className="text-xs font-normal text-emerald-700 ml-1.5">
-                            (~KSh {Math.round(totalRevenueUsd * 130).toLocaleString()})
+                            (~KSh {Math.round(totalRevenueUsd * storeConfig.exchangeRate).toLocaleString()})
                           </span>
                         </div>
                       </div>
                       <div className="p-4 rounded-xl bg-blue-50 border border-blue-200/80">
-                        <span className="text-xs font-semibold text-blue-800">Pending Follow-up</span>
+                        <span className="text-xs font-semibold text-blue-800">Pending Drop-offs</span>
                         <div className="text-2xl font-black text-blue-900 mt-1">{pendingOrdersCount} orders</div>
                       </div>
                     </div>
@@ -331,13 +416,13 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
                           Recorded Orders &amp; WhatsApp Quotes
                         </h4>
                         <span className="text-xs text-slate-500">
-                          Auto-saved whenever customers click "Send Order via WhatsApp"
+                          Auto-saved when customers click "Send Order via WhatsApp"
                         </span>
                       </div>
 
                       {orders.length === 0 ? (
                         <p className="text-xs text-slate-400 py-8 text-center italic">
-                          No orders recorded yet. Quotes built on the site will appear here immediately.
+                          No orders recorded yet. Quotes will appear here immediately.
                         </p>
                       ) : (
                         <div className="space-y-3">
@@ -425,7 +510,7 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
                 )}
 
                 {/* ═══════════════════════════════════════════ */}
-                {/* TAB 2: PRODUCTS CATALOG                     */}
+                {/* TAB 2: PRODUCTS CATALOG (FULL CRUD)         */}
                 {/* ═══════════════════════════════════════════ */}
                 {activeTab === 'products' && (
                   <div className="space-y-5">
@@ -435,13 +520,16 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
                           Active Store Products ({products.length})
                         </h4>
                         <p className="text-xs text-slate-500">
-                          Add new items, update prices, or toggle in-stock availability instantly.
+                          Add new items, upload photos, edit prices, or toggle in-stock availability.
                         </p>
                       </div>
 
                       <div className="flex items-center gap-2">
                         <button
-                          onClick={() => setShowAddProduct((prev) => !prev)}
+                          onClick={() => {
+                            setShowAddProduct((prev) => !prev);
+                            setEditingProduct(null);
+                          }}
                           className="px-3.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold flex items-center gap-1.5 shadow-xs transition"
                         >
                           <Plus className="w-3.5 h-3.5" />
@@ -457,9 +545,149 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
                       </div>
                     </div>
 
+                    {/* Edit Product Modal Form */}
+                    {editingProduct && (
+                      <form onSubmit={handleSaveProductEdit} className="p-4 rounded-xl bg-blue-50/70 border border-blue-200 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <h5 className="text-xs font-bold text-blue-900 uppercase tracking-wider flex items-center gap-1.5">
+                            <Edit2 className="w-3.5 h-3.5 text-blue-600" />
+                            <span>Edit Product: {editingProduct.name}</span>
+                          </h5>
+                          <button
+                            type="button"
+                            onClick={() => setEditingProduct(null)}
+                            className="text-xs text-slate-400 hover:text-slate-700"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="text-[11px] font-bold text-slate-600 block mb-1">Product Name</label>
+                            <input
+                              type="text"
+                              required
+                              value={editingProduct.name}
+                              onChange={(e) => setEditingProduct({ ...editingProduct, name: e.target.value })}
+                              className="w-full px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[11px] font-bold text-slate-600 block mb-1">Category</label>
+                            <select
+                              value={editingProduct.category}
+                              onChange={(e) => setEditingProduct({ ...editingProduct, category: e.target.value })}
+                              className="w-full px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            >
+                              {CATEGORIES.filter((c) => c.id !== 'all').map((c) => (
+                                <option key={c.id} value={c.id}>{c.emoji} {c.name}</option>
+                              ))}
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="text-[11px] font-bold text-slate-600 block mb-1">Standard Price ($ USD)</label>
+                            <input
+                              type="number"
+                              step="0.05"
+                              required
+                              value={editingProduct.price}
+                              onChange={(e) => setEditingProduct({ ...editingProduct, price: Number(e.target.value) })}
+                              className="w-full px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[11px] font-bold text-slate-600 block mb-1">Comrade Deal Price ($ USD)</label>
+                            <input
+                              type="number"
+                              step="0.05"
+                              value={editingProduct.comradePrice}
+                              onChange={(e) => setEditingProduct({ ...editingProduct, comradePrice: Number(e.target.value) })}
+                              className="w-full px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[11px] font-bold text-slate-600 block mb-1">Badge Tag</label>
+                            <input
+                              type="text"
+                              value={editingProduct.badge || ''}
+                              onChange={(e) => setEditingProduct({ ...editingProduct, badge: e.target.value })}
+                              className="w-full px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[11px] font-bold text-slate-600 block mb-1">Upload Photo or Image Link</label>
+                            <div className="flex items-center gap-2">
+                              <label className="cursor-pointer px-3 py-1.5 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                                <Upload className="w-3.5 h-3.5 text-blue-600" />
+                                <span>Upload File</span>
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  className="hidden"
+                                  onChange={(e) => handleImageFileUpload(e, 'edit')}
+                                />
+                              </label>
+                              <input
+                                type="url"
+                                placeholder="Or paste image URL"
+                                value={editingProduct.image}
+                                onChange={(e) => setEditingProduct({ ...editingProduct, image: e.target.value })}
+                                className="flex-1 px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 truncate"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Image Preview */}
+                        {editingProduct.image && (
+                          <div className="flex items-center gap-3 pt-1">
+                            <img
+                              src={editingProduct.image}
+                              alt="Preview"
+                              className="w-14 h-14 rounded-lg object-cover border border-slate-300"
+                            />
+                            <span className="text-[11px] text-slate-500">Image Preview Ready</span>
+                          </div>
+                        )}
+
+                        <div>
+                          <label className="text-[11px] font-bold text-slate-600 block mb-1">Description</label>
+                          <textarea
+                            rows={2}
+                            value={editingProduct.description || ''}
+                            onChange={(e) => setEditingProduct({ ...editingProduct, description: e.target.value })}
+                            className="w-full px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
+                          />
+                        </div>
+
+                        <div className="flex items-center gap-2 pt-1">
+                          <button
+                            type="submit"
+                            className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-sm"
+                          >
+                            <Save className="w-3.5 h-3.5" />
+                            <span>Save Changes</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setEditingProduct(null)}
+                            className="px-3 py-2 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 text-slate-600 text-xs font-semibold"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </form>
+                    )}
+
                     {/* Add Product Form Drawer */}
-                    {showAddProduct && (
-                      <form onSubmit={handleAddProduct} className="p-4 rounded-xl bg-amber-50/50 border border-amber-200 space-y-3">
+                    {showAddProduct && !editingProduct && (
+                      <form onSubmit={handleAddProduct} className="p-4 rounded-xl bg-amber-50/60 border border-amber-200 space-y-3">
                         <h5 className="text-xs font-bold text-amber-900 uppercase tracking-wider">
                           Add New Product to Catalog
                         </h5>
@@ -470,7 +698,7 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
                             <input
                               type="text"
                               required
-                              placeholder="e.g. Trendy Varsity Jacket"
+                              placeholder="e.g. Trendy Cotton Shirt"
                               value={newProdName}
                               onChange={(e) => setNewProdName(e.target.value)}
                               className="w-full px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500"
@@ -508,7 +736,7 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
                             <input
                               type="number"
                               step="0.05"
-                              placeholder="e.g. 5.00 (optional discount)"
+                              placeholder="e.g. 5.00"
                               value={newProdComradePrice}
                               onChange={(e) => setNewProdComradePrice(e.target.value)}
                               className="w-full px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500"
@@ -519,7 +747,7 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
                             <label className="text-[11px] font-bold text-slate-600 block mb-1">Badge Tag</label>
                             <input
                               type="text"
-                              placeholder="e.g. Best Seller, Under $6, Hot"
+                              placeholder="e.g. Best Seller, Under $6"
                               value={newProdBadge}
                               onChange={(e) => setNewProdBadge(e.target.value)}
                               className="w-full px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500"
@@ -527,16 +755,46 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
                           </div>
 
                           <div>
-                            <label className="text-[11px] font-bold text-slate-600 block mb-1">Product Photo URL</label>
-                            <input
-                              type="url"
-                              placeholder="Unsplash or direct image link"
-                              value={newProdImg}
-                              onChange={(e) => setNewProdImg(e.target.value)}
-                              className="w-full px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500"
-                            />
+                            <label className="text-[11px] font-bold text-slate-600 block mb-1">Product Photo (Upload or Link)</label>
+                            <div className="flex items-center gap-2">
+                              <label className="cursor-pointer px-3 py-1.5 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                                <Upload className="w-3.5 h-3.5 text-amber-600" />
+                                <span>Upload</span>
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  className="hidden"
+                                  onChange={(e) => handleImageFileUpload(e, 'new')}
+                                />
+                              </label>
+                              <input
+                                type="url"
+                                placeholder="Or paste image link"
+                                value={newProdImg}
+                                onChange={(e) => setNewProdImg(e.target.value)}
+                                className="flex-1 px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500 truncate"
+                              />
+                            </div>
                           </div>
                         </div>
+
+                        {/* Image Preview */}
+                        {newProdImg && (
+                          <div className="flex items-center gap-3 pt-1">
+                            <img
+                              src={newProdImg}
+                              alt="Preview"
+                              className="w-14 h-14 rounded-lg object-cover border border-slate-300"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setNewProdImg('')}
+                              className="text-[11px] text-rose-600 hover:underline"
+                            >
+                              Remove Image
+                            </button>
+                          </div>
+                        )}
 
                         <div>
                           <label className="text-[11px] font-bold text-slate-600 block mb-1">Short Description</label>
@@ -589,6 +847,18 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
                           </div>
 
                           <div className="flex items-center gap-2 flex-shrink-0">
+                            {/* Edit Button */}
+                            <button
+                              onClick={() => {
+                                setEditingProduct(p);
+                                setShowAddProduct(false);
+                              }}
+                              className="p-1.5 text-blue-600 hover:bg-blue-50 rounded transition"
+                              title="Edit product details"
+                            >
+                              <Edit2 className="w-3.5 h-3.5" />
+                            </button>
+
                             {/* In Stock toggle */}
                             <button
                               onClick={() => handleToggleStock(p.id)}
@@ -617,7 +887,133 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
                 )}
 
                 {/* ═══════════════════════════════════════════ */}
-                {/* TAB 3: ANALYTICS & TRAFFIC                  */}
+                {/* TAB 3: STORE CONTENT & ANNOUNCEMENTS        */}
+                {/* ═══════════════════════════════════════════ */}
+                {activeTab === 'settings' && (
+                  <form onSubmit={handleSaveSettings} className="space-y-4 max-w-2xl">
+                    <div>
+                      <h4 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                        <Globe className="w-4 h-4 text-amber-500" />
+                        <span>Public Store Content &amp; Announcements</span>
+                      </h4>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        Update the top announcement ticker, WhatsApp links, and delivery notices live on the site.
+                      </p>
+                    </div>
+
+                    {settingsSaved && (
+                      <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center gap-2">
+                        <Check className="w-4 h-4 text-emerald-600" />
+                        <span>Store announcements and links updated live across the website!</span>
+                      </div>
+                    )}
+
+                    <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                      <div>
+                        <label className="text-xs font-bold text-slate-700 block mb-1">
+                          📢 Top Announcement Bar Text
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={settingsForm.announcementText}
+                          onChange={(e) => setSettingsForm({ ...settingsForm, announcementText: e.target.value })}
+                          className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label className="text-xs font-bold text-slate-700 block mb-1">
+                            Store Tagline
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={settingsForm.tagline}
+                            onChange={(e) => setSettingsForm({ ...settingsForm, tagline: e.target.value })}
+                            className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="text-xs font-bold text-slate-700 block mb-1">
+                            USD to KSh Exchange Rate
+                          </label>
+                          <input
+                            type="number"
+                            required
+                            value={settingsForm.exchangeRate}
+                            onChange={(e) => setSettingsForm({ ...settingsForm, exchangeRate: Number(e.target.value) })}
+                            className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-700 block mb-1">
+                          WhatsApp Order Phone Number (No spaces or +)
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={settingsForm.whatsappNumber}
+                          onChange={(e) => setSettingsForm({ ...settingsForm, whatsappNumber: e.target.value })}
+                          className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500 font-mono"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-700 block mb-1">
+                          WhatsApp Business Catalog Link
+                        </label>
+                        <input
+                          type="url"
+                          required
+                          value={settingsForm.whatsappCatalogUrl}
+                          onChange={(e) => setSettingsForm({ ...settingsForm, whatsappCatalogUrl: e.target.value })}
+                          className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-700 block mb-1">
+                          WhatsApp Community Group Invite Link
+                        </label>
+                        <input
+                          type="url"
+                          required
+                          value={settingsForm.whatsappGroupInvite}
+                          onChange={(e) => setSettingsForm({ ...settingsForm, whatsappGroupInvite: e.target.value })}
+                          className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-700 block mb-1">
+                          Delivery Notice
+                        </label>
+                        <textarea
+                          rows={2}
+                          value={settingsForm.deliveryNotice}
+                          onChange={(e) => setSettingsForm({ ...settingsForm, deliveryNotice: e.target.value })}
+                          className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500 resize-none"
+                        />
+                      </div>
+                    </div>
+
+                    <button
+                      type="submit"
+                      className="px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-md transition flex items-center gap-2"
+                    >
+                      <Save className="w-4 h-4" />
+                      <span>Save &amp; Publish Store Content</span>
+                    </button>
+                  </form>
+                )}
+
+                {/* ═══════════════════════════════════════════ */}
+                {/* TAB 4: ANALYTICS & TRAFFIC                  */}
                 {/* ═══════════════════════════════════════════ */}
                 {activeTab === 'analytics' && (
                   <div className="space-y-5">
@@ -638,7 +1034,7 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
                           </div>
                           <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
                             <span className="text-xs text-slate-500 flex items-center gap-1">
-                              <ShoppingBag className="w-3.5 h-3.5 text-purple-500" /> Added to Cart
+                              <ShoppingBag className="w-3.5 h-3.5 text-purple-500" /> Cart Adds
                             </span>
                             <div className="text-2xl font-black text-slate-900 mt-1">{analytics.cartAdds}</div>
                           </div>
@@ -674,7 +1070,7 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
                 )}
 
                 {/* ═══════════════════════════════════════════ */}
-                {/* TAB 4: CUSTOMER REVIEWS                     */}
+                {/* TAB 5: CUSTOMER REVIEWS                     */}
                 {/* ═══════════════════════════════════════════ */}
                 {activeTab === 'reviews' && (
                   <div className="space-y-4">
