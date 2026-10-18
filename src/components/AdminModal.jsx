@@ -17,7 +17,9 @@ import {
   TrendingUp, 
   Users, 
   Eye, 
-  ArrowUpRight,
+  EyeOff,
+  ArrowRight,
+  ArrowUpRight, 
   LogOut,
   Edit2,
   Upload,
@@ -78,8 +80,10 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated, isPageVi
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [emailInput, setEmailInput] = useState(ADMIN_EMAIL);
   const [passcode, setPasscode] = useState('');
+  const [showPasscode, setShowPasscode] = useState(false);
+  const [isSigningIn, setIsSigningIn] = useState(false);
   const [authError, setAuthError] = useState(false);
-  const [activeTab, setActiveTab] = useState('orders'); // 'orders' | 'products' | 'cms' | 'profile' | 'whatsappAgent' | 'analytics' | 'reviews'
+  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'inventory' | 'orders' | 'products' | 'cms' | 'profile' | 'whatsappAgent' | 'analytics' | 'reviews'
 
   // Profile and passcode management state
   const [currentPasscode, setCurrentPasscode] = useState('');
@@ -158,22 +162,47 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated, isPageVi
     return localStorage.getItem('midevas_admin_passcode') || storeConfig?.adminPasscode || DEFAULT_PASSCODE;
   };
 
-  // Handle Login
-  const handleLogin = (e) => {
-    e.preventDefault();
-    const trimmedEmail = emailInput.trim().toLowerCase();
-    const currentPass = getStoredPasscode();
-    const isEmailValid = trimmedEmail === ADMIN_EMAIL.toLowerCase() || trimmedEmail.includes('mideva');
-    const isPassValid = passcode === currentPass || passcode === 'admin123' || passcode === 'mideva' || passcode === 'comrade2026' || passcode === 'mideva2026';
+  // Quick Demo Access Login Handler (benchmarked from 1-feedback-system)
+  const handleQuickDemoAccess = (demoEmail, demoPass, label) => {
+    setEmailInput(demoEmail);
+    setPasscode(demoPass);
+    setIsSigningIn(true);
+    setAuthError(false);
 
-    if (isEmailValid && isPassValid) {
+    setTimeout(() => {
       setIsAuthenticated(true);
       sessionStorage.setItem('midevas_admin_auth', 'true');
-      setAuthError(false);
+      setIsSigningIn(false);
+      setActiveTab('overview');
       refreshData();
-    } else {
-      setAuthError(true);
-    }
+      notifySuccess(`Signed in as ${label}. Welcome to the management dashboard!`);
+    }, 380);
+  };
+
+  // Handle Standard Login Form
+  const handleLogin = (e) => {
+    if (e) e.preventDefault();
+    setIsSigningIn(true);
+    setAuthError(false);
+
+    setTimeout(() => {
+      const trimmedEmail = emailInput.trim().toLowerCase();
+      const currentPass = getStoredPasscode();
+      const isEmailValid = trimmedEmail === ADMIN_EMAIL.toLowerCase() || trimmedEmail.includes('mideva') || trimmedEmail === 'admin@midevas.co.ke';
+      const isPassValid = passcode === currentPass || passcode === 'admin123' || passcode === 'mideva' || passcode === 'comrade2026' || passcode === 'mideva2026';
+
+      if (isEmailValid && isPassValid) {
+        setIsAuthenticated(true);
+        sessionStorage.setItem('midevas_admin_auth', 'true');
+        setIsSigningIn(false);
+        setActiveTab('overview');
+        refreshData();
+        notifySuccess('Welcome back, Mona Lisa Mideva! Store Dashboard Unlocked.');
+      } else {
+        setIsSigningIn(false);
+        setAuthError(true);
+      }
+    }, 350);
   };
 
   const handleLogout = () => {
@@ -596,61 +625,155 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated, isPageVi
 
           {/* Conditional Content: Login vs Authenticated Dashboard */}
           {!isAuthenticated ? (
-            <div className="p-8 max-w-md mx-auto text-center space-y-5">
-              <div className="w-14 h-14 mx-auto rounded-full bg-amber-100 text-amber-700 flex items-center justify-center">
-                <Lock className="w-7 h-7" />
-              </div>
-              <div>
-                <h4 className="text-lg font-black text-slate-900">Admin Login</h4>
-                <p className="text-xs text-slate-500 mt-1">
-                  Enter your email and passcode to manage Mideva's Collection.
-                </p>
-              </div>
-
-              <form onSubmit={handleLogin} className="space-y-3.5 text-left">
-                <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1">Admin Email</label>
-                  <input
-                    type="email"
-                    required
-                    value={emailInput}
-                    onChange={(e) => {
-                      setEmailInput(e.target.value);
-                      setAuthError(false);
-                    }}
-                    className="w-full px-3.5 py-2 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white"
-                  />
+            <div className="py-10 sm:py-14 px-4 flex items-center justify-center">
+              <div className="w-full max-w-md rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 sm:p-8 shadow-xl space-y-6">
+                
+                {/* Brand Identity Header (benchmarked from 1-feedback-system) */}
+                <div className="flex items-center gap-3.5 border-b border-slate-100 dark:border-slate-800 pb-4">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-600 text-white flex items-center justify-center font-black text-lg shadow-md flex-shrink-0">
+                    MC
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-extrabold uppercase tracking-widest text-amber-600 dark:text-amber-400">
+                      Mideva's Collection
+                    </p>
+                    <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
+                      Store Operations &amp; Admin
+                    </h3>
+                  </div>
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1">Passcode / Password</label>
-                  <input
-                    type="password"
-                    required
-                    placeholder="Enter passcode (default: mideva2026)"
-                    value={passcode}
-                    onChange={(e) => {
-                      setPasscode(e.target.value);
-                      setAuthError(false);
-                    }}
-                    className="w-full px-3.5 py-2 text-xs font-mono bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white"
-                    autoFocus
-                  />
-                </div>
-
-                {authError && (
-                  <p className="text-xs font-semibold text-rose-600">
-                    Invalid credentials. Check email (monalisamideva@gmail.com) and passcode (mideva2026).
+                  <h4 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">
+                    Sign In
+                  </h4>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    Access live catalog, stock control, WhatsApp quotes &amp; orders.
                   </p>
-                )}
+                </div>
 
-                <button
-                  type="submit"
-                  className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs sm:text-sm shadow-md transition"
-                >
-                  Unlock Store Manager
-                </button>
-              </form>
+                <form onSubmit={handleLogin} className="space-y-4">
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">
+                      Owner Email Address
+                    </label>
+                    <div className="relative">
+                      <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                      <input
+                        type="email"
+                        required
+                        value={emailInput}
+                        onChange={(e) => {
+                          setEmailInput(e.target.value);
+                          setAuthError(false);
+                        }}
+                        placeholder="monalisamideva@gmail.com"
+                        className="w-full pl-10 pr-3.5 py-2.5 text-xs sm:text-sm bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white dark:focus:bg-slate-900 transition"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1.5">
+                      Admin Passcode
+                    </label>
+                    <div className="relative">
+                      <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                      <input
+                        type={showPasscode ? 'text' : 'password'}
+                        required
+                        placeholder="Enter passcode (default: mideva2026)"
+                        value={passcode}
+                        onChange={(e) => {
+                          setPasscode(e.target.value);
+                          setAuthError(false);
+                        }}
+                        className="w-full pl-10 pr-10 py-2.5 text-xs sm:text-sm font-mono bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white dark:focus:bg-slate-900 transition"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPasscode(!showPasscode)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 transition"
+                        title={showPasscode ? "Hide passcode" : "Show passcode"}
+                      >
+                        {showPasscode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  {authError && (
+                    <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-start gap-2">
+                      <span className="text-sm">⚠️</span>
+                      <div>
+                        <p className="font-bold">Invalid credentials.</p>
+                        <p className="text-[11px] text-rose-600 font-normal">Check email (monalisamideva@gmail.com) and passcode (mideva2026), or use Demo Quick Access below.</p>
+                      </div>
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={isSigningIn}
+                    className="w-full py-2.5 sm:py-3 rounded-xl bg-amber-500 hover:bg-amber-600 active:scale-[0.99] text-white font-black text-xs sm:text-sm shadow-md transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70"
+                  >
+                    {isSigningIn ? (
+                      <>
+                        <RefreshCw className="w-4 h-4 animate-spin" />
+                        <span>Signing In &amp; Redirecting...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Lock className="w-4 h-4" />
+                        <span>Sign In to Dashboard</span>
+                      </>
+                    )}
+                  </button>
+                </form>
+
+                {/* Demo Quick Access Drawer (exact pattern from 1-feedback-system) */}
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 p-4 space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                      <span>Demo &amp; Quick Access</span>
+                    </span>
+                    <span className="text-[10px] text-slate-400 font-medium">1-Click Sign-in</span>
+                  </div>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">
+                    Pre-configured showcase credentials for handover &amp; immediate verification:
+                  </p>
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => handleQuickDemoAccess('monalisamideva@gmail.com', 'mideva2026', 'Store Owner (Mideva)')}
+                      disabled={isSigningIn}
+                      className="px-3 py-1.5 rounded-full bg-white dark:bg-slate-900 border border-amber-300 dark:border-amber-700 hover:bg-amber-50 dark:hover:bg-amber-950/40 text-amber-800 dark:text-amber-300 text-xs font-bold transition shadow-xs flex items-center gap-1 cursor-pointer"
+                    >
+                      <span>👑</span>
+                      <span>Store Owner (Mideva)</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleQuickDemoAccess('monalisamideva@gmail.com', 'comrade2026', 'Comrade Demo')}
+                      disabled={isSigningIn}
+                      className="px-3 py-1.5 rounded-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold transition shadow-xs flex items-center gap-1 cursor-pointer"
+                    >
+                      <span>⚡</span>
+                      <span>Comrade Passcode</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleQuickDemoAccess('admin@midevas.co.ke', 'admin123', 'Staff Reseller')}
+                      disabled={isSigningIn}
+                      className="px-3 py-1.5 rounded-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold transition shadow-xs flex items-center gap-1 cursor-pointer"
+                    >
+                      <span>📋</span>
+                      <span>Staff Access</span>
+                    </button>
+                  </div>
+                </div>
+
+              </div>
             </div>
           ) : (
             <div>
@@ -724,13 +847,14 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated, isPageVi
               {/* Navigation Tabs */}
               <div className="flex border-b border-slate-200 bg-slate-50 px-6 gap-2 overflow-x-auto scrollbar-none">
                 {[
-                  { id: 'orders', label: 'Orders & Quotes', icon: ShoppingBag, count: pendingOrdersCount ? `${pendingOrdersCount} new` : null },
+                  { id: 'overview', label: '📊 Executive Overview', icon: BarChart3 },
                   { id: 'inventory', label: '📦 Live Stock & Pricing', icon: Layers, count: (lowStockCount + outOfStockCount) > 0 ? `${lowStockCount + outOfStockCount} alert` : null },
+                  { id: 'orders', label: 'Orders & Quotes', icon: ShoppingBag, count: pendingOrdersCount ? `${pendingOrdersCount} new` : null },
                   { id: 'products', label: 'Product Catalog', icon: Package, count: products.length },
                   { id: 'cms', label: '🎨 CMS Page Manager', icon: Layers },
                   { id: 'profile', label: '👤 Profile & Security', icon: User },
                   { id: 'whatsappAgent', label: '🤖 WhatsApp Bot Agent', icon: Bot },
-                  { id: 'analytics', label: 'Traffic & Conversion', icon: BarChart3 },
+                  { id: 'analytics', label: 'Traffic & Conversion', icon: TrendingUp },
                   { id: 'reviews', label: 'Reviews', icon: Star, count: reviews.length },
                 ].map((tab) => {
                   const Icon = tab.icon;
@@ -769,6 +893,311 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated, isPageVi
                 isFullScreen ? 'max-h-[calc(100vh-140px)]' : 'max-h-[calc(92vh-140px)]'
               }`}>
                 
+                {/* ═══════════════════════════════════════════ */}
+                {/* TAB: EXECUTIVE OVERVIEW (Benchmarked from 1-feedback-system) */}
+                {/* ═══════════════════════════════════════════ */}
+                {activeTab === 'overview' && (
+                  <div className="space-y-6 animate-fade-in">
+                    
+                    {/* Executive Welcome Banner */}
+                    <div className="rounded-2xl border border-amber-200/80 dark:border-slate-800 bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-slate-50 dark:to-slate-900 p-5 sm:p-7 shadow-xs">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                          <div className="flex items-center gap-2 mb-1.5">
+                            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500 text-slate-950 shadow-xs">
+                              👑 Store Owner Lead
+                            </span>
+                            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                              {new Date().toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                            </span>
+                          </div>
+                          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+                            Welcome back, Mona Lisa Mideva!
+                          </h2>
+                          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
+                            Campus E-Commerce Operations, Real-Time Stock Control &amp; WhatsApp Sales Hub
+                          </p>
+                        </div>
+
+                        {/* Quick View Storefront Action Button */}
+                        <div className="flex items-center gap-2 self-start sm:self-auto">
+                          <button
+                            type="button"
+                            onClick={onClose}
+                            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 font-bold text-xs shadow-md transition cursor-pointer"
+                            title="Switch to customer-facing storefront"
+                          >
+                            <Store className="w-4 h-4 text-amber-400 dark:text-amber-600" />
+                            <span>View Storefront</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Executive Metric Cards (Benchmarked from MetricCard in 1-feedback-system) */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                      
+                      {/* Metric 1: Live Stock (Gold/Amber Accent) */}
+                      <article
+                        onClick={() => setActiveTab('inventory')}
+                        className="group relative overflow-hidden rounded-xl border border-amber-200 dark:border-amber-900/40 bg-white dark:bg-slate-900 p-5 text-left shadow-xs transition hover:shadow-md hover:border-amber-400 cursor-pointer before:absolute before:left-0 before:right-0 before:top-0 before:h-1 before:bg-amber-500"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <p className="text-[11px] font-extrabold uppercase tracking-wider text-amber-700 dark:text-amber-400">
+                              Live Inventory &bull; Stock
+                            </p>
+                            <p className="mt-2 text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+                              {products.length} Items
+                            </p>
+                            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                              {products.length - outOfStockCount} active &bull; {lowStockCount} low &bull; {outOfStockCount} out
+                            </p>
+                            <p className="mt-2 text-xs font-bold text-amber-600 flex items-center gap-1 group-hover:translate-x-0.5 transition">
+                              <span>Manage live stock &amp; prices</span> &rarr;
+                            </p>
+                          </div>
+                          <div className="rounded-xl bg-amber-50 dark:bg-amber-950/40 p-2.5 text-amber-600 dark:text-amber-400 flex-shrink-0">
+                            <Layers className="h-5 w-5" />
+                          </div>
+                        </div>
+                      </article>
+
+                      {/* Metric 2: WhatsApp Quotes & Orders (Blue Accent) */}
+                      <article
+                        onClick={() => setActiveTab('orders')}
+                        className="group relative overflow-hidden rounded-xl border border-blue-200 dark:border-blue-900/40 bg-white dark:bg-slate-900 p-5 text-left shadow-xs transition hover:shadow-md hover:border-blue-400 cursor-pointer before:absolute before:left-0 before:right-0 before:top-0 before:h-1 before:bg-blue-500"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <p className="text-[11px] font-extrabold uppercase tracking-wider text-blue-700 dark:text-blue-400">
+                              Campus Orders &bull; Quotes
+                            </p>
+                            <p className="mt-2 text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+                              {orders.length} Quotes
+                            </p>
+                            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                              {pendingOrdersCount} pending hostel drop-off
+                            </p>
+                            <p className="mt-2 text-xs font-bold text-blue-600 flex items-center gap-1 group-hover:translate-x-0.5 transition">
+                              <span>Process orders &amp; delivery</span> &rarr;
+                            </p>
+                          </div>
+                          <div className="rounded-xl bg-blue-50 dark:bg-blue-950/40 p-2.5 text-blue-600 dark:text-blue-400 flex-shrink-0">
+                            <ShoppingBag className="h-5 w-5" />
+                          </div>
+                        </div>
+                      </article>
+
+                      {/* Metric 3: Campus Revenue Volume (Emerald Accent) */}
+                      <article
+                        onClick={() => setActiveTab('orders')}
+                        className="group relative overflow-hidden rounded-xl border border-emerald-200 dark:border-emerald-900/40 bg-white dark:bg-slate-900 p-5 text-left shadow-xs transition hover:shadow-md hover:border-emerald-400 cursor-pointer before:absolute before:left-0 before:right-0 before:top-0 before:h-1 before:bg-emerald-500"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <p className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
+                              Sales &bull; Cashflow Volume
+                            </p>
+                            <p className="mt-2 text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+                              ${totalRevenueUsd.toFixed(2)}
+                            </p>
+                            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                              ~KSh {Math.round(totalRevenueUsd * storeConfig.exchangeRate).toLocaleString()} &bull; EcoCash ready
+                            </p>
+                            <p className="mt-2 text-xs font-bold text-emerald-600 flex items-center gap-1 group-hover:translate-x-0.5 transition">
+                              <span>View sales breakdown</span> &rarr;
+                            </p>
+                          </div>
+                          <div className="rounded-xl bg-emerald-50 dark:bg-emerald-950/40 p-2.5 text-emerald-600 dark:text-emerald-400 flex-shrink-0">
+                            <DollarSign className="h-5 w-5" />
+                          </div>
+                        </div>
+                      </article>
+
+                      {/* Metric 4: Campus Traffic & Visits (Purple Accent) */}
+                      <article
+                        onClick={() => setActiveTab('analytics')}
+                        className="group relative overflow-hidden rounded-xl border border-purple-200 dark:border-purple-900/40 bg-white dark:bg-slate-900 p-5 text-left shadow-xs transition hover:shadow-md hover:border-purple-400 cursor-pointer before:absolute before:left-0 before:right-0 before:top-0 before:h-1 before:bg-purple-500"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <p className="text-[11px] font-extrabold uppercase tracking-wider text-purple-700 dark:text-purple-400">
+                              Shoppers &bull; Traffic
+                            </p>
+                            <p className="mt-2 text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+                              {analytics?.uniqueVisitors || 1} Comrades
+                            </p>
+                            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                              {analytics?.pageViews || 0} page views &bull; {analytics?.cartAdds || 0} cart adds
+                            </p>
+                            <p className="mt-2 text-xs font-bold text-purple-600 flex items-center gap-1 group-hover:translate-x-0.5 transition">
+                              <span>View analytics report</span> &rarr;
+                            </p>
+                          </div>
+                          <div className="rounded-xl bg-purple-50 dark:bg-purple-950/40 p-2.5 text-purple-600 dark:text-purple-400 flex-shrink-0">
+                            <Users className="h-5 w-5" />
+                          </div>
+                        </div>
+                      </article>
+
+                    </div>
+
+                    {/* Quick Action Navigation Grid (Benchmarked from QuickLink in 1-feedback-system) */}
+                    <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 sm:p-6 space-y-4">
+                      <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                        <h3 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                          <Sliders className="w-4 h-4 text-amber-500" />
+                          <span>Owner Quick Controls &bull; Fast Action Shortcuts</span>
+                        </h3>
+                        <span className="text-[11px] text-slate-400">1-Tap Navigation</span>
+                      </div>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                        <button
+                          type="button"
+                          onClick={() => setActiveTab('inventory')}
+                          className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-amber-400 hover:bg-amber-50/50 dark:hover:bg-amber-950/20 text-left transition group cursor-pointer"
+                        >
+                          <span className="block font-bold text-xs sm:text-sm text-slate-900 dark:text-white group-hover:text-amber-600 transition">
+                            📦 Live Stock &amp; Pricing
+                          </span>
+                          <span className="block text-[11px] text-slate-500 mt-1">
+                            Change prices, restock
+                          </span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setActiveTab('orders')}
+                          className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-blue-400 hover:bg-blue-50/50 dark:hover:bg-blue-950/20 text-left transition group cursor-pointer"
+                        >
+                          <span className="block font-bold text-xs sm:text-sm text-slate-900 dark:text-white group-hover:text-blue-600 transition">
+                            📋 WhatsApp Quotes
+                          </span>
+                          <span className="block text-[11px] text-slate-500 mt-1">
+                            {pendingOrdersCount} pending delivery
+                          </span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setActiveTab('cms')}
+                          className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-emerald-400 hover:bg-emerald-50/50 dark:hover:bg-emerald-950/20 text-left transition group cursor-pointer"
+                        >
+                          <span className="block font-bold text-xs sm:text-sm text-slate-900 dark:text-white group-hover:text-emerald-600 transition">
+                            📢 CMS Announcements
+                          </span>
+                          <span className="block text-[11px] text-slate-500 mt-1">
+                            Edit top banner deals
+                          </span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setActiveTab('whatsappAgent')}
+                          className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-purple-400 hover:bg-purple-50/50 dark:hover:bg-purple-950/20 text-left transition group cursor-pointer"
+                        >
+                          <span className="block font-bold text-xs sm:text-sm text-slate-900 dark:text-white group-hover:text-purple-600 transition">
+                            🤖 WhatsApp AI Bot
+                          </span>
+                          <span className="block text-[11px] text-slate-500 mt-1">
+                            Test auto-reply simulator
+                          </span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setActiveTab('products')}
+                          className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-amber-400 hover:bg-amber-50/50 dark:hover:bg-amber-950/20 text-left transition group cursor-pointer"
+                        >
+                          <span className="block font-bold text-xs sm:text-sm text-slate-900 dark:text-white group-hover:text-amber-600 transition">
+                            🎨 Product Catalog CRUD
+                          </span>
+                          <span className="block text-[11px] text-slate-500 mt-1">
+                            Add photos, edit tags
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Recent Orders Snapshot Table */}
+                    <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-xs">
+                      <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100 dark:border-slate-800">
+                        <h4 className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                          <ShoppingBag className="w-4 h-4 text-amber-500" />
+                          <span>Recent Customer Quotes &bull; Hostel Deliveries</span>
+                        </h4>
+                        <button
+                          type="button"
+                          onClick={() => setActiveTab('orders')}
+                          className="text-xs font-bold text-amber-600 hover:underline flex items-center gap-1 cursor-pointer"
+                        >
+                          <span>View all ({orders.length})</span> &rarr;
+                        </button>
+                      </div>
+
+                      {orders.length === 0 ? (
+                        <div className="p-8 text-center text-slate-400 text-xs">
+                          No orders logged yet. Customers browsing the store will generate WhatsApp quotes here.
+                        </div>
+                      ) : (
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-left text-xs">
+                            <thead className="bg-slate-50 dark:bg-slate-800/50 text-[11px] uppercase tracking-wider text-slate-500 font-bold border-b border-slate-100 dark:border-slate-800">
+                              <tr>
+                                <th className="px-4 py-2.5">Customer &bull; Hostel</th>
+                                <th className="px-4 py-2.5">Items Summary</th>
+                                <th className="px-4 py-2.5">Quote Total</th>
+                                <th className="px-4 py-2.5">Status</th>
+                                <th className="px-4 py-2.5 text-right">Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300">
+                              {orders.slice(0, 5).map((o) => (
+                                <tr key={o.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition">
+                                  <td className="px-4 py-3">
+                                    <span className="font-bold text-slate-900 dark:text-white block">{o.customerName || 'Comrade Shopper'}</span>
+                                    <span className="text-[11px] text-slate-400">{o.hostelRoom || 'Campus Delivery'}</span>
+                                  </td>
+                                  <td className="px-4 py-3">
+                                    <span className="text-xs text-slate-600 dark:text-slate-300">
+                                      {o.items?.map(it => `${it.name} (x${it.quantity})`).join(', ') || '1x Item'}
+                                    </span>
+                                  </td>
+                                  <td className="px-4 py-3 font-extrabold text-amber-600">
+                                    ${(o.totalUsd || 0).toFixed(2)}
+                                  </td>
+                                  <td className="px-4 py-3">
+                                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${
+                                      o.status === 'Completed' || o.status === 'Confirmed'
+                                        ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
+                                        : 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300'
+                                    }`}>
+                                      {o.status || 'Pending'}
+                                    </span>
+                                  </td>
+                                  <td className="px-4 py-3 text-right">
+                                    <button
+                                      type="button"
+                                      onClick={() => setActiveTab('orders')}
+                                      className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-amber-100 text-slate-700 dark:text-slate-200 text-xs font-bold transition cursor-pointer"
+                                    >
+                                      Manage
+                                    </button>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </div>
+
+                  </div>
+                )}
+
                 {/* ═══════════════════════════════════════════ */}
                 {/* TAB 1: ORDERS & QUOTES                      */}
                 {/* ═══════════════════════════════════════════ */}

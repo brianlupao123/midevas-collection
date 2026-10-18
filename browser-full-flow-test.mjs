@@ -180,37 +180,53 @@ async function runBrowserFlow() {
   await page.screenshot({ path: clientScreenshotPath, fullPage: false });
   console.log(`📸 Saved client flow screenshot: ${clientScreenshotPath}`);
 
-  // 8. Admin Flow: Open Admin Login & Perform CRUD & Live Stock Operations
-  console.log('\n🔐 Step 8: Testing Admin Authentication & Management Portal...');
+  // 8. Admin Flow: Test Professional Sign-In with Demo Quick Access & Direction to Dashboard
+  console.log('\n🔐 Step 8: Testing Professional Admin Sign-in & Dashboard Redirection...');
   const adminBtn = await page.$('button[title*="Store Admin"]');
   if (adminBtn) {
     await adminBtn.click();
-    await new Promise(r => setTimeout(r, 600));
+    await new Promise(r => setTimeout(r, 800));
 
-    // Fill Admin credentials
-    const emailField = await page.$('input[type="email"]');
-    const passField = await page.$('input[type="password"]');
+    // Screenshot the Sign-In Card
+    await page.screenshot({ path: 'test-admin-signin.png', fullPage: false });
+    console.log('📸 Saved professional sign-in screenshot: test-admin-signin.png');
 
-    if (passField) {
-      await page.evaluate(() => {
-        const email = document.querySelector('form input[type="email"]');
-        if (email) {
-          email.value = 'monalisamideva@gmail.com';
-          email.dispatchEvent(new Event('input', { bubbles: true }));
-        }
-      });
-      await passField.type('comrade2026');
-      
-      const loginBtn = await page.$('form button[type="submit"]');
-      if (loginBtn) {
-        await loginBtn.click();
-        await new Promise(r => setTimeout(r, 1500));
-        console.log('✅ Admin login submitted successfully!');
+    // Test 1-Click Demo Quick Access (Benchmarked from 1-feedback-system)
+    const demoOwnerBtn = await page.$('button ::-p-text("Store Owner"), button');
+    const allButtons = await page.$$('button');
+    let clickedDemo = false;
+    for (const b of allButtons) {
+      const txt = await page.evaluate(el => el.textContent, b);
+      if (txt.includes('Store Owner') || txt.includes('Mideva')) {
+        await b.click();
+        clickedDemo = true;
+        console.log('✅ Clicked 1-Click Demo Quick Access pill: "👑 Store Owner (Mideva)"');
+        break;
       }
     }
 
-    // Check if Admin Portal opened
-    console.log('✅ Admin Management Dashboard is open and operational!');
+    if (!clickedDemo) {
+      // Fallback form submission
+      const passField = await page.$('input[type="password"]');
+      if (passField) {
+        await passField.type('mideva2026');
+        const loginBtn = await page.$('form button[type="submit"]');
+        if (loginBtn) await loginBtn.click();
+      }
+    }
+
+    await new Promise(r => setTimeout(r, 1200));
+
+    // Verify immediate redirection to Executive Overview Dashboard
+    const welcomeHeader = await page.$('h2');
+    if (welcomeHeader) {
+      const headerText = await page.evaluate(el => el.textContent, welcomeHeader);
+      console.log('✅ Successfully directed to Executive Dashboard! Heading:', headerText.trim());
+    }
+
+    // Capture Executive Overview Dashboard Screenshot
+    await page.screenshot({ path: 'test-admin-overview.png', fullPage: false });
+    console.log('📸 Saved executive overview dashboard screenshot: test-admin-overview.png');
 
     // Test Live Stock & Pricing Tab
     const tabButtons = await page.$$('button');
