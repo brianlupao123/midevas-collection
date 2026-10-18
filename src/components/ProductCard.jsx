@@ -3,10 +3,11 @@ import { ShoppingBag, MessageCircle, Check, Star, Tag, MessageSquare, Heart } fr
 import { STORE_CONFIG } from '../data/products';
 import { trackEvent } from '../utils/analytics';
 import { getLikes, isProductLikedByUser, toggleProductLike } from '../utils/likes';
+import { formatPrice } from '../utils/storeConfig';
 
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=600&q=80';
 
-export default function ProductCard({ product, onAddToCart, currency, onOpenReviews }) {
+export default function ProductCard({ product, onAddToCart, currency, onOpenReviews, config }) {
   const [added, setAdded] = useState(false);
   const [imgSrc, setImgSrc] = useState(product.image);
   const [likeCount, setLikeCount] = useState(() => (getLikes()[product.id] || 0));
@@ -25,13 +26,8 @@ export default function ProductCard({ product, onAddToCart, currency, onOpenRevi
     }
   };
 
-  const displayPrice = currency === '$' 
-    ? `$${product.price.toFixed(2)}`
-    : `KSh ${Math.round(product.price * STORE_CONFIG.exchangeRate).toLocaleString()}`;
-
-  const comradeDisplayPrice = currency === '$'
-    ? `$${product.comradePrice.toFixed(2)}`
-    : `KSh ${Math.round(product.comradePrice * STORE_CONFIG.exchangeRate).toLocaleString()}`;
+  const displayPrice = formatPrice(product.price, currency, config);
+  const comradeDisplayPrice = formatPrice(product.comradePrice, currency, config);
 
   const handleAdd = () => {
     onAddToCart({

@@ -1385,6 +1385,36 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
                         />
                       </div>
 
+                      {/* EcoCash Payment Settings */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-200">
+                        <div>
+                          <label className="text-xs font-bold text-slate-700 block mb-1">
+                            EcoCash Phone / Merchant Number
+                          </label>
+                          <input
+                            type="text"
+                            value={settingsForm.ecocashNumber || ''}
+                            onChange={(e) => setSettingsForm({ ...settingsForm, ecocashNumber: e.target.value })}
+                            className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500 font-mono"
+                            placeholder="e.g. 0774809479"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="text-xs font-bold text-slate-700 block mb-1">
+                            EcoCash Currency Mode
+                          </label>
+                          <select
+                            value={settingsForm.ecocashMode || 'USD'}
+                            onChange={(e) => setSettingsForm({ ...settingsForm, ecocashMode: e.target.value })}
+                            className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500"
+                          >
+                            <option value="USD">EcoCash USD ($ - Standard)</option>
+                            <option value="ZiG">EcoCash Local Currency (ZiG)</option>
+                          </select>
+                        </div>
+                      </div>
+
                       <div>
                         <label className="text-xs font-bold text-slate-700 block mb-1">
                           Delivery Notice

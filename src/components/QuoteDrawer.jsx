@@ -18,8 +18,19 @@ import {
 import { STORE_CONFIG } from '../data/products';
 import { saveOrder } from '../utils/orders';
 import { trackEvent } from '../utils/analytics';
+import { formatPrice } from '../utils/storeConfig';
 
-export default function QuoteDrawer({ isOpen, onClose, cartItems, onUpdateQuantity, onRemoveItem, onClearCart, currency }) {
+export default function QuoteDrawer({ 
+  isOpen, 
+  onClose, 
+  cartItems, 
+  onUpdateQuantity, 
+  onRemoveItem, 
+  onClearCart, 
+  currency,
+  config,
+  onOpenPayment
+}) {
   const [customerName, setCustomerName] = useState('');
   const [deliveryLocation, setDeliveryLocation] = useState('');
   const [notes, setNotes] = useState('');
@@ -47,11 +58,9 @@ export default function QuoteDrawer({ isOpen, onClose, cartItems, onUpdateQuanti
   }, [isOpen]);
 
   const totalUsd = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const totalKsh = Math.round(totalUsd * STORE_CONFIG.exchangeRate);
+  const totalKsh = Math.round(totalUsd * (config?.exchangeRate || STORE_CONFIG.exchangeRate));
 
-  const displayTotal = currency === '$' 
-    ? `$${totalUsd.toFixed(2)}`
-    : `KSh ${totalKsh.toLocaleString()}`;
+  const displayTotal = formatPrice(totalUsd, currency, config);
 
   // Build formatted order text
   const generateOrderText = () => {
@@ -323,12 +332,25 @@ export default function QuoteDrawer({ isOpen, onClose, cartItems, onUpdateQuanti
                 </div>
               </div>
 
+              {/* Express Checkout Button (M-Pesa STK & EcoCash USSD) */}
+              <button
+                type="button"
+                onClick={() => {
+                  if (onOpenPayment) {
+                    onOpenPayment();
+                  }
+                }}
+                className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-600 via-blue-600 to-amber-500 hover:opacity-95 text-white font-extrabold text-xs sm:text-sm shadow-md transition transform active:scale-98 flex items-center justify-center gap-2"
+              >
+                <span>⚡ Express Pay (M-Pesa / EcoCash / Cash)</span>
+              </button>
+
               {/* Primary Action: Send WhatsApp Order */}
               <button
                 onClick={handleSendWhatsApp}
-                className="w-full py-3.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-lg hover:shadow-xl transition transform active:scale-98 flex items-center justify-center gap-2"
+                className="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-md hover:shadow-lg transition transform active:scale-98 flex items-center justify-center gap-2"
               >
-                <MessageCircle className="w-5 h-5 text-emerald-200" />
+                <MessageCircle className="w-4 h-4 text-emerald-200" />
                 <span>Send Order via WhatsApp Now</span>
               </button>
 

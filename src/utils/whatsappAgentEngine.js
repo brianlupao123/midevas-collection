@@ -162,7 +162,8 @@ export function processWhatsAppMessage({ from, text, customerName = "Comrade" })
     return { replyText: reply, intent: 'category_hygiene', matchedProducts: hygiene };
   }
 
-  if (q === '7' || q.includes('delivery') || q.includes('deliver') || q.includes('hostel') || q.includes('pay') || q.includes('mpesa')) {
+  if (q === '7' || q.includes('delivery') || q.includes('deliver') || q.includes('hostel') || q.includes('pay') || q.includes('mpesa') || q.includes('ecocash')) {
+    const ecocashNum = storeConfig.ecocashNumber || '0774809479';
     return {
       replyText: `🚚 *DELIVERY & PAYMENT INFORMATION*
 ━━━━━━━━━━━━━━━━━━━━━
@@ -172,8 +173,8 @@ export function processWhatsAppMessage({ from, text, customerName = "Comrade" })
 
 💵 *Payment Options:*
 • *M-Pesa:* Till / Paybill: *${agentConfig.mpesaTillNumber || '254748094795'}*
+• *EcoCash:* Send to *${ecocashNum}* (Dial *151*1*1*${ecocashNum}*amount#)
 • *Cash on Delivery:* Pay upon receiving and inspecting your items.
-• *EcoCash & Mobile Bank Transfer* also accepted.
 
 🔒 *Zero Risk:* Inspect your bag, shirt, or items before making payment!`,
       intent: 'delivery_payment',

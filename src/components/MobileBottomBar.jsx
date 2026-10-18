@@ -1,11 +1,10 @@
 import React from 'react';
 import { ShoppingBag, MessageCircle, Sparkles } from 'lucide-react';
 import { STORE_CONFIG } from '../data/products';
+import { formatPrice } from '../utils/storeConfig';
 
-export default function MobileBottomBar({ cartCount, cartTotal, currency, onOpenCart, onExploreCatalog }) {
-  const displayTotal = currency === '$' 
-    ? `$${cartTotal.toFixed(2)}`
-    : `KSh ${Math.round(cartTotal * STORE_CONFIG.exchangeRate).toLocaleString()}`;
+export default function MobileBottomBar({ cartCount, cartTotal, currency, onOpenCart, onExploreCatalog, config }) {
+  const displayTotal = formatPrice(cartTotal, currency, config);
 
   return (
     <div className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/80 shadow-2xl px-4 py-2.5 sm:hidden flex items-center justify-between gap-3">

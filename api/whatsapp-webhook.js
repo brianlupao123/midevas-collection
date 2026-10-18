@@ -67,11 +67,12 @@ Reply with item name & your hostel room to order! 🚀`;
 Free hostel delivery! Reply with chosen bag to order.`;
   }
 
-  if (q === '6' || q.includes('deliver') || q.includes('pay') || q.includes('mpesa')) {
+  if (q === '6' || q.includes('deliver') || q.includes('pay') || q.includes('mpesa') || q.includes('ecocash')) {
     return `🚚 *DELIVERY & PAYMENT INFO*
 • Free drop-off to all campus hostels & student halls!
-• Pay on delivery via *M-Pesa* or *Cash* after inspecting your items.
-• M-Pesa Till: *254748094795* (Mideva)`;
+• *M-Pesa:* Till *254748094795* (Mideva)
+• *EcoCash:* Send to *0774809479* (Dial *151*1*1*0774809479*amount#)
+• *Cash on Delivery:* Pay after inspecting your items at your room!`;
   }
 
   if (q === '7' || q.includes('human') || q.includes('mideva')) {

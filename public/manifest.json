@@ -1,0 +1,29 @@
+{
+  "short_name": "Mideva's",
+  "name": "Mideva's Collection — Campus Fashion & Essentials",
+  "description": "Comrade affordable fashion, handbags, pocket perfumes, and everyday campus essentials with free hostel drop-off.",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    },
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#0f172a",
+  "theme_color": "#d97706",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/"
+}

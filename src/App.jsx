@@ -9,6 +9,8 @@ import ChatWidget from './components/ChatWidget';
 import MobileBottomBar from './components/MobileBottomBar';
 import ReviewsModal from './components/ReviewsModal';
 import AdminModal from './components/AdminModal';
+import PaymentModal from './components/PaymentModal';
+import FlyerGeneratorModal from './components/FlyerGeneratorModal';
 import Footer from './components/Footer';
 import { getStoredProducts } from './data/products';
 import { getStoreConfig } from './utils/storeConfig';
@@ -28,13 +30,33 @@ export default function App() {
   // Modals state
   const [reviewProduct, setReviewProduct] = useState(null);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
+  const [isPaymentOpen, setIsPaymentOpen] = useState(false);
+  const [isFlyerOpen, setIsFlyerOpen] = useState(false);
+  const [installPrompt, setInstallPrompt] = useState(null);
 
   const catalogRef = useRef(null);
 
   // Log page view on mount
   useEffect(() => {
     trackEvent('page_view', { path: window.location.pathname });
+
+    const handleBeforeInstall = (e) => {
+      e.preventDefault();
+      setInstallPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
   }, []);
+
+  const handleInstallClick = () => {
+    if (!installPrompt) return;
+    installPrompt.prompt();
+    installPrompt.userChoice.then((choice) => {
+      if (choice.outcome === 'accepted') {
+        setInstallPrompt(null);
+      }
+    });
+  };
 
   // Track search query with debounce
   useEffect(() => {
@@ -93,7 +115,7 @@ export default function App() {
 
   const handleToggleCurrency = () => {
     setCurrency((prev) => {
-      const next = prev === '$' ? 'KSh' : '$';
+      const next = prev === '$' ? 'KSh' : prev === 'KSh' ? 'EcoCash' : '$';
       trackEvent('currency_toggle', { to: next });
       return next;
     });
@@ -164,6 +186,9 @@ export default function App() {
         onToggleCurrency={handleToggleCurrency}
         onOpenAdmin={() => setIsAdminOpen(true)}
         config={storeConfig}
+        onOpenFlyers={() => setIsFlyerOpen(true)}
+        installPrompt={installPrompt}
+        onInstallClick={handleInstallClick}
       />
 
       {/* Hero Category Slides Carousel */}
@@ -212,6 +237,7 @@ export default function App() {
           currency={currency}
           onResetFilters={handleResetFilters}
           onOpenReviews={(prod) => setReviewProduct(prod)}
+          config={storeConfig}
         />
 
       </main>
@@ -225,6 +251,11 @@ export default function App() {
         onRemoveItem={handleRemoveItem}
         onClearCart={handleClearCart}
         currency={currency}
+        config={storeConfig}
+        onOpenPayment={() => {
+          setIsCartOpen(false);
+          setIsPaymentOpen(true);
+        }}
       />
 
       {/* Interactive Floating Chatbot Assistant */}
@@ -241,6 +272,24 @@ export default function App() {
         currency={currency}
         onOpenCart={() => setIsCartOpen(true)}
         onExploreCatalog={scrollToCatalog}
+        config={storeConfig}
+      />
+
+      {/* Express Payment & STK Push Modal */}
+      <PaymentModal
+        isOpen={isPaymentOpen}
+        onClose={() => setIsPaymentOpen(false)}
+        cartItems={cartItems}
+        currency={currency}
+        config={storeConfig}
+        onClearCart={handleClearCart}
+      />
+
+      {/* Campus Marketing & WhatsApp Status Flyer Generator Modal */}
+      <FlyerGeneratorModal
+        isOpen={isFlyerOpen}
+        onClose={() => setIsFlyerOpen(false)}
+        config={storeConfig}
       />
 
       {/* Customer Reviews & Comments Modal */}

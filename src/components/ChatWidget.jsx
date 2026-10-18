@@ -112,7 +112,7 @@ export default function ChatWidget({ onAddToCart, onSelectCategory, config }) {
     // 6. Payment query
     if (q.includes('pay') || q.includes('mpesa') || q.includes('m-pesa') || q.includes('cash') || q.includes('ecocash') || q.includes('money')) {
       return {
-        text: "💳 We accept M-Pesa, Cash on Delivery, EcoCash, and Mobile Bank Transfer. You only pay after you receive and inspect your items at your hostel!",
+        text: `💳 We accept:\n• M-Pesa (Till / Paybill: 254748094795)\n• EcoCash (Send money to ${config?.ecocashNumber || '0774809479'} or dial *151*1*1*${config?.ecocashNumber || '0774809479'}*amount#)\n• Cash on Delivery: inspect your items at your hostel first before paying!`,
         recs: []
       };
     }

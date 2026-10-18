@@ -19,8 +19,30 @@ export const DEFAULT_STORE_CONFIG = {
   exchangeRate: 130,
   currency: "$",
   secondaryCurrency: "KSh",
-  paymentMethods: ["M-Pesa", "Cash on Delivery", "EcoCash", "Bank Transfer"]
+  ecocashNumber: "0774809479",
+  ecocashMerchantCode: "94795",
+  ecocashRate: 28, // ZiG rate per USD if paying in local ZiG EcoCash
+  ecocashMode: "USD", // "USD" or "ZiG"
+  paymentMethods: ["M-Pesa", "EcoCash", "Cash on Delivery", "Bank Transfer"]
 };
+
+// Unified price formatter across the application
+export function formatPrice(usdAmount, activeCurrency = '$', config = DEFAULT_STORE_CONFIG) {
+  const amount = Number(usdAmount) || 0;
+  if (activeCurrency === 'KSh') {
+    const kshRate = config?.exchangeRate || 130;
+    return `KSh ${Math.round(amount * kshRate).toLocaleString()}`;
+  }
+  if (activeCurrency === 'EcoCash') {
+    // If EcoCash is set to USD mode (most common in modern Zim campus trade), show EcoCash $
+    if (config?.ecocashMode === 'ZiG') {
+      const zigRate = config?.ecocashRate || 28;
+      return `ZiG ${Math.round(amount * zigRate).toLocaleString()}`;
+    }
+    return `EcoCash $${amount.toFixed(2)}`;
+  }
+  return `$${amount.toFixed(2)}`;
+}
 
 export function getStoreConfig() {
   try {
