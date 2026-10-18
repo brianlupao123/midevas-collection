@@ -33,13 +33,16 @@ import {
   updateProductPrice, 
   toggleProductStock, 
   deleteProduct, 
-  resetProducts 
+  resetProducts,
+  updateProductStockQuantity,
+  adjustProductStock
 } from '../data/products';
 import { getOrders, updateOrderStatus, deleteOrder } from '../utils/orders';
 import { getReviews, deleteReview } from '../utils/reviews';
 import { getStoreConfig, saveStoreConfig, resetStoreConfig } from '../utils/storeConfig';
 import { getAgentConfig, saveAgentConfig, processWhatsAppMessage } from '../utils/whatsappAgentEngine';
 import { getAnalyticsSummary } from '../utils/analytics';
+import { notifySuccess, notifyWarning, notifyInfo } from '../utils/notifications';
 import { 
   Bot, 
   Copy, 
@@ -99,6 +102,12 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
 
   // Editing existing product state
   const [editingProduct, setEditingProduct] = useState(null);
+
+  // Live Inventory & Pricing states
+  const [inventorySearch, setInventorySearch] = useState('');
+  const [inventoryFilter, setInventoryFilter] = useState('all'); // 'all' | 'low' | 'out' | 'in'
+  const [inventoryCat, setInventoryCat] = useState('all');
+  const [editingPrices, setEditingPrices] = useState({});
 
   // Settings form state
   const [settingsForm, setSettingsForm] = useState(() => getStoreConfig());
@@ -364,6 +373,43 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
     }
   };
 
+  // Live Inventory Stock Handlers
+  const handleQuickAdjustStock = (prodId, delta) => {
+    const updated = adjustProductStock(prodId, delta);
+    setProducts(updated);
+    if (onCatalogUpdated) onCatalogUpdated();
+    notifySuccess(`Stock adjusted (${delta > 0 ? '+' + delta : delta} units)`);
+  };
+
+  const handleSetStockQty = (prodId, newQty) => {
+    const updated = updateProductStockQuantity(prodId, newQty);
+    setProducts(updated);
+    if (onCatalogUpdated) onCatalogUpdated();
+  };
+
+  const handleUpdateInlinePrice = (prodId, regularPrice, comradePrice) => {
+    const updated = updateProductPrice(prodId, regularPrice, comradePrice);
+    setProducts(updated);
+    if (onCatalogUpdated) onCatalogUpdated();
+    notifySuccess('Price updated successfully! 💰');
+  };
+
+  const handleRestockAllLowStock = () => {
+    const prods = getStoredProducts();
+    const updated = prods.map((p) => {
+      const qty = p.stockQuantity !== undefined ? p.stockQuantity : (p.inStock !== false ? 12 : 0);
+      if (qty <= 5) {
+        const next = Math.max(10, qty + 10);
+        return { ...p, stockQuantity: next, inStock: true };
+      }
+      return p;
+    });
+    localStorage.setItem('midevas_catalog_products', JSON.stringify(updated));
+    setProducts(updated);
+    if (onCatalogUpdated) onCatalogUpdated();
+    notifySuccess('All low-stock items restocked (+10 units)! 📦');
+  };
+
   // Store Settings Save handler
   const handleSaveSettings = (e) => {
     e.preventDefault();
@@ -453,6 +499,16 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
   // Calculate order stats
   const totalRevenueUsd = orders.reduce((sum, o) => sum + (o.totalUsd || 0), 0);
   const pendingOrdersCount = orders.filter((o) => o.status === 'Pending').length;
+
+  const lowStockCount = products.filter((p) => {
+    const qty = p.stockQuantity !== undefined ? p.stockQuantity : (p.inStock !== false ? 12 : 0);
+    return qty > 0 && qty <= 5;
+  }).length;
+
+  const outOfStockCount = products.filter((p) => {
+    const qty = p.stockQuantity !== undefined ? p.stockQuantity : (p.inStock !== false ? 12 : 0);
+    return qty <= 0 || p.inStock === false;
+  }).length;
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
@@ -636,6 +692,7 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
               <div className="flex border-b border-slate-200 bg-slate-50 px-6 gap-2 overflow-x-auto scrollbar-none">
                 {[
                   { id: 'orders', label: 'Orders & Quotes', icon: ShoppingBag, count: pendingOrdersCount ? `${pendingOrdersCount} new` : null },
+                  { id: 'inventory', label: '📦 Live Stock & Pricing', icon: Layers, count: (lowStockCount + outOfStockCount) > 0 ? `${lowStockCount + outOfStockCount} alert` : null },
                   { id: 'products', label: 'Product Catalog', icon: Package, count: products.length },
                   { id: 'cms', label: '🎨 CMS Page Manager', icon: Layers },
                   { id: 'profile', label: '👤 Profile & Security', icon: User },
@@ -800,6 +857,301 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
                         </div>
                       )}
                     </div>
+                  </div>
+                )}
+
+                {/* ═══════════════════════════════════════════ */}
+                {/* TAB: LIVE INVENTORY & PRICING CONTROLS     */}
+                {/* ═══════════════════════════════════════════ */}
+                {activeTab === 'inventory' && (
+                  <div className="space-y-5">
+                    
+                    {/* Header & Batch Restock Action */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div>
+                        <h4 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                          <span>Live Stock &amp; Real-Time Inventory Control</span>
+                          {(lowStockCount + outOfStockCount) > 0 && (
+                            <span className="text-[10px] font-black bg-rose-500 text-white px-2 py-0.5 rounded-full animate-pulse">
+                              {lowStockCount + outOfStockCount} Alerts
+                            </span>
+                          )}
+                        </h4>
+                        <p className="text-xs text-slate-500">
+                          Instantly increment/decrement stock, change regular &amp; comrade prices, or restock batches in 1 click.
+                        </p>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        {lowStockCount > 0 && (
+                          <button
+                            type="button"
+                            onClick={handleRestockAllLowStock}
+                            className="px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs flex items-center gap-1.5 shadow-sm transition"
+                          >
+                            <Plus className="w-3.5 h-3.5 text-slate-950" />
+                            <span>Restock Low Stock (+10 all)</span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Stock Metrics Overview Cards */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+                        <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Total Products</span>
+                        <div className="text-xl font-black text-slate-900 mt-0.5">{products.length} items</div>
+                      </div>
+
+                      <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200">
+                        <span className="text-[11px] font-bold text-emerald-700 uppercase tracking-wider">In Stock (&gt;5)</span>
+                        <div className="text-xl font-black text-emerald-900 mt-0.5">
+                          {products.filter((p) => (p.stockQuantity ?? (p.inStock !== false ? 12 : 0)) > 5).length} items
+                        </div>
+                      </div>
+
+                      <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200">
+                        <span className="text-[11px] font-bold text-amber-700 uppercase tracking-wider">Low Stock (&le;5)</span>
+                        <div className="text-xl font-black text-amber-900 mt-0.5">{lowStockCount} items</div>
+                      </div>
+
+                      <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200">
+                        <span className="text-[11px] font-bold text-rose-700 uppercase tracking-wider">Sold Out (0)</span>
+                        <div className="text-xl font-black text-rose-900 mt-0.5">{outOfStockCount} items</div>
+                      </div>
+                    </div>
+
+                    {/* Search & Filter Bar */}
+                    <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row gap-3 items-center justify-between">
+                      <div className="relative w-full sm:w-72">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                        <input
+                          type="text"
+                          placeholder="Search product by name or category..."
+                          value={inventorySearch}
+                          onChange={(e) => setInventorySearch(e.target.value)}
+                          className="w-full pl-9 pr-3 py-1.5 text-xs bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        />
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-1.5 w-full sm:w-auto">
+                        {[
+                          { id: 'all', label: 'All Items' },
+                          { id: 'low', label: `⚠️ Low Stock (${lowStockCount})` },
+                          { id: 'out', label: `❌ Sold Out (${outOfStockCount})` },
+                          { id: 'in', label: '✅ In Stock' }
+                        ].map((flt) => (
+                          <button
+                            key={flt.id}
+                            type="button"
+                            onClick={() => setInventoryFilter(flt.id)}
+                            className={`px-2.5 py-1 text-xs font-bold rounded-lg border transition ${
+                              inventoryFilter === flt.id
+                                ? 'bg-amber-500 border-amber-500 text-white shadow-xs'
+                                : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-100'
+                            }`}
+                          >
+                            {flt.label}
+                          </button>
+                        ))}
+
+                        <select
+                          value={inventoryCat}
+                          onChange={(e) => setInventoryCat(e.target.value)}
+                          className="px-2.5 py-1 text-xs font-bold rounded-lg border border-slate-200 bg-white text-slate-700"
+                        >
+                          <option value="all">All Categories</option>
+                          {CATEGORIES.filter((c) => c.id !== 'all').map((c) => (
+                            <option key={c.id} value={c.id}>{c.name}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Inventory Items List */}
+                    <div className="space-y-2.5 max-h-[550px] overflow-y-auto pr-1">
+                      {products
+                        .filter((p) => {
+                          const qty = p.stockQuantity !== undefined ? p.stockQuantity : (p.inStock !== false ? 12 : 0);
+                          const isOut = qty <= 0 || p.inStock === false;
+                          const isLow = !isOut && qty <= 5;
+                          const isIn = qty > 5;
+
+                          if (inventoryFilter === 'low' && !isLow) return false;
+                          if (inventoryFilter === 'out' && !isOut) return false;
+                          if (inventoryFilter === 'in' && !isIn) return false;
+
+                          if (inventoryCat !== 'all' && p.category !== inventoryCat) return false;
+
+                          if (inventorySearch.trim()) {
+                            const q = inventorySearch.toLowerCase();
+                            const matchName = p.name.toLowerCase().includes(q);
+                            const matchCat = p.category.toLowerCase().includes(q);
+                            if (!matchName && !matchCat) return false;
+                          }
+                          return true;
+                        })
+                        .map((prod) => {
+                          const qty = prod.stockQuantity !== undefined ? prod.stockQuantity : (prod.inStock !== false ? 12 : 0);
+                          const isOut = qty <= 0 || prod.inStock === false;
+                          const isLow = !isOut && qty <= 5;
+
+                          return (
+                            <div
+                              key={prod.id}
+                              className={`p-3.5 rounded-2xl border transition flex flex-col md:flex-row items-start md:items-center justify-between gap-3 ${
+                                isOut
+                                  ? 'bg-rose-50/40 border-rose-200'
+                                  : isLow
+                                  ? 'bg-amber-50/40 border-amber-200'
+                                  : 'bg-white border-slate-200 hover:border-slate-300'
+                              }`}
+                            >
+                              {/* Product Info & Photo */}
+                              <div className="flex items-center gap-3 min-w-0 flex-1">
+                                <img
+                                  src={prod.image}
+                                  alt={prod.name}
+                                  className="w-12 h-12 rounded-xl object-cover border border-slate-200 flex-shrink-0"
+                                />
+                                <div className="min-w-0">
+                                  <div className="flex items-center gap-2">
+                                    <h5 className="font-bold text-xs sm:text-sm text-slate-900 truncate">
+                                      {prod.name}
+                                    </h5>
+                                    {isOut ? (
+                                      <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-full bg-rose-600 text-white">
+                                        Sold Out
+                                      </span>
+                                    ) : isLow ? (
+                                      <span className="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-amber-500 text-white animate-pulse">
+                                        Low: {qty} left
+                                      </span>
+                                    ) : (
+                                      <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                                        In Stock ({qty})
+                                      </span>
+                                    )}
+                                  </div>
+                                  <div className="flex items-center gap-2 text-[11px] text-slate-500 mt-0.5">
+                                    <span className="capitalize">{prod.category}</span>
+                                    <span>•</span>
+                                    <span className="font-semibold text-slate-700">${prod.price?.toFixed(2)}</span>
+                                    {prod.comradePrice < prod.price && (
+                                      <span className="text-rose-600 font-bold">
+                                        Comrade: ${prod.comradePrice?.toFixed(2)}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Live Stock Modifier Stepper */}
+                              <div className="flex items-center gap-1.5 flex-shrink-0">
+                                <span className="text-[10px] font-black uppercase text-slate-400 mr-1">Stock:</span>
+                                
+                                <button
+                                  type="button"
+                                  onClick={() => handleQuickAdjustStock(prod.id, -1)}
+                                  className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-xs flex items-center justify-center border border-slate-200"
+                                  title="Decrease stock by 1"
+                                >
+                                  -1
+                                </button>
+
+                                <input
+                                  type="number"
+                                  min="0"
+                                  max="999"
+                                  value={qty}
+                                  onChange={(e) => handleSetStockQty(prod.id, e.target.value)}
+                                  className="w-14 text-center py-1 text-xs font-black bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                />
+
+                                <button
+                                  type="button"
+                                  onClick={() => handleQuickAdjustStock(prod.id, 1)}
+                                  className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-xs flex items-center justify-center border border-slate-200"
+                                  title="Add 1 to stock"
+                                >
+                                  +1
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => handleQuickAdjustStock(prod.id, 5)}
+                                  className="px-2 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-[11px] border border-emerald-200"
+                                  title="Add 5 to stock"
+                                >
+                                  +5
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => handleQuickAdjustStock(prod.id, 10)}
+                                  className="px-2 py-1 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-900 font-extrabold text-[11px] border border-emerald-300"
+                                  title="Add 10 to stock"
+                                >
+                                  +10
+                                </button>
+                              </div>
+
+                              {/* Inline Price Changer */}
+                              <div className="flex items-center gap-2 flex-shrink-0 border-t md:border-t-0 md:border-l border-slate-200 pt-2 md:pt-0 md:pl-3">
+                                <div>
+                                  <label className="text-[9px] font-bold text-slate-400 block">Reg Price ($)</label>
+                                  <input
+                                    type="number"
+                                    step="0.10"
+                                    min="0"
+                                    defaultValue={prod.price}
+                                    onBlur={(e) => {
+                                      const newP = Number(e.target.value);
+                                      if (newP !== prod.price) {
+                                        handleUpdateInlinePrice(prod.id, newP, prod.comradePrice);
+                                      }
+                                    }}
+                                    className="w-16 px-1.5 py-1 text-xs font-black bg-white border border-slate-300 rounded-lg text-slate-900 text-center"
+                                  />
+                                </div>
+
+                                <div>
+                                  <label className="text-[9px] font-bold text-rose-500 block">Comrade ($)</label>
+                                  <input
+                                    type="number"
+                                    step="0.10"
+                                    min="0"
+                                    defaultValue={prod.comradePrice}
+                                    onBlur={(e) => {
+                                      const newC = Number(e.target.value);
+                                      if (newC !== prod.comradePrice) {
+                                        handleUpdateInlinePrice(prod.id, prod.price, newC);
+                                      }
+                                    }}
+                                    className="w-16 px-1.5 py-1 text-xs font-black bg-white border border-rose-200 rounded-lg text-rose-700 text-center"
+                                  />
+                                </div>
+
+                                {/* In Stock Active Toggle */}
+                                <button
+                                  type="button"
+                                  onClick={() => handleToggleStock(prod.id)}
+                                  className={`px-2.5 py-1.5 rounded-lg text-[10px] font-black uppercase transition border mt-3 ${
+                                    prod.inStock !== false
+                                      ? 'bg-emerald-500 text-white border-emerald-600'
+                                      : 'bg-slate-200 text-slate-600 border-slate-300'
+                                  }`}
+                                  title="Toggle active in store"
+                                >
+                                  {prod.inStock !== false ? 'Active' : 'Hidden'}
+                                </button>
+                              </div>
+
+                            </div>
+                          );
+                        })}
+                    </div>
+
                   </div>
                 )}
 

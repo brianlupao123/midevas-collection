@@ -15,10 +15,12 @@ import {
   User,
   FileText
 } from 'lucide-react';
-import { STORE_CONFIG } from '../data/products';
+import { STORE_CONFIG, decrementSoldItems } from '../data/products';
 import { saveOrder } from '../utils/orders';
 import { trackEvent } from '../utils/analytics';
 import { formatPrice } from '../utils/storeConfig';
+import { getCurrentCustomer } from '../utils/customerAuth';
+import { notifySuccess } from '../utils/notifications';
 
 export default function QuoteDrawer({ 
   isOpen, 
@@ -45,10 +47,15 @@ export default function QuoteDrawer({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
-  // Prevent background scroll when open
+  // Prevent background scroll when open & auto-fill customer info
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
+      const cust = getCurrentCustomer();
+      if (cust) {
+        if (!customerName) setCustomerName(cust.name || '');
+        if (!deliveryLocation) setDeliveryLocation(`${cust.hostel} (${cust.campus || 'Main Campus'})`);
+      }
     } else {
       document.body.style.overflow = 'unset';
     }
@@ -100,6 +107,11 @@ export default function QuoteDrawer({
       totalUsd
     });
 
+    // Auto-decrement inventory stock
+    decrementSoldItems(cartItems);
+    window.dispatchEvent(new CustomEvent('midevas-catalog-updated'));
+    notifySuccess('WhatsApp order prepared & live stock reserved! 📦');
+
     trackEvent('whatsapp_order', {
       totalUsd,
       itemCount: cartItems.length,
@@ -121,6 +133,11 @@ export default function QuoteDrawer({
         items: cartItems,
         totalUsd
       });
+
+      // Auto-decrement inventory stock
+      decrementSoldItems(cartItems);
+      window.dispatchEvent(new CustomEvent('midevas-catalog-updated'));
+      notifySuccess('Order summary copied & live stock reserved! 📋');
 
       trackEvent('copy_quote', {
         totalUsd,

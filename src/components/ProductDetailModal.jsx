@@ -23,6 +23,8 @@ import { formatPrice } from '../utils/storeConfig';
 import { trackEvent } from '../utils/analytics';
 import { getLikes, isProductLikedByUser, toggleProductLike } from '../utils/likes';
 import { getReviewsForProduct, addReview, getProductRatingStats } from '../utils/reviews';
+import { getCurrentCustomer } from '../utils/customerAuth';
+import { notifySuccess, notifyWarning } from '../utils/notifications';
 
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=800&q=80';
 
@@ -74,11 +76,22 @@ export default function ProductDetailModal({
       setReviewsList(getReviewsForProduct(product.id));
       setCommentSubmitted(false);
 
+      // Comrade profile auto-fill
+      const customer = getCurrentCustomer();
+      if (customer) {
+        setAuthorName(customer.name || '');
+        setCampusLocation(customer.hostel || 'Main Campus Hostel');
+      }
+
       trackEvent('view_product_detail', { productId: product.id, name: product.name, price: product.price });
     }
   }, [product]);
 
   if (!isOpen || !product) return null;
+
+  const stock = product.stockQuantity !== undefined ? product.stockQuantity : (product.inStock !== false ? 12 : 0);
+  const isOutOfStock = stock <= 0 || product.inStock === false;
+  const isLowStock = !isOutOfStock && stock <= 5;
 
   const displayPrice = formatPrice(product.price, currency, config);
   const comradeDisplayPrice = formatPrice(product.comradePrice, currency, config);
@@ -102,6 +115,11 @@ export default function ProductDetailModal({
 
   // Add to cart handler
   const handleAdd = () => {
+    if (isOutOfStock) {
+      notifyWarning(`"${product.name}" is currently sold out.`);
+      return;
+    }
+
     for (let i = 0; i < quantity; i++) {
       onAddToCart({
         ...product,
@@ -115,6 +133,7 @@ export default function ProductDetailModal({
       quantity,
       selectedVariant 
     });
+    notifySuccess(`Added ${quantity}x ${product.name} to Quote 🛒`);
     setAdded(true);
     setTimeout(() => setAdded(false), 1600);
   };
@@ -251,12 +270,24 @@ export default function ProductDetailModal({
                   <span className="text-xs font-bold">{likeCount}</span>
                 </button>
 
-                {/* Stock Tag */}
+                {/* Dynamic Stock Tag */}
                 <div className="absolute bottom-3 left-3">
-                  <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-sm border border-emerald-200 text-emerald-800 shadow-sm flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span>In Stock • Ready for Drop-Off</span>
-                  </span>
+                  {isOutOfStock ? (
+                    <span className="text-[11px] font-black px-2.5 py-1 rounded-full bg-rose-600 text-white shadow-sm flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-white"></span>
+                      <span>Sold Out • Restocking Soon</span>
+                    </span>
+                  ) : isLowStock ? (
+                    <span className="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-amber-500 text-white shadow-sm flex items-center gap-1.5 animate-pulse">
+                      <span className="w-2 h-2 rounded-full bg-white"></span>
+                      <span>Only {stock} Left in Stock!</span>
+                    </span>
+                  ) : (
+                    <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-sm border border-emerald-200 text-emerald-800 shadow-sm flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                      <span>In Stock ({stock} available) • Ready for Drop-Off</span>
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -383,28 +414,35 @@ export default function ProductDetailModal({
                     <div className="flex items-center border border-slate-200 rounded-xl overflow-hidden bg-white shadow-xs">
                       <button
                         type="button"
+                        disabled={isOutOfStock || quantity <= 1}
                         onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                        className="px-3 py-1.5 text-xs font-black text-slate-600 hover:bg-slate-100 transition"
+                        className="px-3 py-1.5 text-xs font-black text-slate-600 hover:bg-slate-100 transition disabled:opacity-40 disabled:cursor-not-allowed"
                       >
                         −
                       </button>
                       <span className="px-3 py-1.5 text-xs font-black text-slate-900 bg-slate-50 min-w-[32px] text-center">
-                        {quantity}
+                        {isOutOfStock ? 0 : quantity}
                       </span>
                       <button
                         type="button"
-                        onClick={() => setQuantity((q) => q + 1)}
-                        className="px-3 py-1.5 text-xs font-black text-slate-600 hover:bg-slate-100 transition"
+                        disabled={isOutOfStock || quantity >= stock}
+                        onClick={() => setQuantity((q) => Math.min(stock, q + 1))}
+                        className="px-3 py-1.5 text-xs font-black text-slate-600 hover:bg-slate-100 transition disabled:opacity-40 disabled:cursor-not-allowed"
                       >
                         +
                       </button>
                     </div>
+                    {isLowStock && (
+                      <span className="text-[10px] font-bold text-amber-600">
+                        Max {stock} units
+                      </span>
+                    )}
                   </div>
 
                   <div className="text-right">
                     <span className="text-[10px] text-slate-400 block font-semibold">Total</span>
                     <span className="text-sm font-black text-slate-900">
-                      {formatPrice(product.price * quantity, currency, config)}
+                      {formatPrice(product.price * (isOutOfStock ? 0 : quantity), currency, config)}
                     </span>
                   </div>
                 </div>
@@ -417,13 +455,18 @@ export default function ProductDetailModal({
                   <button
                     type="button"
                     onClick={handleAdd}
+                    disabled={isOutOfStock}
                     className={`w-full py-3 px-4 rounded-2xl text-xs sm:text-sm font-black transition flex items-center justify-center gap-2 shadow-md ${
-                      added
+                      isOutOfStock
+                        ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                        : added
                         ? 'bg-emerald-600 text-white'
                         : 'bg-amber-500 hover:bg-amber-600 text-white active:scale-95'
                     }`}
                   >
-                    {added ? (
+                    {isOutOfStock ? (
+                      <span>Currently Out of Stock</span>
+                    ) : added ? (
                       <>
                         <Check className="w-4 h-4" /> Added to Order!
                       </>

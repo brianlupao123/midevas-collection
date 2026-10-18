@@ -19,7 +19,10 @@ import {
   ShieldCheck, 
   DollarSign, 
   Smartphone,
-  ExternalLink
+  ExternalLink,
+  Sun,
+  Moon,
+  GraduationCap
 } from 'lucide-react';
 import { CATEGORIES, STORE_CONFIG } from '../data/products';
 
@@ -47,7 +50,11 @@ export default function AmazonSidebarNav({
   onToggleComradeDeals,
   priceFilter,
   onSelectPriceFilter,
-  config
+  config,
+  theme = 'light',
+  onToggleTheme,
+  onOpenAuth,
+  currentCustomer
 }) {
   if (!isOpen) return null;
 
@@ -92,6 +99,40 @@ export default function AmazonSidebarNav({
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto divide-y divide-slate-100 text-xs">
           
+          {/* Comrade Student Pass & Theme Toggle Row */}
+          <div className="p-4 bg-slate-50 dark:bg-slate-800/80 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                if (onOpenAuth) onOpenAuth();
+                onClose();
+              }}
+              className="flex items-center gap-2 text-xs font-bold text-slate-800 dark:text-slate-100 hover:text-amber-600 transition"
+            >
+              <div className="w-8 h-8 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                <GraduationCap className="w-4 h-4" />
+              </div>
+              <div className="text-left">
+                <span className="block font-black leading-tight">
+                  {currentCustomer ? `Hi, ${currentCustomer.name}` : 'Comrade Sign In'}
+                </span>
+                <span className="text-[10px] text-slate-400 font-semibold">
+                  {currentCustomer ? currentCustomer.hostel : 'Save hostel delivery room'}
+                </span>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={onToggleTheme}
+              className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-amber-400 hover:bg-slate-100 transition flex items-center gap-1.5 font-bold text-xs"
+              title="Toggle Light / Dark mode"
+            >
+              {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-600" />}
+              <span className="text-[11px]">{theme === 'dark' ? 'Light' : 'Dark'}</span>
+            </button>
+          </div>
+
           {/* Section 1: Quick Currency Switcher */}
           <div className="p-4 bg-slate-50/70 flex items-center justify-between">
             <div>

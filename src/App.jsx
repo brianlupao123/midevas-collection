@@ -14,13 +14,18 @@ import FlyerGeneratorModal from './components/FlyerGeneratorModal';
 import ProductDetailModal from './components/ProductDetailModal';
 import AmazonSidebarNav from './components/AmazonSidebarNav';
 import Footer from './components/Footer';
+import ToastNotification from './components/ToastNotification';
+import AuthModal from './components/AuthModal';
 import { getStoredProducts } from './data/products';
 import { getStoreConfig } from './utils/storeConfig';
 import { trackEvent } from './utils/analytics';
+import { initTheme, getStoredTheme, toggleTheme } from './utils/theme';
+import { getCurrentCustomer } from './utils/customerAuth';
 
 export default function App() {
   const [productsList, setProductsList] = useState(() => getStoredProducts());
   const [storeConfig, setStoreConfig] = useState(() => getStoreConfig());
+  const [theme, setTheme] = useState(() => getStoredTheme());
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [priceFilter, setPriceFilter] = useState('all');
@@ -36,9 +41,29 @@ export default function App() {
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
   const [isFlyerOpen, setIsFlyerOpen] = useState(false);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [currentCustomer, setCurrentCustomer] = useState(() => getCurrentCustomer());
   const [installPrompt, setInstallPrompt] = useState(null);
 
   const catalogRef = useRef(null);
+
+  // Initialize theme and global event listeners
+  useEffect(() => {
+    initTheme();
+    const handleThemeChange = (e) => setTheme(e.detail.theme);
+    const handleCatalogUpdate = () => setProductsList(getStoredProducts());
+    const handleCustomerUpdate = (e) => setCurrentCustomer(e.detail);
+
+    window.addEventListener('midevas-theme-changed', handleThemeChange);
+    window.addEventListener('midevas-catalog-updated', handleCatalogUpdate);
+    window.addEventListener('midevas-customer-updated', handleCustomerUpdate);
+
+    return () => {
+      window.removeEventListener('midevas-theme-changed', handleThemeChange);
+      window.removeEventListener('midevas-catalog-updated', handleCatalogUpdate);
+      window.removeEventListener('midevas-customer-updated', handleCustomerUpdate);
+    };
+  }, []);
 
   // Log page view on mount & check for product deep links
   useEffect(() => {
@@ -188,7 +213,7 @@ export default function App() {
   const cartTotalUsd = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 pb-16 sm:pb-0">
+    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 pb-16 sm:pb-0 transition-colors duration-200">
       
       {/* Top Banner with dynamic editable announcement */}
       <AnnouncementBar config={storeConfig} />
@@ -207,6 +232,10 @@ export default function App() {
         onOpenFlyers={() => setIsFlyerOpen(true)}
         installPrompt={installPrompt}
         onInstallClick={handleInstallClick}
+        theme={theme}
+        onToggleTheme={toggleTheme}
+        onOpenAuth={() => setIsAuthOpen(true)}
+        currentCustomer={currentCustomer}
       />
 
       {/* Hero Category Slides Carousel */}
@@ -325,6 +354,10 @@ export default function App() {
         priceFilter={priceFilter}
         onSelectPriceFilter={setPriceFilter}
         config={storeConfig}
+        theme={theme}
+        onToggleTheme={toggleTheme}
+        onOpenAuth={() => setIsAuthOpen(true)}
+        currentCustomer={currentCustomer}
       />
 
       {/* Amazon-Style Product Detail & Comments Modal */}
@@ -351,6 +384,15 @@ export default function App() {
         isOpen={isAdminOpen}
         onClose={() => setIsAdminOpen(false)}
         onCatalogUpdated={handleCatalogUpdated}
+      />
+
+      {/* Global Toast Alert Notifications */}
+      <ToastNotification />
+
+      {/* Comrade Student Auth & Delivery Pass Modal */}
+      <AuthModal
+        isOpen={isAuthOpen}
+        onClose={() => setIsAuthOpen(false)}
       />
 
       {/* Footer */}

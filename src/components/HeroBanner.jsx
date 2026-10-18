@@ -96,15 +96,17 @@ export default function HeroBanner({ onExploreClick, onSelectCategory, config })
   return (
     <div className="relative overflow-hidden bg-slate-950 text-white min-h-[460px] sm:min-h-[520px] flex items-center transition-all duration-700">
       
-      {/* Background Image with Dynamic Fade */}
+      {/* Background Image with Dynamic Fade - Crisp & High Visibility */}
       <div className="absolute inset-0 z-0">
         <img
           key={slide.id}
           src={slide.bgImage}
           alt={slide.tag}
-          className="w-full h-full object-cover object-center transform scale-105 animate-fade-in transition-all duration-1000 opacity-35"
+          className="w-full h-full object-cover object-center transform scale-100 animate-fade-in transition-all duration-1000 opacity-80"
         />
-        <div className={`absolute inset-0 bg-gradient-to-r ${slide.bgGradient} opacity-95`} />
+        {/* Sleek directional gradient vignettes for text readability without washing out product photo */}
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-950/70 to-slate-950/25" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-slate-950/40" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 w-full">

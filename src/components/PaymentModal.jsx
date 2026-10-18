@@ -17,6 +17,9 @@ import {
 import { saveOrder } from '../utils/orders';
 import { trackEvent } from '../utils/analytics';
 import { formatPrice } from '../utils/storeConfig';
+import { decrementSoldItems } from '../data/products';
+import { getCurrentCustomer } from '../utils/customerAuth';
+import { notifySuccess } from '../utils/notifications';
 
 export default function PaymentModal({ isOpen, onClose, cartItems, currency, config, onClearCart }) {
   const [paymentMethod, setPaymentMethod] = useState('mpesa'); // 'mpesa' | 'ecocash' | 'cash'
@@ -36,6 +39,18 @@ export default function PaymentModal({ isOpen, onClose, cartItems, currency, con
 
   // Cash on delivery states
   const [cashConfirmed, setCashConfirmed] = useState(false);
+
+  // Auto-fill comrade info if logged in
+  React.useEffect(() => {
+    if (isOpen) {
+      const cust = getCurrentCustomer();
+      if (cust) {
+        if (!customerName) setCustomerName(cust.name || '');
+        if (!phoneNumber) setPhoneNumber(cust.phone || '');
+        if (!hostelRoom) setHostelRoom(`${cust.hostel} (${cust.campus || 'Main Campus'})`);
+      }
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -83,6 +98,11 @@ export default function PaymentModal({ isOpen, onClose, cartItems, currency, con
         status: 'Paid'
       });
 
+      // Auto-decrement inventory stock
+      decrementSoldItems(cartItems);
+      window.dispatchEvent(new CustomEvent('midevas-catalog-updated'));
+      notifySuccess('M-Pesa payment received & live stock reserved! ⚡');
+
       trackEvent('payment_success', { method: 'mpesa', amount: totalKsh, ref: randomRef });
       if (onClearCart) onClearCart();
     }, 1200);
@@ -104,6 +124,11 @@ export default function PaymentModal({ isOpen, onClose, cartItems, currency, con
       status: 'Paid (EcoCash)'
     });
 
+    // Auto-decrement inventory stock
+    decrementSoldItems(cartItems);
+    window.dispatchEvent(new CustomEvent('midevas-catalog-updated'));
+    notifySuccess('EcoCash order recorded & live stock reserved! ⚡');
+
     trackEvent('payment_success', { method: 'ecocash', amount: totalUsd, ref });
     if (onClearCart) onClearCart();
   };
@@ -121,6 +146,11 @@ export default function PaymentModal({ isOpen, onClose, cartItems, currency, con
       paymentMethod: 'Cash on Delivery',
       status: 'Pending Drop-off'
     });
+
+    // Auto-decrement inventory stock
+    decrementSoldItems(cartItems);
+    window.dispatchEvent(new CustomEvent('midevas-catalog-updated'));
+    notifySuccess('Cash delivery booked & live stock reserved! 📦');
 
     trackEvent('payment_success', { method: 'cash', amount: totalUsd });
     if (onClearCart) onClearCart();

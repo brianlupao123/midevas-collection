@@ -817,10 +817,24 @@ export function getStoredProducts() {
   try {
     const raw = localStorage.getItem(CATALOG_STORAGE_KEY);
     if (!raw) {
-      localStorage.setItem(CATALOG_STORAGE_KEY, JSON.stringify(BASELINE_PRODUCTS));
-      return BASELINE_PRODUCTS;
+      // Seed initial products with realistic stock quantities (10-25 items)
+      const seeded = BASELINE_PRODUCTS.map((p, idx) => ({
+        ...p,
+        stockQuantity: p.stockQuantity ?? (12 + (idx % 15)),
+        lowStockThreshold: 5,
+        inStock: p.inStock !== false
+      }));
+      localStorage.setItem(CATALOG_STORAGE_KEY, JSON.stringify(seeded));
+      return seeded;
     }
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    // Ensure backwards compatibility with any products missing stockQuantity
+    return parsed.map((p, idx) => ({
+      ...p,
+      stockQuantity: p.stockQuantity ?? (p.inStock !== false ? (10 + (idx % 12)) : 0),
+      lowStockThreshold: p.lowStockThreshold || 5,
+      inStock: p.stockQuantity !== undefined ? p.stockQuantity > 0 : (p.inStock !== false)
+    }));
   } catch (err) {
     return BASELINE_PRODUCTS;
   }
@@ -829,12 +843,15 @@ export function getStoredProducts() {
 export function saveCustomProduct(product) {
   try {
     const prods = getStoredProducts();
+    const qty = product.stockQuantity !== undefined ? Number(product.stockQuantity) : 20;
     const newProd = {
       ...product,
       id: product.id || 'cust-' + Math.random().toString(36).substring(2, 8),
       rating: product.rating || 5.0,
       reviews: product.reviews || 1,
-      inStock: product.inStock !== false,
+      stockQuantity: qty,
+      lowStockThreshold: product.lowStockThreshold || 5,
+      inStock: qty > 0,
       isComradeDeal: product.isComradeDeal !== false,
       price: Number(product.price) || 1.0,
       comradePrice: Number(product.comradePrice) || Number(product.price) || 1.0
@@ -844,6 +861,77 @@ export function saveCustomProduct(product) {
     return prods;
   } catch (err) {
     console.error('Error saving product:', err);
+    return getStoredProducts();
+  }
+}
+
+// Automatically decrement stock when items are sold
+export function decrementSoldItems(orderItems = []) {
+  try {
+    const prods = getStoredProducts();
+    const updated = prods.map((p) => {
+      const match = orderItems.find((item) => item.id === p.id);
+      if (match) {
+        const currentQty = p.stockQuantity ?? (p.inStock !== false ? 15 : 0);
+        const qtySold = Number(match.quantity) || 1;
+        const newQty = Math.max(0, currentQty - qtySold);
+        return {
+          ...p,
+          stockQuantity: newQty,
+          inStock: newQty > 0
+        };
+      }
+      return p;
+    });
+    localStorage.setItem(CATALOG_STORAGE_KEY, JSON.stringify(updated));
+    return updated;
+  } catch (err) {
+    console.error('Error decrementing sold stock:', err);
+    return getStoredProducts();
+  }
+}
+
+// Directly set product stock quantity
+export function updateProductStockQuantity(id, newQuantity) {
+  try {
+    const prods = getStoredProducts();
+    const qty = Math.max(0, Number(newQuantity) || 0);
+    const updated = prods.map((p) => {
+      if (p.id === id) {
+        return {
+          ...p,
+          stockQuantity: qty,
+          inStock: qty > 0
+        };
+      }
+      return p;
+    });
+    localStorage.setItem(CATALOG_STORAGE_KEY, JSON.stringify(updated));
+    return updated;
+  } catch (err) {
+    return getStoredProducts();
+  }
+}
+
+// Adjust stock by delta (+1, +5, -1, etc.)
+export function adjustProductStock(id, delta) {
+  try {
+    const prods = getStoredProducts();
+    const updated = prods.map((p) => {
+      if (p.id === id) {
+        const current = p.stockQuantity ?? (p.inStock !== false ? 15 : 0);
+        const next = Math.max(0, current + Number(delta));
+        return {
+          ...p,
+          stockQuantity: next,
+          inStock: next > 0
+        };
+      }
+      return p;
+    });
+    localStorage.setItem(CATALOG_STORAGE_KEY, JSON.stringify(updated));
+    return updated;
+  } catch (err) {
     return getStoredProducts();
   }
 }
