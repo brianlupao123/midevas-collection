@@ -69,13 +69,29 @@ import {
   Pause, 
   FileText 
 } from 'lucide-react';
+import { 
+  getActiveUser, 
+  setActiveUser, 
+  switchDemoRole, 
+  ROLES, 
+  ROLE_LABELS, 
+  ROLE_BADGES, 
+  DEMO_ACCOUNTS, 
+  canAccessAdmin, 
+  canManageCMS, 
+  canConfigureBot, 
+  canChangePasscode 
+} from '../utils/rbac';
 
 const ADMIN_EMAIL = 'monalisamideva@gmail.com';
 const DEFAULT_PASSCODE = 'mideva2026';
 
 export default function AdminModal({ isOpen, onClose, onCatalogUpdated, isPageView = false }) {
+  const [activeUser, setActiveUserState] = useState(() => getActiveUser());
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return sessionStorage.getItem('midevas_admin_auth') === 'true';
+    const authSession = sessionStorage.getItem('midevas_admin_auth') === 'true';
+    const user = getActiveUser();
+    return authSession || user.role === ROLES.ADMIN || user.role === ROLES.SELLER;
   });
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [emailInput, setEmailInput] = useState(ADMIN_EMAIL);
@@ -84,6 +100,21 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated, isPageVi
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [authError, setAuthError] = useState(false);
   const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'inventory' | 'orders' | 'products' | 'cms' | 'profile' | 'whatsappAgent' | 'analytics' | 'reviews'
+
+  // Listen to external auth role changes (e.g. from UserProfileDropdown)
+  useEffect(() => {
+    const handleAuth = (e) => {
+      const u = e.detail;
+      setActiveUserState(u);
+      if (u.role === ROLES.ADMIN || u.role === ROLES.SELLER) {
+        setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
+      }
+    };
+    window.addEventListener('midevas-auth-updated', handleAuth);
+    return () => window.removeEventListener('midevas-auth-updated', handleAuth);
+  }, []);
 
   // Profile and passcode management state
   const [currentPasscode, setCurrentPasscode] = useState('');
@@ -163,20 +194,26 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated, isPageVi
   };
 
   // Quick Demo Access Login Handler (benchmarked from 1-feedback-system)
-  const handleQuickDemoAccess = (demoEmail, demoPass, label) => {
-    setEmailInput(demoEmail);
-    setPasscode(demoPass);
+  const handleQuickDemoAccess = (accountKey) => {
     setIsSigningIn(true);
     setAuthError(false);
 
     setTimeout(() => {
-      setIsAuthenticated(true);
-      sessionStorage.setItem('midevas_admin_auth', 'true');
+      const updated = switchDemoRole(accountKey);
+      setActiveUserState(updated);
       setIsSigningIn(false);
-      setActiveTab('overview');
-      refreshData();
-      notifySuccess(`Signed in as ${label}. Welcome to the management dashboard!`);
-    }, 380);
+
+      if (updated.role === ROLES.CUSTOMER) {
+        setIsAuthenticated(false);
+        notifySuccess(`Switched to Customer account: ${updated.name}`);
+      } else {
+        setIsAuthenticated(true);
+        sessionStorage.setItem('midevas_admin_auth', 'true');
+        setActiveTab('overview');
+        refreshData();
+        notifySuccess(`Signed in as ${updated.name} (${ROLE_LABELS[updated.role]})`);
+      }
+    }, 350);
   };
 
   // Handle Standard Login Form
@@ -188,16 +225,20 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated, isPageVi
     setTimeout(() => {
       const trimmedEmail = emailInput.trim().toLowerCase();
       const currentPass = getStoredPasscode();
-      const isEmailValid = trimmedEmail === ADMIN_EMAIL.toLowerCase() || trimmedEmail.includes('mideva') || trimmedEmail === 'admin@midevas.co.ke';
-      const isPassValid = passcode === currentPass || passcode === 'admin123' || passcode === 'mideva' || passcode === 'comrade2026' || passcode === 'mideva2026';
+      const isEmailValid = trimmedEmail === ADMIN_EMAIL.toLowerCase() || trimmedEmail.includes('mideva') || trimmedEmail === 'admin@midevas.co.ke' || trimmedEmail.includes('seller');
+      const isPassValid = passcode === currentPass || passcode === 'admin123' || passcode === 'mideva' || passcode === 'seller123' || passcode === 'mideva2026';
 
       if (isEmailValid && isPassValid) {
+        const assignedRole = trimmedEmail.includes('seller') ? ROLES.SELLER : ROLES.ADMIN;
+        const matched = DEMO_ACCOUNTS.find((a) => a.role === assignedRole) || DEMO_ACCOUNTS[0];
+        setActiveUser(matched);
+        setActiveUserState(matched);
         setIsAuthenticated(true);
         sessionStorage.setItem('midevas_admin_auth', 'true');
         setIsSigningIn(false);
         setActiveTab('overview');
         refreshData();
-        notifySuccess('Welcome back, Mona Lisa Mideva! Store Dashboard Unlocked.');
+        notifySuccess(`Welcome back, ${matched.name}! ${ROLE_LABELS[assignedRole]} Unlocked.`);
       } else {
         setIsSigningIn(false);
         setAuthError(true);
@@ -208,7 +249,9 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated, isPageVi
   const handleLogout = () => {
     setIsAuthenticated(false);
     sessionStorage.removeItem('midevas_admin_auth');
+    switchDemoRole('customer');
     setPasscode('');
+    notifySuccess('Signed out of management. Reset to Customer.');
   };
 
   // Passcode Update Handler
@@ -566,8 +609,12 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated, isPageVi
             <h3 className="text-sm sm:text-base font-extrabold tracking-tight flex flex-wrap items-center gap-2">
               <span>Mideva's Store &amp; Catalog Manager</span>
               {isAuthenticated && (
-                <span className="text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full">
-                  Logged in: {ADMIN_EMAIL}
+                <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${
+                  activeUser?.role === ROLES.ADMIN
+                    ? 'bg-purple-500/20 text-purple-300 border-purple-500/30'
+                    : 'bg-amber-500/20 text-amber-300 border-amber-500/30'
+                }`}>
+                  {activeUser?.role === ROLES.ADMIN ? '👑 Admin (Mona Lisa Mideva)' : '💼 Seller (Campus Reseller)'}
                 </span>
               )}
             </h3>
@@ -745,30 +792,30 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated, isPageVi
                   <div className="flex flex-wrap gap-2 pt-1">
                     <button
                       type="button"
-                      onClick={() => handleQuickDemoAccess('monalisamideva@gmail.com', 'mideva2026', 'Store Owner (Mideva)')}
+                      onClick={() => handleQuickDemoAccess('admin')}
+                      disabled={isSigningIn}
+                      className="px-3 py-1.5 rounded-full bg-white dark:bg-slate-900 border border-purple-300 dark:border-purple-700 hover:bg-purple-50 dark:hover:bg-purple-950/40 text-purple-900 dark:text-purple-300 text-xs font-bold transition shadow-xs flex items-center gap-1 cursor-pointer"
+                    >
+                      <span>👑</span>
+                      <span>Store Owner (Admin)</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleQuickDemoAccess('seller')}
                       disabled={isSigningIn}
                       className="px-3 py-1.5 rounded-full bg-white dark:bg-slate-900 border border-amber-300 dark:border-amber-700 hover:bg-amber-50 dark:hover:bg-amber-950/40 text-amber-800 dark:text-amber-300 text-xs font-bold transition shadow-xs flex items-center gap-1 cursor-pointer"
                     >
-                      <span>👑</span>
-                      <span>Store Owner (Mideva)</span>
+                      <span>💼</span>
+                      <span>Staff Reseller (Seller)</span>
                     </button>
                     <button
                       type="button"
-                      onClick={() => handleQuickDemoAccess('monalisamideva@gmail.com', 'comrade2026', 'Comrade Demo')}
+                      onClick={() => handleQuickDemoAccess('customer')}
                       disabled={isSigningIn}
-                      className="px-3 py-1.5 rounded-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold transition shadow-xs flex items-center gap-1 cursor-pointer"
+                      className="px-3 py-1.5 rounded-full bg-white dark:bg-slate-900 border border-emerald-300 dark:border-emerald-700 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 text-xs font-semibold transition shadow-xs flex items-center gap-1 cursor-pointer"
                     >
-                      <span>⚡</span>
-                      <span>Comrade Passcode</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleQuickDemoAccess('admin@midevas.co.ke', 'admin123', 'Staff Reseller')}
-                      disabled={isSigningIn}
-                      className="px-3 py-1.5 rounded-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold transition shadow-xs flex items-center gap-1 cursor-pointer"
-                    >
-                      <span>📋</span>
-                      <span>Staff Access</span>
+                      <span>🎓</span>
+                      <span>Comrade (Customer)</span>
                     </button>
                   </div>
                 </div>
@@ -845,20 +892,21 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated, isPageVi
               </div>
 
               {/* Navigation Tabs */}
-              <div className="flex border-b border-slate-200 bg-slate-50 px-6 gap-2 overflow-x-auto scrollbar-none">
+              <div className="flex border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 px-6 gap-2 overflow-x-auto scrollbar-none">
                 {[
                   { id: 'overview', label: '📊 Executive Overview', icon: BarChart3 },
                   { id: 'inventory', label: '📦 Live Stock & Pricing', icon: Layers, count: (lowStockCount + outOfStockCount) > 0 ? `${lowStockCount + outOfStockCount} alert` : null },
                   { id: 'orders', label: 'Orders & Quotes', icon: ShoppingBag, count: pendingOrdersCount ? `${pendingOrdersCount} new` : null },
                   { id: 'products', label: 'Product Catalog', icon: Package, count: products.length },
-                  { id: 'cms', label: '🎨 CMS Page Manager', icon: Layers },
-                  { id: 'profile', label: '👤 Profile & Security', icon: User },
-                  { id: 'whatsappAgent', label: '🤖 WhatsApp Bot Agent', icon: Bot },
+                  { id: 'cms', label: '🎨 CMS Page Manager', icon: Layers, adminOnly: true },
+                  { id: 'profile', label: '👤 Profile & Security', icon: User, adminOnly: true },
+                  { id: 'whatsappAgent', label: '🤖 WhatsApp Bot Agent', icon: Bot, adminOnly: true },
                   { id: 'analytics', label: 'Traffic & Conversion', icon: TrendingUp },
                   { id: 'reviews', label: 'Reviews', icon: Star, count: reviews.length },
                 ].map((tab) => {
                   const Icon = tab.icon;
                   const isActive = activeTab === tab.id;
+                  const isRestrictedForSeller = activeUser?.role === ROLES.SELLER && tab.adminOnly;
                   return (
                     <button
                       key={tab.id}
@@ -868,17 +916,22 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated, isPageVi
                       }}
                       className={`flex items-center gap-2 py-3 px-4 text-xs font-bold border-b-2 transition whitespace-nowrap ${
                         isActive
-                          ? 'border-amber-600 text-amber-700 bg-white shadow-xs'
-                          : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                          ? 'border-amber-600 text-amber-700 bg-white dark:bg-slate-900 dark:text-amber-400 shadow-xs'
+                          : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'
                       }`}
                     >
                       <Icon className="w-4 h-4" />
                       <span>{tab.label}</span>
+                      {isRestrictedForSeller && (
+                        <span className="text-[9px] font-black uppercase px-1.5 py-0.2 rounded-full bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300 border border-purple-200 dark:border-purple-800">
+                          Admin Only
+                        </span>
+                      )}
                       {tab.count && (
                         <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-extrabold ${
                           tab.id === 'orders' && pendingOrdersCount
                             ? 'bg-rose-500 text-white animate-pulse'
-                            : 'bg-slate-200 text-slate-700'
+                            : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200'
                         }`}>
                           {tab.count}
                         </span>
@@ -899,23 +952,31 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated, isPageVi
                 {activeTab === 'overview' && (
                   <div className="space-y-6 animate-fade-in">
                     
-                    {/* Executive Welcome Banner */}
+                    {/* Executive Welcome Banner with RBAC Identity */}
                     <div className="rounded-2xl border border-amber-200/80 dark:border-slate-800 bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-slate-50 dark:to-slate-900 p-5 sm:p-7 shadow-xs">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div>
                           <div className="flex items-center gap-2 mb-1.5">
-                            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500 text-slate-950 shadow-xs">
-                              👑 Store Owner Lead
+                            <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider shadow-xs ${
+                              activeUser?.role === ROLES.ADMIN
+                                ? 'bg-purple-600 text-white'
+                                : 'bg-amber-500 text-slate-950'
+                            }`}>
+                              {activeUser?.role === ROLES.ADMIN ? '👑 Store Owner Lead (Admin)' : '💼 Campus Reseller Lead (Seller)'}
                             </span>
                             <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
                               {new Date().toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                             </span>
                           </div>
                           <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
-                            Welcome back, Mona Lisa Mideva!
+                            {activeUser?.role === ROLES.ADMIN 
+                              ? 'Welcome back, Mona Lisa Mideva!' 
+                              : `Welcome back, ${activeUser?.name || 'Mideva Sales Staff'}!`}
                           </h2>
                           <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
-                            Campus E-Commerce Operations, Real-Time Stock Control &amp; WhatsApp Sales Hub
+                            {activeUser?.role === ROLES.ADMIN 
+                              ? 'Campus E-Commerce Operations, Real-Time Stock Control & WhatsApp Sales Hub' 
+                              : 'Live Stock Adjustment, Price Updates, and Student Order Fulfillment'}
                           </p>
                         </div>
 

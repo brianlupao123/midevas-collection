@@ -17,8 +17,12 @@ export const DEFAULT_HERO_SLIDES = [
     primaryCta: "Explore Men's Wear",
     categoryId: "fashion",
     bgGradient: "from-blue-900/80 via-slate-900/90 to-slate-950",
-    bgImage: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=1600&q=80",
-    badge: "Shirts < $8 • Tees < $4"
+    bgImage: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=800&q=80",
+    image: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=800&q=80",
+    badge: "Shirts < $8 • Tees < $4",
+    priceTag: "From $3.50",
+    rating: "4.9 ★ (84 reviews)",
+    secondaryPill: "Pure Breathable Cotton"
   },
   {
     id: 2,
@@ -30,8 +34,12 @@ export const DEFAULT_HERO_SLIDES = [
     primaryCta: "Shop Handbags ($6 & $10)",
     categoryId: "bags",
     bgGradient: "from-rose-950/80 via-slate-900/90 to-slate-950",
-    bgImage: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=1600&q=80",
-    badge: "Steal $6 • Premium $10"
+    bgImage: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80",
+    image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80",
+    badge: "Steal $6 • Premium $10",
+    priceTag: "Steal $6 • Premium $10",
+    rating: "5.0 ★ (112 reviews)",
+    secondaryPill: "Gold Clasps & Chains"
   },
   {
     id: 3,
@@ -43,8 +51,12 @@ export const DEFAULT_HERO_SLIDES = [
     primaryCta: "Discover Scents (< $5)",
     categoryId: "beauty",
     bgGradient: "from-amber-950/80 via-slate-900/90 to-slate-950",
-    bgImage: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=1600&q=80",
-    badge: "All Scents Under $5"
+    bgImage: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=800&q=80",
+    image: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=800&q=80",
+    badge: "All Scents Under $5",
+    priceTag: "Only $3.00 - $4.50",
+    rating: "4.8 ★ (96 reviews)",
+    secondaryPill: "Long-Lasting Oil Scent"
   },
   {
     id: 4,
@@ -56,8 +68,12 @@ export const DEFAULT_HERO_SLIDES = [
     primaryCta: "Browse Study Fuel",
     categoryId: "snacks",
     bgGradient: "from-emerald-950/80 via-slate-900/90 to-slate-950",
-    bgImage: "https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=1600&q=80",
-    badge: "Snacks from 25¢ - 50¢"
+    bgImage: "https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=800&q=80",
+    image: "https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=800&q=80",
+    badge: "Snacks from 25¢ - 50¢",
+    priceTag: "From 25¢ - $4.00",
+    rating: "4.9 ★ (130 reviews)",
+    secondaryPill: "Instant Hostel Delivery"
   }
 ];
 
@@ -114,7 +130,20 @@ export function getStoreConfig() {
       localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify(DEFAULT_STORE_CONFIG));
       return DEFAULT_STORE_CONFIG;
     }
-    return { ...DEFAULT_STORE_CONFIG, ...JSON.parse(raw) };
+    const parsed = JSON.parse(raw);
+    if (parsed.heroSlides && Array.isArray(parsed.heroSlides)) {
+      parsed.heroSlides = parsed.heroSlides.map((slide, i) => {
+        const def = DEFAULT_HERO_SLIDES[i] || DEFAULT_HERO_SLIDES[0];
+        return {
+          ...def,
+          ...slide,
+          image: slide.image || slide.bgImage || def.image,
+          priceTag: slide.priceTag || def.priceTag,
+          rating: slide.rating || def.rating,
+        };
+      });
+    }
+    return { ...DEFAULT_STORE_CONFIG, ...parsed };
   } catch (err) {
     return DEFAULT_STORE_CONFIG;
   }

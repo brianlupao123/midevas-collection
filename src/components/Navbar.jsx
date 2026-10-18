@@ -12,9 +12,13 @@ import {
   User, 
   GraduationCap,
   Store,
+  Crown,
+  Briefcase,
   X
 } from 'lucide-react';
 import { STORE_CONFIG } from '../data/products';
+import UserProfileDropdown from './UserProfileDropdown';
+import { canAccessAdmin, ROLES } from '../utils/rbac';
 
 export default function Navbar({ 
   cartCount, 
@@ -33,6 +37,7 @@ export default function Navbar({
   onToggleTheme,
   onOpenAuth,
   currentCustomer,
+  activeUser,
   currentView = 'store',
   onViewChange
 }) {
@@ -40,11 +45,13 @@ export default function Navbar({
   const catalogUrl = config?.whatsappCatalogUrl || "https://wa.me/c/254748094795";
   const groupLink = config?.whatsappGroupInvite || STORE_CONFIG.whatsappGroupInvite;
 
+  const hasManagementAccess = canAccessAdmin(activeUser);
+
   return (
-    <header className="sticky top-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 shadow-xs transition-colors">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-2 sm:gap-4">
+    <header className="sticky top-0 z-40 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 shadow-xs transition-colors">
+      <div className="w-full max-w-[1720px] 2xl:max-w-[1880px] mx-auto px-3 sm:px-6 lg:px-8 xl:px-12 h-14 sm:h-16 flex items-center justify-between gap-2 sm:gap-4">
         
-        {/* Left: Department Menu & Brand Identity */}
+        {/* Left: Department Menu, Brand Identity & Profile Avatar */}
         <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
           <button
             type="button"
@@ -68,15 +75,26 @@ export default function Navbar({
               <h1 className="font-black text-sm sm:text-base text-slate-900 dark:text-white tracking-tight leading-tight">
                 MIDEVA'S <span className="text-amber-600 dark:text-amber-400 font-extrabold">COLLECTION</span>
               </h1>
-              <p className="hidden sm:block text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+              <p className="hidden md:block text-[11px] text-slate-500 dark:text-slate-400 font-medium">
                 Quality Campus Store • Comrade Affordable
               </p>
             </div>
           </div>
+
+          {/* User Profile Avatar with RBAC Role Badge — positioned prominently on the header */}
+          <div className="ml-1 sm:ml-2">
+            <UserProfileDropdown
+              user={activeUser}
+              onViewChange={onViewChange}
+              onOpenAuth={onOpenAuth}
+              onOpenCart={onOpenCart}
+              currentView={currentView}
+            />
+          </div>
         </div>
 
         {/* Center: Desktop Search Bar */}
-        <div className="hidden md:flex flex-1 max-w-md mx-3">
+        <div className="hidden md:flex flex-1 max-w-lg mx-3">
           <div className="relative w-full">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
@@ -98,7 +116,7 @@ export default function Navbar({
         </div>
 
         {/* Right: High-Quality Communicating Icon Bar */}
-        <div className="flex items-center gap-1 sm:gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2.5">
           
           {/* Mobile Search Toggle */}
           <button
@@ -124,7 +142,7 @@ export default function Navbar({
             </span>
           </button>
 
-          {/* Light / Dark Mode Toggle */}
+          {/* Light / Dark Mode Toggle with smooth transitions */}
           <button
             type="button"
             onClick={onToggleTheme}
@@ -134,39 +152,44 @@ export default function Navbar({
             {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-600" />}
           </button>
 
-          {/* Comrade Sign-in / Profile Pass */}
-          <button
-            type="button"
-            onClick={onOpenAuth}
-            title={currentCustomer ? `Comrade Profile: ${currentCustomer.name}` : "Comrade Sign In & Delivery Pass"}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-slate-100 hover:bg-amber-50 dark:bg-slate-800 dark:hover:bg-amber-950/40 text-slate-700 dark:text-slate-200 text-xs font-semibold transition"
-          >
-            <GraduationCap className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-            <span className="hidden sm:inline">
-              {currentCustomer ? currentCustomer.name.split(' ')[0] : 'Comrade'}
-            </span>
-          </button>
-
-          {/* View Switcher: Storefront vs Admin */}
-          {currentView === 'admin' ? (
-            <button
-              type="button"
-              onClick={() => (onViewChange ? onViewChange('store') : onOpenAdmin())}
-              title="Return to Public Storefront"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-xs transition"
-            >
-              <Store className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Storefront</span>
-            </button>
+          {/* Role-Aware View Switcher (Dashboard vs Storefront) */}
+          {hasManagementAccess ? (
+            currentView === 'admin' ? (
+              <button
+                type="button"
+                onClick={() => (onViewChange ? onViewChange('store') : onOpenAdmin())}
+                title="Return to Public Storefront"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-xs transition"
+              >
+                <Store className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Storefront</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => (onViewChange ? onViewChange('admin') : onOpenAdmin())}
+                title={`Open ${activeUser?.role === ROLES.ADMIN ? 'Admin' : 'Seller'} Workspace`}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-amber-50 dark:hover:bg-amber-950/40 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition text-xs font-bold"
+              >
+                {activeUser?.role === ROLES.ADMIN ? (
+                  <Crown className="w-3.5 h-3.5 text-purple-500" />
+                ) : (
+                  <Briefcase className="w-3.5 h-3.5 text-amber-500" />
+                )}
+                <span className="hidden sm:inline">
+                  {activeUser?.role === ROLES.ADMIN ? 'Admin' : 'Seller'}
+                </span>
+              </button>
+            )
           ) : (
             <button
               type="button"
-              onClick={() => (onViewChange ? onViewChange('admin') : onOpenAdmin())}
-              title="Store Admin & Inventory Manager (Mideva Only)"
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-slate-600 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-xs font-semibold"
+              onClick={onOpenAuth}
+              title="Hostel Delivery Pass & Student Profile"
+              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-slate-100 hover:bg-amber-50 dark:bg-slate-800 dark:hover:bg-amber-950/40 text-slate-700 dark:text-slate-200 text-xs font-semibold transition"
             >
-              <Lock className="w-3.5 h-3.5" />
-              <span className="hidden lg:inline">Admin</span>
+              <GraduationCap className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+              <span>Pass</span>
             </button>
           )}
 
@@ -188,7 +211,7 @@ export default function Navbar({
 
       </div>
 
-      {/* Collapsible Mobile Search Row (Only shown when user taps the search icon!) */}
+      {/* Collapsible Mobile Search Row */}
       {isMobileSearchOpen && (
         <div className="md:hidden px-3 py-2 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/90 animate-fade-in">
           <div className="relative w-full">

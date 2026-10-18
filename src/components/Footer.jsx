@@ -4,26 +4,26 @@ import { ShoppingBag, MessageCircle, Heart, ShieldCheck, Truck, CreditCard } fro
 
 export default function Footer({ onCategoryClick, onOpenAdmin }) {
   return (
-    <footer className="bg-slate-900 text-slate-300 pt-12 pb-8 border-t border-slate-800">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+    <footer className="w-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 pt-12 pb-8 border-t border-slate-200 dark:border-slate-800 transition-colors">
+      <div className="w-full max-w-[1720px] 2xl:max-w-[1880px] mx-auto px-4 sm:px-8 xl:px-12 space-y-10">
         
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand Col */}
           <div className="space-y-3 md:col-span-2">
             <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-amber-500 to-accent-600 flex items-center justify-center font-black text-white text-base">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-amber-500 to-amber-600 flex items-center justify-center font-black text-white text-base shadow-xs">
                 MC
               </div>
               <div>
-                <h3 className="font-extrabold text-white text-base tracking-tight">
+                <h3 className="font-extrabold text-slate-900 dark:text-white text-base tracking-tight">
                   MIDEVA'S COLLECTION
                 </h3>
-                <p className="text-xs text-amber-400 font-medium">
+                <p className="text-xs text-amber-600 dark:text-amber-400 font-medium">
                   {STORE_CONFIG.tagline}
                 </p>
               </div>
             </div>
-            <p className="text-xs text-slate-400 max-w-sm leading-relaxed">
+            <p className="text-xs text-slate-600 dark:text-slate-400 max-w-sm leading-relaxed">
               We sell comrade-affordable quality apparel, handbags, perfumes, and daily essentials for both ladies &amp; gentlemen. Serving students, hostels, and beyond with fast, friendly delivery.
             </p>
             <div className="flex items-center gap-3 pt-1">
@@ -31,9 +31,9 @@ export default function Footer({ onCategoryClick, onOpenAdmin }) {
                 href={STORE_CONFIG.whatsappGroupInvite}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-800 text-xs font-semibold hover:bg-emerald-900 transition"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-300 dark:bg-emerald-950 dark:text-emerald-300 dark:border-emerald-800 text-xs font-semibold hover:bg-emerald-100 dark:hover:bg-emerald-900 transition"
               >
-                <MessageCircle className="w-3.5 h-3.5 text-emerald-400" />
+                <MessageCircle className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                 <span>WhatsApp Group (110+ Members)</span>
               </a>
             </div>
@@ -41,32 +41,32 @@ export default function Footer({ onCategoryClick, onOpenAdmin }) {
 
           {/* Quick Shop Links */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-white">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">
               Categories
             </h4>
             <ul className="space-y-2 text-xs">
               <li>
-                <button onClick={() => onCategoryClick('fashion')} className="hover:text-amber-400 transition">
+                <button onClick={() => onCategoryClick('fashion')} className="hover:text-amber-600 dark:hover:text-amber-400 transition cursor-pointer">
                   👔 Men's Fashion &amp; Tees (&lt; $8, &lt; $4)
                 </button>
               </li>
               <li>
-                <button onClick={() => onCategoryClick('bags')} className="hover:text-amber-400 transition">
+                <button onClick={() => onCategoryClick('bags')} className="hover:text-amber-600 dark:hover:text-amber-400 transition cursor-pointer">
                   👜 Ladies' Handbags ($6 &amp; $10)
                 </button>
               </li>
               <li>
-                <button onClick={() => onCategoryClick('beauty')} className="hover:text-amber-400 transition">
+                <button onClick={() => onCategoryClick('beauty')} className="hover:text-amber-600 dark:hover:text-amber-400 transition cursor-pointer">
                   🌸 Perfumes &amp; Hair Sprays (&lt; $5, &lt; $4)
                 </button>
               </li>
               <li>
-                <button onClick={() => onCategoryClick('hygiene')} className="hover:text-amber-400 transition">
+                <button onClick={() => onCategoryClick('hygiene')} className="hover:text-amber-600 dark:hover:text-amber-400 transition cursor-pointer">
                   🧼 Hygiene &amp; Personal Care
                 </button>
               </li>
               <li>
-                <button onClick={() => onCategoryClick('snacks')} className="hover:text-amber-400 transition">
+                <button onClick={() => onCategoryClick('snacks')} className="hover:text-amber-600 dark:hover:text-amber-400 transition cursor-pointer">
                   🍫 Snacks &amp; Drinks
                 </button>
               </li>
@@ -75,20 +75,20 @@ export default function Footer({ onCategoryClick, onOpenAdmin }) {
 
           {/* How It Works & Guarantees */}
           <div className="space-y-3">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-white">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">
               Comrade Promise
             </h4>
-            <div className="space-y-2 text-xs text-slate-400">
+            <div className="space-y-2 text-xs text-slate-600 dark:text-slate-400">
               <div className="flex items-start gap-2">
-                <Truck className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+                <Truck className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
                 <span>Fast hostel &amp; campus hall delivery</span>
               </div>
               <div className="flex items-start gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+                <ShieldCheck className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
                 <span>Inspect items upon delivery before payment</span>
               </div>
               <div className="flex items-start gap-2">
-                <CreditCard className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" />
+                <CreditCard className="w-4 h-4 text-blue-500 flex-shrink-0 mt-0.5" />
                 <span>M-Pesa, Cash, or Direct Mobile Transfer</span>
               </div>
             </div>
@@ -96,17 +96,17 @@ export default function Footer({ onCategoryClick, onOpenAdmin }) {
         </div>
 
         {/* Copyright & Admin Link */}
-        <div className="pt-6 border-t border-slate-800 text-center text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="pt-6 border-t border-slate-200 dark:border-slate-800 text-center text-xs text-slate-500 dark:text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p>© {new Date().getFullYear()} Mideva's Collection. All Rights Reserved.</p>
           <div className="flex items-center gap-4">
             <button
               onClick={onOpenAdmin}
-              className="text-slate-400 hover:text-amber-400 transition font-semibold text-xs flex items-center gap-1"
+              className="text-slate-600 dark:text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 transition font-semibold text-xs flex items-center gap-1 cursor-pointer"
             >
-              🔒 Admin Portal
+              🔒 Store Management Portal
             </button>
-            <p className="flex items-center gap-1 text-slate-400">
-              Powered by modern catalog &amp; WhatsApp quote technology ❤️
+            <p className="flex items-center gap-1 text-slate-500 dark:text-slate-400">
+              Zero-Cost Architecture &amp; WhatsApp Quote Engine ❤️
             </p>
           </div>
         </div>

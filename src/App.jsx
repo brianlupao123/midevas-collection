@@ -21,11 +21,13 @@ import { getStoreConfig } from './utils/storeConfig';
 import { trackEvent } from './utils/analytics';
 import { initTheme, getStoredTheme, toggleTheme } from './utils/theme';
 import { getCurrentCustomer } from './utils/customerAuth';
+import { getActiveUser, setActiveUser, ROLES } from './utils/rbac';
 
 export default function App() {
   const [productsList, setProductsList] = useState(() => getStoredProducts());
   const [storeConfig, setStoreConfig] = useState(() => getStoreConfig());
   const [theme, setTheme] = useState(() => getStoredTheme());
+  const [activeUser, setActiveUserState] = useState(() => getActiveUser());
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [priceFilter, setPriceFilter] = useState('all');
@@ -85,15 +87,18 @@ export default function App() {
     const handleThemeChange = (e) => setTheme(e.detail.theme);
     const handleCatalogUpdate = () => setProductsList(getStoredProducts());
     const handleCustomerUpdate = (e) => setCurrentCustomer(e.detail);
+    const handleAuthUpdate = (e) => setActiveUserState(e.detail);
 
     window.addEventListener('midevas-theme-changed', handleThemeChange);
     window.addEventListener('midevas-catalog-updated', handleCatalogUpdate);
     window.addEventListener('midevas-customer-updated', handleCustomerUpdate);
+    window.addEventListener('midevas-auth-updated', handleAuthUpdate);
 
     return () => {
       window.removeEventListener('midevas-theme-changed', handleThemeChange);
       window.removeEventListener('midevas-catalog-updated', handleCatalogUpdate);
       window.removeEventListener('midevas-customer-updated', handleCustomerUpdate);
+      window.removeEventListener('midevas-auth-updated', handleAuthUpdate);
     };
   }, []);
 
@@ -247,7 +252,7 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 pb-16 sm:pb-0 transition-colors duration-200">
       
-      {/* Top Banner with dynamic editable announcement */}
+      {/* Top Banner with dynamic editable announcement - Full edge-to-edge */}
       <AnnouncementBar config={storeConfig} />
 
       {/* Main Navbar */}
@@ -268,16 +273,18 @@ export default function App() {
         onToggleTheme={toggleTheme}
         onOpenAuth={() => setIsAuthOpen(true)}
         currentCustomer={currentCustomer}
+        activeUser={activeUser}
         currentView={currentView}
         onViewChange={handleNavigateView}
       />
 
       {/* Main Content: Integrated Admin Page View or Customer Storefront Workspace */}
       {currentView === 'admin' ? (
-        <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-6">
+        <main className="flex-1 w-full max-w-[1720px] 2xl:max-w-[1880px] mx-auto px-3 sm:px-6 lg:px-8 xl:px-12 py-6 sm:py-10 space-y-6">
           <AdminModal
             isOpen={true}
             isPageView={true}
+            activeUser={activeUser}
             onClose={() => handleNavigateView('store')}
             onCatalogUpdated={handleCatalogUpdated}
           />
@@ -291,8 +298,8 @@ export default function App() {
             config={storeConfig}
           />
 
-          {/* Main Catalog Workspace */}
-          <main ref={catalogRef} className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-6">
+          {/* Main Catalog Workspace - Expansive Full-Width Layout */}
+          <main ref={catalogRef} className="flex-1 w-full max-w-[1720px] 2xl:max-w-[1880px] mx-auto px-4 sm:px-8 xl:px-12 py-8 sm:py-12 space-y-8">
             
             {/* Section Header */}
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
