@@ -42,39 +42,29 @@ export default function Navbar({
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-2 sm:gap-4">
         
         {/* Left: Department Menu & Brand Identity */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
           <button
             type="button"
             onClick={onOpenSidebar}
             title="All Departments & Comrade Filters"
-            className="flex items-center gap-1 p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-amber-50 dark:hover:bg-amber-950/40 text-slate-700 dark:text-slate-200 font-bold text-xs transition"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-xs transition"
           >
             <Menu className="w-4 h-4 text-slate-800 dark:text-slate-200" />
             <span className="hidden sm:inline text-xs">All</span>
           </button>
 
-          <div className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-tr from-amber-500 to-rose-500 p-0.5 shadow-sm flex-shrink-0">
-            <div className="w-full h-full bg-white dark:bg-slate-900 rounded-full flex items-center justify-center font-black text-amber-600 dark:text-amber-400 text-xs sm:text-base tracking-tighter">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-tr from-amber-500 to-amber-600 flex items-center justify-center font-black text-white text-xs sm:text-sm shadow-xs flex-shrink-0">
               MC
             </div>
-            <span className="absolute -bottom-0.5 -right-0.5 flex h-3 w-3 sm:h-3.5 sm:w-3.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 sm:h-3.5 sm:w-3.5 bg-emerald-500 border-2 border-white dark:border-slate-900"></span>
-            </span>
-          </div>
-
-          <div>
-            <div className="flex items-center gap-1.5">
-              <h1 className="font-black text-xs sm:text-base text-slate-900 dark:text-white tracking-tight leading-tight">
-                MIDEVA'S <span className="hidden xs:inline">COLLECTION</span>
+            <div>
+              <h1 className="font-black text-sm sm:text-base text-slate-900 dark:text-white tracking-tight leading-tight">
+                MIDEVA'S <span className="text-amber-600 dark:text-amber-400 font-extrabold">COLLECTION</span>
               </h1>
-              <span className="hidden md:inline-block text-[10px] uppercase font-bold bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 px-1.5 py-0.2 rounded">
-                For Him &amp; Her
-              </span>
+              <p className="hidden sm:block text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+                Quality Campus Store • Comrade Affordable
+              </p>
             </div>
-            <p className="hidden sm:block text-[11px] text-slate-500 dark:text-slate-400 font-medium truncate">
-              Great Quality Everyday • Comrade Affordable
-            </p>
           </div>
         </div>
 
@@ -84,10 +74,10 @@ export default function Navbar({
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
-              placeholder="Search shirts, bags, perfumes, snacks..."
+              placeholder="Search campus fashion, bags, perfumes, snacks..."
               value={searchTerm}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="w-full pl-10 pr-8 py-1.5 text-xs sm:text-sm bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 border border-slate-200 dark:border-slate-700 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition"
+              className="w-full pl-10 pr-8 py-2 text-xs sm:text-sm bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 border border-slate-200 dark:border-slate-700 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition shadow-inner"
             />
             {searchTerm && (
               <button
@@ -100,17 +90,31 @@ export default function Navbar({
           </div>
         </div>
 
-        {/* Right: Actions & Toggles */}
-        <div className="flex items-center gap-1.5 sm:gap-2.5">
+        {/* Right: High-Quality Communicating Icon Bar */}
+        <div className="flex items-center gap-1 sm:gap-2">
           
-          {/* Mobile Search Toggle Icon */}
+          {/* Mobile Search Toggle */}
           <button
             type="button"
             onClick={() => setIsMobileSearchOpen((prev) => !prev)}
             aria-label="Toggle mobile search"
-            className="md:hidden p-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 transition"
+            className="md:hidden p-2 rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
           >
             {isMobileSearchOpen ? <X className="w-4 h-4" /> : <Search className="w-4 h-4" />}
+          </button>
+
+          {/* Currency Switcher Pill */}
+          <button
+            onClick={onToggleCurrency}
+            title="Toggle Currency (USD / KSh / EcoCash)"
+            className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-bold rounded-full bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition"
+          >
+            <span className="text-amber-600 dark:text-amber-400 font-extrabold">
+              {currency === 'EcoCash' ? '⚡' : currency}
+            </span>
+            <span className="text-[11px] font-semibold text-slate-600 dark:text-slate-300">
+              {currency === '$' ? 'USD' : currency === 'KSh' ? 'KES' : 'EcoCash'}
+            </span>
           </button>
 
           {/* Light / Dark Mode Toggle */}
@@ -118,50 +122,38 @@ export default function Navbar({
             type="button"
             onClick={onToggleTheme}
             title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-            className="p-1.5 sm:p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-amber-400 transition"
+            className="p-2 rounded-full text-slate-600 dark:text-amber-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
           >
             {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-600" />}
           </button>
 
-          {/* Comrade Sign-in / Profile Button */}
+          {/* Comrade Sign-in / Profile Pass */}
           <button
             type="button"
             onClick={onOpenAuth}
             title={currentCustomer ? `Comrade Profile: ${currentCustomer.name}` : "Comrade Sign In & Delivery Pass"}
-            className="p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-amber-50 dark:hover:bg-amber-950/40 text-slate-700 dark:text-slate-200 text-xs font-bold transition flex items-center gap-1"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-slate-100 hover:bg-amber-50 dark:bg-slate-800 dark:hover:bg-amber-950/40 text-slate-700 dark:text-slate-200 text-xs font-semibold transition"
           >
             <GraduationCap className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-            <span className="hidden lg:inline">
-              {currentCustomer ? currentCustomer.name.split(' ')[0] : 'Sign In'}
+            <span className="hidden sm:inline">
+              {currentCustomer ? currentCustomer.name.split(' ')[0] : 'Comrade'}
             </span>
           </button>
 
-          {/* Admin Lock Button */}
+          {/* Admin Control Center Portal */}
           <button
             onClick={onOpenAdmin}
             title="Store Admin (Mideva Only)"
-            className="p-1.5 sm:px-2 sm:py-1.5 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-amber-50 dark:hover:bg-amber-950/40 text-slate-600 dark:text-slate-300 transition flex items-center gap-1"
+            className="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
           >
-            <Lock className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-            <span className="hidden xl:inline text-[11px]">Admin</span>
+            <Lock className="w-4 h-4" />
           </button>
 
-          {/* Currency Switcher */}
-          <button
-            onClick={onToggleCurrency}
-            title="Toggle Currency (USD / KSh / EcoCash)"
-            className="p-1.5 sm:px-2.5 sm:py-1.5 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 transition flex items-center gap-1"
-          >
-            <span className="text-amber-600 dark:text-amber-400 font-extrabold">{currency === 'EcoCash' ? '⚡' : currency}</span>
-            <span className="hidden sm:inline text-[10px] text-slate-500 dark:text-slate-400 font-semibold">
-              {currency === '$' ? 'USD' : currency === 'KSh' ? 'KSh' : 'EcoCash'}
-            </span>
-          </button>
-
-          {/* Cart / Order Trigger */}
+          {/* Cart / Quote Hero CTA Button */}
           <button
             onClick={onOpenCart}
-            className="relative flex items-center gap-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-bold text-xs sm:text-sm px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-sm hover:shadow-md transition active:scale-95"
+            title="View Quote & Checkout"
+            className="relative flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-bold text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-sm hover:shadow-md transition"
           >
             <ShoppingBag className="w-4 h-4" />
             <span className="hidden sm:inline">Quote</span>

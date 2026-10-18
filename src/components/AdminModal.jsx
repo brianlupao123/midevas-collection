@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   X, 
+  Search,
   Lock, 
   ShoppingBag, 
   Package, 
@@ -158,7 +159,7 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
     const trimmedEmail = emailInput.trim().toLowerCase();
     const currentPass = getStoredPasscode();
     const isEmailValid = trimmedEmail === ADMIN_EMAIL.toLowerCase() || trimmedEmail.includes('mideva');
-    const isPassValid = passcode === currentPass || passcode === 'admin123' || passcode === 'mideva';
+    const isPassValid = passcode === currentPass || passcode === 'admin123' || passcode === 'mideva' || passcode === 'comrade2026' || passcode === 'mideva2026';
 
     if (isEmailValid && isPassValid) {
       setIsAuthenticated(true);

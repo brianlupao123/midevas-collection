@@ -47,7 +47,7 @@ export const BASELINE_PRODUCTS = [
     description: "Breathable, crisp long-sleeve cotton shirt. Perfect for class, presentations, and Sunday outings.",
     sizes: ["M", "L", "XL", "XXL"],
     colors: ["Sky Blue", "Classic White", "Navy Blue", "Soft Pink"],
-    image: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=600&q=80",
+    image: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
@@ -95,7 +95,7 @@ export const BASELINE_PRODUCTS = [
     description: "Ribbed collar polo with clean fit. Great balance of smart and casual comfort.",
     sizes: ["M", "L", "XL"],
     colors: ["Burgundy", "Charcoal", "Olive"],
-    image: "https://images.unsplash.com/photo-1625910513413-5753066498a4?auto=format&fit=crop&w=600&q=80",
+    image: "https://images.unsplash.com/photo-1586363104862-3a5e2ab60d99?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
 
@@ -222,7 +222,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.6,
     reviews: 43,
     description: "Tames flyaways and holds braid/wig styling without flaking. Vitamin E enriched.",
-    image: "https://images.unsplash.com/photo-1608248597359-2521e64906a2?auto=format&fit=crop&w=600&q=80",
+    image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
@@ -310,7 +310,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.9,
     reviews: 78,
     description: "Trusted antibacterial soap for daily hygiene. 6-bar value pack for roommates.",
-    image: "https://images.unsplash.com/photo-1607006314644-77a835567c94?auto=format&fit=crop&w=600&q=80",
+    image: "https://images.unsplash.com/photo-1600857544200-b2f666a9a2ec?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
@@ -324,7 +324,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.8,
     reviews: 150,
     description: "Cavity protection fluoride toothpaste. Fresh minty breath throughout lectures.",
-    image: "https://images.unsplash.com/photo-1559591937-e1032b49c716?auto=format&fit=crop&w=600&q=80",
+    image: "https://images.unsplash.com/photo-1528740561666-dc2479dc08ab?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
@@ -352,7 +352,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.6,
     reviews: 88,
     description: "Multi-purpose moisture barrier. Heals dry lips, knees, elbows, and minor cuts.",
-    image: "https://images.unsplash.com/photo-1608248597359-2521e64906a2?auto=format&fit=crop&w=600&q=80",
+    image: "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
@@ -408,7 +408,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.6,
     reviews: 33,
     description: "48-hour freshness roll-on. Confidence from lecture hall to night out.",
-    image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=600&q=80",
+    image: "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
 
@@ -556,7 +556,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.7,
     reviews: 77,
     description: "Nutritious instant breakfast porridge. Just add warm water or milk for a quick filling start.",
-    image: "https://images.unsplash.com/photo-1517093157656-b9ec81646277?auto=format&fit=crop&w=600&q=80",
+    image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
@@ -672,7 +672,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.7,
     reviews: 95,
     description: "Smooth glide blue ink ballpoint pens. 10-pack will last you and your study group through exams.",
-    image: "https://images.unsplash.com/photo-1585336261026-7f57a9e320d7?auto=format&fit=crop&w=600&q=80",
+    image: "https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?auto=format&fit=crop&w=600&q=80",
     inStock: true,
   },
   {
