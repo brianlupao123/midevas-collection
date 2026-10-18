@@ -5,7 +5,7 @@ import { ShoppingBag, MessageCircle, Heart, ShieldCheck, Truck, CreditCard } fro
 export default function Footer({ onCategoryClick, onOpenAdmin }) {
   return (
     <footer className="w-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 pt-12 pb-8 border-t border-slate-200 dark:border-slate-800 transition-colors">
-      <div className="w-full max-w-[1720px] 2xl:max-w-[1880px] mx-auto px-4 sm:px-8 xl:px-12 space-y-10">
+      <div className="w-full px-2 sm:px-4 lg:px-6 space-y-10">
         
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand Col */}

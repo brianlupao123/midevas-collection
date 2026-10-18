@@ -6,8 +6,8 @@ export default function AnnouncementBar({ config }) {
   const groupLink = config?.whatsappGroupInvite || "https://chat.whatsapp.com/GuRW4nzqO251oyPcC5MRwH";
 
   return (
-    <div className="w-full bg-gradient-to-r from-amber-600 via-amber-500 to-rose-600 text-white text-xs sm:text-sm py-1.5 sm:py-2 px-3 sm:px-6 shadow-xs select-none">
-      <div className="w-full max-w-[1720px] 2xl:max-w-[1880px] mx-auto px-2 sm:px-4 flex items-center justify-between gap-3">
+    <div className="w-full bg-gradient-to-r from-amber-600 via-amber-500 to-rose-600 text-white text-xs sm:text-sm py-1.5 sm:py-2 px-2 sm:px-4 shadow-xs select-none">
+      <div className="w-full flex items-center justify-between gap-2 sm:gap-4">
         
         {/* Single-line sleek announcement on mobile & desktop */}
         <div className="flex items-center gap-2.5 font-medium min-w-0 flex-1">

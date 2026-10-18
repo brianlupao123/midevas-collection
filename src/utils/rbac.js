@@ -2,6 +2,8 @@
 // MIDEVA'S COLLECTION — ROLE-BASED ACCESS CONTROL (RBAC) & AUTH SYSTEM
 // Benchmarked from 1-feedback-system (Africa University LecturePulse)
 // Defines strict roles: 'customer' (Comrade), 'seller' (Reseller), 'admin' (System Lead)
+// By default: Unauthenticated guest / Customer.
+// Customers have STRICTLY ZERO privileges to edit catalog, prices, or store settings.
 // =========================================================================
 
 export const ROLES = {
@@ -22,7 +24,7 @@ export const ROLE_BADGES = {
   [ROLES.ADMIN]: { label: 'Admin', color: 'bg-purple-100 text-purple-800 border-purple-300 dark:bg-purple-950 dark:text-purple-300 dark:border-purple-800' }
 };
 
-// Seeded Showcase Accounts (benchmarked directly from 1-feedback-system DEMO_ACCOUNTS)
+// Staff / Admin Accounts (for official store management)
 export const DEMO_ACCOUNTS = [
   {
     role: ROLES.ADMIN,
@@ -37,7 +39,7 @@ export const DEMO_ACCOUNTS = [
   },
   {
     role: ROLES.SELLER,
-    name: 'Mideva Sales Staff',
+    name: 'Campus Reseller Staff',
     email: 'seller@midevas.co.ke',
     title: 'Campus Reseller & Fulfillment',
     avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=200&q=80',
@@ -45,23 +47,12 @@ export const DEMO_ACCOUNTS = [
     phone: '+254 748 094 795',
     passcode: 'seller123',
     key: 'seller'
-  },
-  {
-    role: ROLES.CUSTOMER,
-    name: 'Brian Lupao',
-    email: 'brian@student.africa',
-    title: 'Comrade Student',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
-    hostel: 'Hall 4 Room 204',
-    phone: '+254 712 345 678',
-    passcode: 'comrade',
-    key: 'customer'
   }
 ];
 
 const AUTH_USER_KEY = 'midevas_auth_user';
 
-// Get current logged in user or default to Comrade (Customer)
+// Get current logged in user. BY DEFAULT: NO ONE IS SIGNED IN (returns null).
 export function getActiveUser() {
   try {
     const raw = localStorage.getItem(AUTH_USER_KEY);
@@ -73,7 +64,7 @@ export function getActiveUser() {
     // fallback
   }
 
-  // Check legacy customer storage if present
+  // Check registered customer profile in localStorage
   try {
     const custRaw = localStorage.getItem('midevas_customer_user');
     if (custRaw) {
@@ -83,8 +74,8 @@ export function getActiveUser() {
           id: cust.id || 'cust_' + Date.now().toString(36),
           role: ROLES.CUSTOMER,
           name: cust.name,
-          email: cust.email || 'comrade@student.ac.ke',
-          phone: cust.phone || '+254 700 000 000',
+          email: cust.email || '',
+          phone: cust.phone || '',
           hostel: cust.hostel || 'Campus Hostel',
           title: 'Comrade Shopper',
           avatar: ''
@@ -95,31 +86,41 @@ export function getActiveUser() {
     // fallback
   }
 
-  // Default initial guest/comrade account
-  return DEMO_ACCOUNTS.find((a) => a.role === ROLES.CUSTOMER) || DEMO_ACCOUNTS[2];
+  // Default: Nobody signed in
+  return null;
 }
 
 // Set active user with role
 export function setActiveUser(user) {
   try {
+    if (!user) {
+      localStorage.removeItem(AUTH_USER_KEY);
+      sessionStorage.removeItem('midevas_admin_auth');
+      window.dispatchEvent(new CustomEvent('midevas-auth-updated', { detail: null }));
+      return null;
+    }
+
     localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
-    // Also sync with legacy customer key if it's a customer
+
+    // Also sync with customer storage if role is customer
     if (user.role === ROLES.CUSTOMER) {
       localStorage.setItem('midevas_customer_user', JSON.stringify({
         id: user.id || 'cust_' + Date.now().toString(36),
         name: user.name,
-        phone: user.phone,
-        hostel: user.hostel,
-        email: user.email,
+        phone: user.phone || '',
+        hostel: user.hostel || '',
+        email: user.email || '',
         campus: 'Main Campus'
       }));
     }
+
     // Set admin session auth if admin or seller
     if (user.role === ROLES.ADMIN || user.role === ROLES.SELLER) {
       sessionStorage.setItem('midevas_admin_auth', 'true');
     } else {
       sessionStorage.removeItem('midevas_admin_auth');
     }
+
     window.dispatchEvent(new CustomEvent('midevas-auth-updated', { detail: user }));
     return user;
   } catch (err) {
@@ -128,8 +129,11 @@ export function setActiveUser(user) {
   }
 }
 
-// Switch to a demo account
+// Switch to a staff/admin demo account (or logout to customer/guest)
 export function switchDemoRole(roleKey) {
+  if (roleKey === 'customer' || roleKey === 'guest') {
+    return logoutActiveUser();
+  }
   const account = DEMO_ACCOUNTS.find((a) => a.key === roleKey || a.role === roleKey);
   if (account) {
     return setActiveUser(account);
@@ -137,69 +141,54 @@ export function switchDemoRole(roleKey) {
   return getActiveUser();
 }
 
-// Logout to Comrade / Guest state
+// Logout user: resets to guest state (nobody signed in)
 export function logoutActiveUser() {
   try {
     sessionStorage.removeItem('midevas_admin_auth');
-    const guestUser = {
-      role: ROLES.CUSTOMER,
-      name: 'Comrade Guest',
-      email: '',
-      title: 'Comrade Shopper',
-      phone: '',
-      hostel: '',
-      avatar: ''
-    };
-    localStorage.setItem(AUTH_USER_KEY, JSON.stringify(guestUser));
-    window.dispatchEvent(new CustomEvent('midevas-auth-updated', { detail: guestUser }));
-    return guestUser;
+    localStorage.removeItem(AUTH_USER_KEY);
+    localStorage.removeItem('midevas_customer_user');
+    window.dispatchEvent(new CustomEvent('midevas-auth-updated', { detail: null }));
+    window.dispatchEvent(new CustomEvent('midevas-customer-updated', { detail: null }));
+    return null;
   } catch (err) {
-    // ignore
+    return null;
   }
 }
 
 // RBAC Permission Helpers
+// Customers have STRICTLY ZERO privileges to modify the store.
 export function canAccessAdmin(user) {
-  const role = user?.role || ROLES.CUSTOMER;
-  return role === ROLES.ADMIN || role === ROLES.SELLER;
+  return Boolean(user && (user.role === ROLES.ADMIN || user.role === ROLES.SELLER));
 }
 
 export function canEditStock(user) {
-  const role = user?.role || ROLES.CUSTOMER;
-  return role === ROLES.ADMIN || role === ROLES.SELLER;
+  return Boolean(user && (user.role === ROLES.ADMIN || user.role === ROLES.SELLER));
 }
 
 export function canEditPrices(user) {
-  const role = user?.role || ROLES.CUSTOMER;
-  return role === ROLES.ADMIN || role === ROLES.SELLER;
+  return Boolean(user && (user.role === ROLES.ADMIN || user.role === ROLES.SELLER));
 }
 
 export function canManageOrders(user) {
-  const role = user?.role || ROLES.CUSTOMER;
-  return role === ROLES.ADMIN || role === ROLES.SELLER;
+  return Boolean(user && (user.role === ROLES.ADMIN || user.role === ROLES.SELLER));
 }
 
 export function canExportDeliveryRoster(user) {
-  const role = user?.role || ROLES.CUSTOMER;
-  return role === ROLES.ADMIN || role === ROLES.SELLER;
+  return Boolean(user && (user.role === ROLES.ADMIN || user.role === ROLES.SELLER));
 }
 
 export function canManageCMS(user) {
-  const role = user?.role || ROLES.CUSTOMER;
-  return role === ROLES.ADMIN;
+  return Boolean(user && user.role === ROLES.ADMIN);
 }
 
 export function canConfigureBot(user) {
-  const role = user?.role || ROLES.CUSTOMER;
-  return role === ROLES.ADMIN;
+  return Boolean(user && user.role === ROLES.ADMIN);
 }
 
 export function canChangePasscode(user) {
-  const role = user?.role || ROLES.CUSTOMER;
-  return role === ROLES.ADMIN;
+  return Boolean(user && user.role === ROLES.ADMIN);
 }
 
 export function canResetCatalog(user) {
-  const role = user?.role || ROLES.CUSTOMER;
-  return role === ROLES.ADMIN;
+  return Boolean(user && user.role === ROLES.ADMIN);
 }

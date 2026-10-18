@@ -559,7 +559,7 @@ export default function ProductDetailModal({
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Brian L. or Tariro"
+                    placeholder="e.g. Kelvin K. or Tariro"
                     value={authorName}
                     onChange={(e) => setAuthorName(e.target.value)}
                     className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"

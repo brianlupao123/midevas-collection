@@ -91,7 +91,7 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated, isPageVi
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     const authSession = sessionStorage.getItem('midevas_admin_auth') === 'true';
     const user = getActiveUser();
-    return authSession || user.role === ROLES.ADMIN || user.role === ROLES.SELLER;
+    return authSession || user?.role === ROLES.ADMIN || user?.role === ROLES.SELLER;
   });
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [emailInput, setEmailInput] = useState(ADMIN_EMAIL);
@@ -106,7 +106,7 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated, isPageVi
     const handleAuth = (e) => {
       const u = e.detail;
       setActiveUserState(u);
-      if (u.role === ROLES.ADMIN || u.role === ROLES.SELLER) {
+      if (u && (u.role === ROLES.ADMIN || u.role === ROLES.SELLER)) {
         setIsAuthenticated(true);
       } else {
         setIsAuthenticated(false);
@@ -203,9 +203,9 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated, isPageVi
       setActiveUserState(updated);
       setIsSigningIn(false);
 
-      if (updated.role === ROLES.CUSTOMER) {
+      if (!updated || updated.role === ROLES.CUSTOMER) {
         setIsAuthenticated(false);
-        notifySuccess(`Switched to Customer account: ${updated.name}`);
+        notifySuccess('Switched to Customer account.');
       } else {
         setIsAuthenticated(true);
         sessionStorage.setItem('midevas_admin_auth', 'true');
@@ -595,7 +595,7 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated, isPageVi
         : isFullScreen
           ? 'w-screen h-screen min-h-screen rounded-none border-0 overflow-hidden'
           : isAuthenticated
-            ? 'w-full max-w-[98vw] 2xl:max-w-[1720px] min-h-[92vh] rounded-2xl shadow-2xl overflow-hidden'
+            ? 'w-full max-w-[99vw] min-h-[92vh] rounded-2xl shadow-2xl overflow-hidden'
             : 'w-full max-w-md rounded-2xl shadow-2xl overflow-hidden'
     }`}>
       

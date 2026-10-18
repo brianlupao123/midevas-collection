@@ -111,7 +111,7 @@ async function runBrowserFlow() {
     const phoneInput = await page.$('input[placeholder*="WhatsApp"]');
     const hostelInput = await page.$('input[placeholder*="Hostel"]');
 
-    if (nameInput) await nameInput.type('Brian Lupao');
+    if (nameInput) await nameInput.type('Tariro Moyo');
     if (phoneInput) await phoneInput.type('0771234567');
     if (hostelInput) await hostelInput.type('Complex Block B, Room 14');
 

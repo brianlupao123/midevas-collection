@@ -49,7 +49,7 @@ export default function Navbar({
 
   return (
     <header className="sticky top-0 z-40 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 shadow-xs transition-colors">
-      <div className="w-full max-w-[1720px] 2xl:max-w-[1880px] mx-auto px-3 sm:px-6 lg:px-8 xl:px-12 h-14 sm:h-16 flex items-center justify-between gap-2 sm:gap-4">
+      <div className="w-full px-2 sm:px-4 lg:px-6 h-14 sm:h-16 flex items-center justify-between gap-2 sm:gap-4">
         
         {/* Left: Department Menu, Brand Identity & Profile Avatar */}
         <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
@@ -88,6 +88,7 @@ export default function Navbar({
               onViewChange={onViewChange}
               onOpenAuth={onOpenAuth}
               onOpenCart={onOpenCart}
+              onOpenAdmin={onOpenAdmin}
               currentView={currentView}
             />
           </div>

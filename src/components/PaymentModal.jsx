@@ -274,7 +274,7 @@ export default function PaymentModal({ isOpen, onClose, cartItems, currency, con
                         <input
                           type="text"
                           required
-                          placeholder="e.g. Brian"
+                          placeholder="e.g. Tariro"
                           value={customerName}
                           onChange={(e) => setCustomerName(e.target.value)}
                           className="w-full px-3 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500"

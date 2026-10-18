@@ -174,7 +174,7 @@ export default function ReviewsModal({ isOpen, onClose, product }) {
                   <User className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
                   <input
                     type="text"
-                    placeholder="Your Name (e.g. Brian L.)"
+                    placeholder="Your Name (e.g. Kelvin K.)"
                     value={author}
                     onChange={(e) => setAuthor(e.target.value)}
                     className="w-full pl-8 pr-2.5 py-1.5 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:bg-white dark:focus:bg-slate-800 focus:ring-1 focus:ring-amber-500 text-slate-900 dark:text-white"

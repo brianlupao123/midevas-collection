@@ -106,4 +106,4 @@ npm run bot
 
 ## 📄 License & Ownership
 
-Created for **Mona Lisa Mideva** by **Brian Lupao**. All rights reserved. Built for production deployment across tertiary university campuses.
+Created for **Mona Lisa Mideva**. All rights reserved. Built for production deployment across tertiary university campuses.

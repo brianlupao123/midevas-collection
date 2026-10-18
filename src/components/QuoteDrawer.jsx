@@ -292,7 +292,7 @@ export default function QuoteDrawer({
                       <User className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
                       <input
                         type="text"
-                        placeholder="Your Name / Nickname (e.g. Brian)"
+                        placeholder="Your Name / Nickname (e.g. Tariro)"
                         value={customerName}
                         onChange={(e) => setCustomerName(e.target.value)}
                         className="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:bg-white focus:ring-1 focus:ring-amber-500"

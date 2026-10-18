@@ -280,7 +280,7 @@ export default function App() {
 
       {/* Main Content: Integrated Admin Page View or Customer Storefront Workspace */}
       {currentView === 'admin' ? (
-        <main className="flex-1 w-full max-w-[1720px] 2xl:max-w-[1880px] mx-auto px-3 sm:px-6 lg:px-8 xl:px-12 py-6 sm:py-10 space-y-6">
+        <main className="flex-1 w-full px-2 sm:px-4 lg:px-6 py-6 space-y-6">
           <AdminModal
             isOpen={true}
             isPageView={true}
@@ -299,7 +299,7 @@ export default function App() {
           />
 
           {/* Main Catalog Workspace - Expansive Full-Width Layout */}
-          <main ref={catalogRef} className="flex-1 w-full max-w-[1720px] 2xl:max-w-[1880px] mx-auto px-4 sm:px-8 xl:px-12 py-8 sm:py-12 space-y-8">
+          <main ref={catalogRef} className="flex-1 w-full px-2 sm:px-4 lg:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
             
             {/* Section Header */}
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
