@@ -11,6 +11,7 @@ import {
   Moon, 
   User, 
   GraduationCap,
+  Store,
   X
 } from 'lucide-react';
 import { STORE_CONFIG } from '../data/products';
@@ -31,7 +32,9 @@ export default function Navbar({
   theme = 'light',
   onToggleTheme,
   onOpenAuth,
-  currentCustomer
+  currentCustomer,
+  currentView = 'store',
+  onViewChange
 }) {
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const catalogUrl = config?.whatsappCatalogUrl || "https://wa.me/c/254748094795";
@@ -53,7 +56,11 @@ export default function Navbar({
             <span className="hidden sm:inline text-xs">All</span>
           </button>
 
-          <div className="flex items-center gap-2.5">
+          <div 
+            onClick={() => (onViewChange ? onViewChange('store') : null)}
+            className="flex items-center gap-2.5 cursor-pointer select-none"
+            title="Mideva's Collection — Home"
+          >
             <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-tr from-amber-500 to-amber-600 flex items-center justify-center font-black text-white text-xs sm:text-sm shadow-xs flex-shrink-0">
               MC
             </div>
@@ -140,14 +147,28 @@ export default function Navbar({
             </span>
           </button>
 
-          {/* Admin Control Center Portal */}
-          <button
-            onClick={onOpenAdmin}
-            title="Store Admin (Mideva Only)"
-            className="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-          >
-            <Lock className="w-4 h-4" />
-          </button>
+          {/* View Switcher: Storefront vs Admin */}
+          {currentView === 'admin' ? (
+            <button
+              type="button"
+              onClick={() => (onViewChange ? onViewChange('store') : onOpenAdmin())}
+              title="Return to Public Storefront"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-xs transition"
+            >
+              <Store className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Storefront</span>
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => (onViewChange ? onViewChange('admin') : onOpenAdmin())}
+              title="Store Admin & Inventory Manager (Mideva Only)"
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-full text-slate-600 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-xs font-semibold"
+            >
+              <Lock className="w-3.5 h-3.5" />
+              <span className="hidden lg:inline">Admin</span>
+            </button>
+          )}
 
           {/* Cart / Quote Hero CTA Button */}
           <button

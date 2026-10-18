@@ -45,7 +45,39 @@ export default function App() {
   const [currentCustomer, setCurrentCustomer] = useState(() => getCurrentCustomer());
   const [installPrompt, setInstallPrompt] = useState(null);
 
+  // Page View state ('store' | 'admin') synced with location hash
+  const [currentView, setCurrentView] = useState(() => {
+    if (typeof window !== 'undefined' && window.location.hash === '#admin') {
+      return 'admin';
+    }
+    return 'store';
+  });
+
   const catalogRef = useRef(null);
+
+  // Sync hash changes with currentView
+  useEffect(() => {
+    const handleHashSync = () => {
+      if (window.location.hash === '#admin') {
+        setCurrentView('admin');
+      } else if (window.location.hash === '#store' || !window.location.hash) {
+        setCurrentView('store');
+      }
+    };
+    window.addEventListener('hashchange', handleHashSync);
+    return () => window.removeEventListener('hashchange', handleHashSync);
+  }, []);
+
+  const handleNavigateView = (view) => {
+    setCurrentView(view);
+    if (view === 'admin') {
+      window.location.hash = '#admin';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      window.location.hash = '#store';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   // Initialize theme and global event listeners
   useEffect(() => {
@@ -226,7 +258,7 @@ export default function App() {
         onSearchChange={setSearchTerm}
         currency={currency}
         onToggleCurrency={handleToggleCurrency}
-        onOpenAdmin={() => setIsAdminOpen(true)}
+        onOpenAdmin={() => handleNavigateView('admin')}
         onOpenSidebar={() => setIsSidebarOpen(true)}
         config={storeConfig}
         onOpenFlyers={() => setIsFlyerOpen(true)}
@@ -236,59 +268,75 @@ export default function App() {
         onToggleTheme={toggleTheme}
         onOpenAuth={() => setIsAuthOpen(true)}
         currentCustomer={currentCustomer}
+        currentView={currentView}
+        onViewChange={handleNavigateView}
       />
 
-      {/* Hero Category Slides Carousel */}
-      <HeroBanner
-        onExploreClick={scrollToCatalog}
-        onSelectCategory={handleCategorySelect}
-        config={storeConfig}
-      />
+      {/* Main Content: Integrated Admin Page View or Customer Storefront Workspace */}
+      {currentView === 'admin' ? (
+        <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-6">
+          <AdminModal
+            isOpen={true}
+            isPageView={true}
+            onClose={() => handleNavigateView('store')}
+            onCatalogUpdated={handleCatalogUpdated}
+          />
+        </main>
+      ) : (
+        <>
+          {/* Hero Category Slides Carousel */}
+          <HeroBanner
+            onExploreClick={scrollToCatalog}
+            onSelectCategory={handleCategorySelect}
+            config={storeConfig}
+          />
 
-      {/* Main Catalog Workspace */}
-      <main ref={catalogRef} className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-6">
-        
-        {/* Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
-          <div>
-            <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-              Featured Collection &amp; Catalog
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-500">
-              Browse comrade-friendly fashion, scents, and everyday essentials ({filteredProducts.length} items available)
-            </p>
-          </div>
-          <div className="text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 self-start sm:self-auto">
-            <span>✨ Pay upon hostel drop-off</span>
-          </div>
-        </div>
+          {/* Main Catalog Workspace */}
+          <main ref={catalogRef} className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-6">
+            
+            {/* Section Header */}
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+              <div>
+                <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+                  Featured Collection &amp; Catalog
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                  Browse comrade-friendly fashion, scents, and everyday essentials ({filteredProducts.length} items available)
+                </p>
+              </div>
+              <div className="text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800 px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 self-start sm:self-auto">
+                <span>✨ Pay upon hostel drop-off</span>
+              </div>
+            </div>
 
-        {/* Category & Sub-filters Tabs */}
-        <CategoryPills
-          activeCategory={activeCategory}
-          onSelectCategory={(catId) => {
-            setActiveCategory(catId);
-            trackEvent('category_select', { categoryId: catId });
-          }}
-          priceFilter={priceFilter}
-          onSelectPriceFilter={setPriceFilter}
-          comradeDealsOnly={comradeDealsOnly}
-          onToggleComradeDeals={() => setComradeDealsOnly((prev) => !prev)}
-          totalMatching={filteredProducts.length}
-        />
+            {/* Category & Sub-filters Tabs */}
+            <CategoryPills
+              activeCategory={activeCategory}
+              onSelectCategory={(catId) => {
+                setActiveCategory(catId);
+                trackEvent('category_select', { categoryId: catId });
+              }}
+              priceFilter={priceFilter}
+              onSelectPriceFilter={setPriceFilter}
+              comradeDealsOnly={comradeDealsOnly}
+              onToggleComradeDeals={() => setComradeDealsOnly((prev) => !prev)}
+              totalMatching={filteredProducts.length}
+            />
 
-        {/* Product Cards Grid with Like hearts, Reviews and Quick View Detail */}
-        <ProductGrid
-          products={filteredProducts}
-          onAddToCart={handleAddToCart}
-          currency={currency}
-          onResetFilters={handleResetFilters}
-          onOpenReviews={(prod) => setReviewProduct(prod)}
-          onOpenDetail={(prod) => setDetailProduct(prod)}
-          config={storeConfig}
-        />
+            {/* Product Cards Grid with Like hearts, Reviews and Quick View Detail */}
+            <ProductGrid
+              products={filteredProducts}
+              onAddToCart={handleAddToCart}
+              currency={currency}
+              onResetFilters={handleResetFilters}
+              onOpenReviews={(prod) => setReviewProduct(prod)}
+              onOpenDetail={(prod) => setDetailProduct(prod)}
+              config={storeConfig}
+            />
 
-      </main>
+          </main>
+        </>
+      )}
 
       {/* Quote / Order Slide-out Drawer */}
       <QuoteDrawer
@@ -350,7 +398,7 @@ export default function App() {
         onSelectCategory={handleCategorySelect}
         currency={currency}
         onToggleCurrency={handleToggleCurrency}
-        onOpenAdmin={() => setIsAdminOpen(true)}
+        onOpenAdmin={() => handleNavigateView('admin')}
         comradeDealsOnly={comradeDealsOnly}
         onToggleComradeDeals={() => setComradeDealsOnly((prev) => !prev)}
         priceFilter={priceFilter}
@@ -381,12 +429,14 @@ export default function App() {
         product={reviewProduct}
       />
 
-      {/* Store Admin & Orders Manager Modal */}
-      <AdminModal
-        isOpen={isAdminOpen}
-        onClose={() => setIsAdminOpen(false)}
-        onCatalogUpdated={handleCatalogUpdated}
-      />
+      {/* Fallback popup Admin Modal if explicitly invoked while on store view */}
+      {isAdminOpen && currentView !== 'admin' && (
+        <AdminModal
+          isOpen={isAdminOpen}
+          onClose={() => setIsAdminOpen(false)}
+          onCatalogUpdated={handleCatalogUpdated}
+        />
+      )}
 
       {/* Global Toast Alert Notifications */}
       <ToastNotification />
@@ -400,7 +450,7 @@ export default function App() {
       {/* Footer */}
       <Footer 
         onCategoryClick={handleCategorySelect} 
-        onOpenAdmin={() => setIsAdminOpen(true)}
+        onOpenAdmin={() => handleNavigateView('admin')}
       />
 
     </div>

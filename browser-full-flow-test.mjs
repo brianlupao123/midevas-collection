@@ -244,6 +244,21 @@ async function runBrowserFlow() {
     const adminScreenshotPath = 'test-admin-flow.png';
     await page.screenshot({ path: adminScreenshotPath, fullPage: false });
     console.log(`📸 Saved admin analytics dashboard screenshot: ${adminScreenshotPath}`);
+
+    // Step 9: Test Return to Storefront via In-Page Navigation
+    console.log('\n🔄 Step 9: Testing Return to Storefront View Switcher...');
+    const storefrontBtn = await page.$('button[title*="Return to Public Storefront"]');
+    if (storefrontBtn) {
+      await storefrontBtn.click();
+      await new Promise(r => setTimeout(r, 1000));
+      const hash = await page.evaluate(() => window.location.hash);
+      console.log('✅ Clicked "Storefront" button, current window hash:', hash);
+      const isCatalogVisible = await page.$('main h2');
+      if (isCatalogVisible) {
+        const titleText = await page.evaluate(el => el.textContent, isCatalogVisible);
+        console.log('✅ Successfully returned to storefront! Section title:', titleText.trim());
+      }
+    }
   }
 
   console.log('\n📊 Final Error Audit:');

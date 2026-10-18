@@ -26,7 +26,9 @@ import {
   Globe,
   Bell,
   Maximize2,
-  Minimize2
+  Minimize2,
+  ArrowLeft,
+  Store
 } from 'lucide-react';
 import { 
   CATEGORIES, 
@@ -69,7 +71,7 @@ import {
 const ADMIN_EMAIL = 'monalisamideva@gmail.com';
 const DEFAULT_PASSCODE = 'mideva2026';
 
-export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
+export default function AdminModal({ isOpen, onClose, onCatalogUpdated, isPageView = false }) {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     return sessionStorage.getItem('midevas_admin_auth') === 'true';
   });
@@ -145,12 +147,12 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
   };
 
   useEffect(() => {
-    if (isOpen && isAuthenticated) {
+    if ((isOpen || isPageView) && isAuthenticated) {
       refreshData();
     }
-  }, [isOpen, isAuthenticated]);
+  }, [isOpen, isPageView, isAuthenticated]);
 
-  if (!isOpen) return null;
+  if (!isOpen && !isPageView) return null;
 
   const getStoredPasscode = () => {
     return localStorage.getItem('midevas_admin_passcode') || storeConfig?.adminPasscode || DEFAULT_PASSCODE;
@@ -514,74 +516,83 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
     return qty <= 0 || p.inStock === false;
   }).length;
 
-  return (
-    <div className={`fixed inset-0 z-50 overflow-y-auto ${isFullScreen ? 'p-0' : 'p-1 sm:p-3 md:p-4'}`}>
-      {/* Backdrop */}
-      <div 
-        onClick={onClose}
-        className="fixed inset-0 bg-slate-900/80 backdrop-blur-xs transition-opacity"
-      />
-
-      <div className={`flex min-h-full items-center justify-center text-center transition-all duration-200 ${
-        isFullScreen ? 'p-0' : 'p-1 sm:p-2 md:p-3'
-      }`}>
-        <div className={`relative transform overflow-hidden bg-white text-left shadow-2xl transition-all duration-200 flex flex-col border border-slate-200 ${
-          isFullScreen
-            ? 'w-screen h-screen min-h-screen rounded-none border-0'
-            : isAuthenticated
-              ? 'w-full max-w-[98vw] 2xl:max-w-[1720px] min-h-[92vh] rounded-2xl'
-              : 'w-full max-w-md rounded-2xl'
-        }`}>
-          
-          {/* Header */}
-          <div className="flex items-center justify-between border-b border-slate-200 bg-slate-900 text-white px-4 sm:px-6 py-3.5 sm:py-4 flex-shrink-0">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-amber-500 text-white flex items-center justify-center font-black flex-shrink-0 shadow-sm">
-                MC
-              </div>
-              <div>
-                <h3 className="text-sm sm:text-base font-extrabold tracking-tight flex items-center gap-2">
-                  <span>Mideva's Store &amp; Catalog Manager</span>
-                  {isAuthenticated && (
-                    <span className="text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full">
-                      Logged in: {ADMIN_EMAIL}
-                    </span>
-                  )}
-                </h3>
-                <p className="text-[11px] sm:text-xs text-slate-400">
-                  Manage WhatsApp Quotes, Edit Products, Upload Photos &amp; Update Announcements
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-1.5 sm:gap-2">
+  const adminInnerContent = (
+    <div className={`relative bg-white dark:bg-slate-900 text-left transition-all duration-200 flex flex-col border border-slate-200 dark:border-slate-800 ${
+      isPageView
+        ? 'w-full rounded-2xl shadow-sm overflow-hidden'
+        : isFullScreen
+          ? 'w-screen h-screen min-h-screen rounded-none border-0 overflow-hidden'
+          : isAuthenticated
+            ? 'w-full max-w-[98vw] 2xl:max-w-[1720px] min-h-[92vh] rounded-2xl shadow-2xl overflow-hidden'
+            : 'w-full max-w-md rounded-2xl shadow-2xl overflow-hidden'
+    }`}>
+      
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-slate-900 text-white px-4 sm:px-6 py-3.5 sm:py-4 flex-shrink-0 gap-3">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-amber-600 text-white flex items-center justify-center font-black flex-shrink-0 shadow-sm">
+            MC
+          </div>
+          <div>
+            <h3 className="text-sm sm:text-base font-extrabold tracking-tight flex flex-wrap items-center gap-2">
+              <span>Mideva's Store &amp; Catalog Manager</span>
               {isAuthenticated && (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => setIsFullScreen((prev) => !prev)}
-                    title={isFullScreen ? "Restore Normal Size" : "Full Screen Expansive View"}
-                    className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition"
-                  >
-                    {isFullScreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
-                  </button>
-                  <button
-                    onClick={handleLogout}
-                    title="Log out of Admin"
-                    className="p-2 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-lg transition"
-                  >
-                    <LogOut className="w-4 h-4" />
-                  </button>
-                </>
+                <span className="text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full">
+                  Logged in: {ADMIN_EMAIL}
+                </span>
+              )}
+            </h3>
+            <p className="text-[11px] sm:text-xs text-slate-400">
+              Manage WhatsApp Quotes, Edit Products, Upload Photos &amp; Update Announcements
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-1.5 sm:gap-2 self-end sm:self-auto">
+          {/* Always available Return to Storefront button */}
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-xs transition"
+            title="Return to Public Storefront"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Storefront</span>
+          </button>
+
+          {isAuthenticated && (
+            <>
+              {!isPageView && (
+                <button
+                  type="button"
+                  onClick={() => setIsFullScreen((prev) => !prev)}
+                  title={isFullScreen ? "Restore Normal Size" : "Full Screen Expansive View"}
+                  className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition"
+                >
+                  {isFullScreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                </button>
               )}
               <button
-                onClick={onClose}
-                className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition"
+                onClick={handleLogout}
+                title="Log out of Admin"
+                className="p-2 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-lg transition"
               >
-                <X className="w-5 h-5" />
+                <LogOut className="w-4 h-4" />
               </button>
-            </div>
-          </div>
+            </>
+          )}
+
+          {!isPageView && (
+            <button
+              onClick={onClose}
+              className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition"
+              title="Close modal"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          )}
+        </div>
+      </div>
 
           {/* Conditional Content: Login vs Authenticated Dashboard */}
           {!isAuthenticated ? (
@@ -754,7 +765,7 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
               </div>
 
               {/* Main Tab Panels */}
-              <div className={`p-4 sm:p-6 lg:p-8 flex-1 overflow-y-auto space-y-6 ${
+              <div className={isPageView ? "p-4 sm:p-6 lg:p-8 space-y-6" : `p-4 sm:p-6 lg:p-8 flex-1 overflow-y-auto space-y-6 ${
                 isFullScreen ? 'max-h-[calc(100vh-140px)]' : 'max-h-[calc(92vh-140px)]'
               }`}>
                 
@@ -2446,7 +2457,29 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
             </div>
           )}
 
-        </div>
+    </div>
+  );
+
+  if (isPageView) {
+    return (
+      <div className="w-full space-y-6 animate-fade-in">
+        {adminInnerContent}
+      </div>
+    );
+  }
+
+  return (
+    <div className={`fixed inset-0 z-50 overflow-y-auto ${isFullScreen ? 'p-0' : 'p-1 sm:p-3 md:p-4'}`}>
+      {/* Backdrop */}
+      <div 
+        onClick={onClose}
+        className="fixed inset-0 bg-slate-900/80 backdrop-blur-xs transition-opacity"
+      />
+
+      <div className={`flex min-h-full items-center justify-center text-center transition-all duration-200 ${
+        isFullScreen ? 'p-0' : 'p-1 sm:p-2 md:p-3'
+      }`}>
+        {adminInnerContent}
       </div>
     </div>
   );
