@@ -321,6 +321,8 @@ export default function App() {
         onOpenCart={() => setIsCartOpen(true)}
         onExploreCatalog={scrollToCatalog}
         config={storeConfig}
+        onOpenAuth={() => setIsAuthOpen(true)}
+        currentCustomer={currentCustomer}
       />
 
       {/* Express Payment & STK Push Modal */}

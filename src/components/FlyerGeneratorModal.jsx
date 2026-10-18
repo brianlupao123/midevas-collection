@@ -217,7 +217,7 @@ export default function FlyerGeneratorModal({ isOpen, onClose, config }) {
       />
 
       <div className="flex min-h-full items-center justify-center p-3 sm:p-6 text-center">
-        <div className="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all w-full max-w-4xl border border-slate-200">
+        <div className="relative transform overflow-hidden rounded-2xl bg-white dark:bg-slate-900 text-left shadow-2xl transition-all w-full max-w-4xl border border-slate-200 dark:border-slate-800">
           
           {/* Header */}
           <div className="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">

@@ -213,7 +213,7 @@ export default function ChatWidget({ onAddToCart, onSelectCategory, config }) {
 
       {/* Chat Window Modal */}
       {isOpen && (
-        <div className="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-96 max-h-[580px] h-[520px] bg-white rounded-3xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden animate-fade-in">
+        <div className="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-96 max-h-[580px] h-[520px] bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden animate-fade-in">
           
           {/* Chat Header */}
           <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white p-4 flex items-center justify-between">
@@ -248,7 +248,7 @@ export default function ChatWidget({ onAddToCart, onSelectCategory, config }) {
           </div>
 
           {/* Messages Body */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50">
+          <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50 dark:bg-slate-950">
             {messages.map((m) => (
               <div
                 key={m.id}
@@ -258,27 +258,27 @@ export default function ChatWidget({ onAddToCart, onSelectCategory, config }) {
                   className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 text-xs leading-relaxed ${
                     m.sender === 'user'
                       ? 'bg-amber-500 text-white rounded-br-xs shadow-xs'
-                      : 'bg-white text-slate-800 border border-slate-200/80 rounded-bl-xs shadow-xs'
+                      : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 border border-slate-200/80 dark:border-slate-700 rounded-bl-xs shadow-xs'
                   }`}
                 >
                   <p>{m.text}</p>
 
                   {/* Embedded Recommended Product Cards */}
                   {m.recommendations && m.recommendations.length > 0 && (
-                    <div className="mt-2.5 pt-2 border-t border-slate-100 space-y-2">
+                    <div className="mt-2.5 pt-2 border-t border-slate-100 dark:border-slate-700 space-y-2">
                       {m.recommendations.map((rec) => (
                         <div
                           key={rec.id}
-                          className="flex items-center justify-between gap-2 p-2 rounded-xl bg-slate-50 border border-slate-200"
+                          className="flex items-center justify-between gap-2 p-2 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700"
                         >
                           <img
                             src={rec.image}
                             alt={rec.name}
-                            className="w-10 h-10 rounded-lg object-cover flex-shrink-0 border border-slate-200"
+                            className="w-10 h-10 rounded-lg object-cover flex-shrink-0 border border-slate-200 dark:border-slate-700"
                           />
                           <div className="min-w-0 flex-1">
-                            <h5 className="text-[11px] font-bold text-slate-900 truncate">{rec.name}</h5>
-                            <span className="text-[10px] font-black text-amber-700">${rec.price.toFixed(2)}</span>
+                            <h5 className="text-[11px] font-bold text-slate-900 dark:text-white truncate">{rec.name}</h5>
+                            <span className="text-[10px] font-black text-amber-700 dark:text-amber-400">${rec.price.toFixed(2)}</span>
                           </div>
                           <button
                             onClick={() => {
@@ -300,7 +300,7 @@ export default function ChatWidget({ onAddToCart, onSelectCategory, config }) {
             ))}
 
             {isTyping && (
-              <div className="flex items-center gap-1.5 p-2 bg-white rounded-2xl border border-slate-200 w-16 text-slate-400">
+              <div className="flex items-center gap-1.5 p-2 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 w-16 text-slate-400">
                 <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-pulse"></span>
                 <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-pulse delay-100"></span>
                 <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-pulse delay-200"></span>
@@ -311,16 +311,16 @@ export default function ChatWidget({ onAddToCart, onSelectCategory, config }) {
           </div>
 
           {/* Quick Option Suggestion Chips */}
-          <div className="px-3 py-2 bg-white border-t border-slate-100 flex items-center gap-1.5 overflow-x-auto scrollbar-none">
+          <div className="px-3 py-2 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 flex items-center gap-1.5 overflow-x-auto scrollbar-none">
             {QUICK_PROMPTS.map((p) => {
               const Icon = p.icon;
               return (
                 <button
                   key={p.id}
                   onClick={() => handleSendMessage(p.label)}
-                  className="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-slate-100 hover:bg-amber-50 hover:text-amber-800 hover:border-amber-300 border border-slate-200 text-slate-700 whitespace-nowrap transition flex-shrink-0"
+                  className="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-amber-50 dark:hover:bg-amber-950/40 hover:text-amber-800 dark:hover:text-amber-300 hover:border-amber-300 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 whitespace-nowrap transition flex-shrink-0"
                 >
-                  <Icon className="w-3 h-3 text-amber-600" />
+                  <Icon className="w-3 h-3 text-amber-600 dark:text-amber-400" />
                   <span>{p.label}</span>
                 </button>
               );
@@ -328,13 +328,13 @@ export default function ChatWidget({ onAddToCart, onSelectCategory, config }) {
           </div>
 
           {/* WhatsApp Direct Handoff Link */}
-          <div className="px-3 py-1.5 bg-emerald-50 border-t border-emerald-100 flex items-center justify-between text-[11px] text-emerald-800">
+          <div className="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/50 border-t border-emerald-100 dark:border-emerald-800 flex items-center justify-between text-[11px] text-emerald-800 dark:text-emerald-300">
             <span className="truncate">Need to talk directly with Mideva?</span>
             <a
               href={getWhatsAppHandoffUrl()}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-extrabold text-emerald-700 hover:text-emerald-900 flex items-center gap-1 ml-2 flex-shrink-0"
+              className="font-extrabold text-emerald-700 dark:text-emerald-400 hover:underline flex items-center gap-1 ml-2 flex-shrink-0"
             >
               <span>Chat on WhatsApp</span>
               <ChevronRight className="w-3 h-3" />
@@ -347,14 +347,14 @@ export default function ChatWidget({ onAddToCart, onSelectCategory, config }) {
               e.preventDefault();
               handleSendMessage();
             }}
-            className="p-3 border-t border-slate-200 bg-white flex items-center gap-2"
+            className="p-3 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center gap-2"
           >
             <input
               type="text"
               placeholder="Ask about items, delivery, sizing..."
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
-              className="flex-1 px-3.5 py-2 text-xs bg-slate-100 border border-slate-200 rounded-full focus:outline-none focus:bg-white focus:ring-1 focus:ring-amber-500"
+              className="flex-1 px-3.5 py-2 text-xs bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full focus:outline-none focus:bg-white dark:focus:bg-slate-800 focus:ring-1 focus:ring-amber-500 text-slate-900 dark:text-white"
             />
             <button
               type="submit"
