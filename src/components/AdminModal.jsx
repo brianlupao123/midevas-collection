@@ -24,7 +24,9 @@ import {
   Image as ImageIcon,
   Save,
   Globe,
-  Bell
+  Bell,
+  Maximize2,
+  Minimize2
 } from 'lucide-react';
 import { 
   CATEGORIES, 
@@ -71,6 +73,7 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     return sessionStorage.getItem('midevas_admin_auth') === 'true';
   });
+  const [isFullScreen, setIsFullScreen] = useState(false);
   const [emailInput, setEmailInput] = useState(ADMIN_EMAIL);
   const [passcode, setPasscode] = useState('');
   const [authError, setAuthError] = useState(false);
@@ -512,24 +515,32 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
   }).length;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
+    <div className={`fixed inset-0 z-50 overflow-y-auto ${isFullScreen ? 'p-0' : 'p-1 sm:p-3 md:p-4'}`}>
       {/* Backdrop */}
       <div 
         onClick={onClose}
-        className="fixed inset-0 bg-slate-900/70 backdrop-blur-xs transition-opacity"
+        className="fixed inset-0 bg-slate-900/80 backdrop-blur-xs transition-opacity"
       />
 
-      <div className="flex min-h-full items-center justify-center p-3 sm:p-6 text-center">
-        <div className="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all w-full max-w-5xl border border-slate-200">
+      <div className={`flex min-h-full items-center justify-center text-center transition-all duration-200 ${
+        isFullScreen ? 'p-0' : 'p-1 sm:p-2 md:p-3'
+      }`}>
+        <div className={`relative transform overflow-hidden bg-white text-left shadow-2xl transition-all duration-200 flex flex-col border border-slate-200 ${
+          isFullScreen
+            ? 'w-screen h-screen min-h-screen rounded-none border-0'
+            : isAuthenticated
+              ? 'w-full max-w-[98vw] 2xl:max-w-[1720px] min-h-[92vh] rounded-2xl'
+              : 'w-full max-w-md rounded-2xl'
+        }`}>
           
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-slate-200 bg-slate-900 text-white px-6 py-4">
+          <div className="flex items-center justify-between border-b border-slate-200 bg-slate-900 text-white px-4 sm:px-6 py-3.5 sm:py-4 flex-shrink-0">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-amber-500 text-white flex items-center justify-center font-black">
+              <div className="w-9 h-9 rounded-xl bg-amber-500 text-white flex items-center justify-center font-black flex-shrink-0 shadow-sm">
                 MC
               </div>
               <div>
-                <h3 className="text-base font-extrabold tracking-tight flex items-center gap-2">
+                <h3 className="text-sm sm:text-base font-extrabold tracking-tight flex items-center gap-2">
                   <span>Mideva's Store &amp; Catalog Manager</span>
                   {isAuthenticated && (
                     <span className="text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full">
@@ -537,21 +548,31 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
                     </span>
                   )}
                 </h3>
-                <p className="text-xs text-slate-400">
+                <p className="text-[11px] sm:text-xs text-slate-400">
                   Manage WhatsApp Quotes, Edit Products, Upload Photos &amp; Update Announcements
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2">
               {isAuthenticated && (
-                <button
-                  onClick={handleLogout}
-                  title="Log out of Admin"
-                  className="p-2 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-lg transition"
-                >
-                  <LogOut className="w-4 h-4" />
-                </button>
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setIsFullScreen((prev) => !prev)}
+                    title={isFullScreen ? "Restore Normal Size" : "Full Screen Expansive View"}
+                    className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition"
+                  >
+                    {isFullScreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    title="Log out of Admin"
+                    className="p-2 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-lg transition"
+                  >
+                    <LogOut className="w-4 h-4" />
+                  </button>
+                </>
               )}
               <button
                 onClick={onClose}
@@ -733,7 +754,9 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
               </div>
 
               {/* Main Tab Panels */}
-              <div className="p-6 max-h-[72vh] overflow-y-auto space-y-6">
+              <div className={`p-4 sm:p-6 lg:p-8 flex-1 overflow-y-auto space-y-6 ${
+                isFullScreen ? 'max-h-[calc(100vh-140px)]' : 'max-h-[calc(92vh-140px)]'
+              }`}>
                 
                 {/* ═══════════════════════════════════════════ */}
                 {/* TAB 1: ORDERS & QUOTES                      */}
