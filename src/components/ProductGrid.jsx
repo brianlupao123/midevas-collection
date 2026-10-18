@@ -2,7 +2,7 @@ import React from 'react';
 import ProductCard from './ProductCard';
 import { PackageOpen, Sparkles } from 'lucide-react';
 
-export default function ProductGrid({ products, onAddToCart, currency, onResetFilters, onOpenReviews, config }) {
+export default function ProductGrid({ products, onAddToCart, currency, onResetFilters, onOpenReviews, onOpenDetail, config }) {
   if (products.length === 0) {
     return (
       <div className="py-16 text-center bg-white rounded-3xl border border-dashed border-slate-300 p-8 max-w-lg mx-auto">
@@ -33,6 +33,7 @@ export default function ProductGrid({ products, onAddToCart, currency, onResetFi
           onAddToCart={onAddToCart}
           currency={currency}
           onOpenReviews={onOpenReviews}
+          onOpenDetail={onOpenDetail}
           config={config}
         />
       ))}

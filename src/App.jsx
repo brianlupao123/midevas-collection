@@ -11,6 +11,8 @@ import ReviewsModal from './components/ReviewsModal';
 import AdminModal from './components/AdminModal';
 import PaymentModal from './components/PaymentModal';
 import FlyerGeneratorModal from './components/FlyerGeneratorModal';
+import ProductDetailModal from './components/ProductDetailModal';
+import AmazonSidebarNav from './components/AmazonSidebarNav';
 import Footer from './components/Footer';
 import { getStoredProducts } from './data/products';
 import { getStoreConfig } from './utils/storeConfig';
@@ -28,6 +30,8 @@ export default function App() {
   const [cartItems, setCartItems] = useState([]);
 
   // Modals state
+  const [detailProduct, setDetailProduct] = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [reviewProduct, setReviewProduct] = useState(null);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
@@ -36,7 +40,7 @@ export default function App() {
 
   const catalogRef = useRef(null);
 
-  // Log page view on mount
+  // Log page view on mount & check for product deep links
   useEffect(() => {
     trackEvent('page_view', { path: window.location.pathname });
 
@@ -45,6 +49,19 @@ export default function App() {
       setInstallPrompt(e);
     };
     window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+
+    // Deep link product view support
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const prodId = params.get('product');
+      if (prodId) {
+        const found = productsList.find((p) => p.id === prodId);
+        if (found) setDetailProduct(found);
+      }
+    } catch (err) {
+      // ignore
+    }
+
     return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
   }, []);
 
@@ -185,6 +202,7 @@ export default function App() {
         currency={currency}
         onToggleCurrency={handleToggleCurrency}
         onOpenAdmin={() => setIsAdminOpen(true)}
+        onOpenSidebar={() => setIsSidebarOpen(true)}
         config={storeConfig}
         onOpenFlyers={() => setIsFlyerOpen(true)}
         installPrompt={installPrompt}
@@ -230,13 +248,14 @@ export default function App() {
           totalMatching={filteredProducts.length}
         />
 
-        {/* Product Cards Grid with Like hearts and Reviews */}
+        {/* Product Cards Grid with Like hearts, Reviews and Quick View Detail */}
         <ProductGrid
           products={filteredProducts}
           onAddToCart={handleAddToCart}
           currency={currency}
           onResetFilters={handleResetFilters}
           onOpenReviews={(prod) => setReviewProduct(prod)}
+          onOpenDetail={(prod) => setDetailProduct(prod)}
           config={storeConfig}
         />
 
@@ -290,6 +309,34 @@ export default function App() {
         isOpen={isFlyerOpen}
         onClose={() => setIsFlyerOpen(false)}
         config={storeConfig}
+      />
+
+      {/* Amazon-Style Department Sidebar Navigation */}
+      <AmazonSidebarNav
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        activeCategory={activeCategory}
+        onSelectCategory={handleCategorySelect}
+        currency={currency}
+        onToggleCurrency={handleToggleCurrency}
+        onOpenAdmin={() => setIsAdminOpen(true)}
+        comradeDealsOnly={comradeDealsOnly}
+        onToggleComradeDeals={() => setComradeDealsOnly((prev) => !prev)}
+        priceFilter={priceFilter}
+        onSelectPriceFilter={setPriceFilter}
+        config={storeConfig}
+      />
+
+      {/* Amazon-Style Product Detail & Comments Modal */}
+      <ProductDetailModal
+        isOpen={!!detailProduct}
+        onClose={() => setDetailProduct(null)}
+        product={detailProduct}
+        onAddToCart={handleAddToCart}
+        currency={currency}
+        config={storeConfig}
+        allProducts={productsList}
+        onSelectRelatedProduct={(rel) => setDetailProduct(rel)}
       />
 
       {/* Customer Reviews & Comments Modal */}

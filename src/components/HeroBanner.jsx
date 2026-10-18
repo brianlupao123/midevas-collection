@@ -70,22 +70,23 @@ const SLIDES = [
 ];
 
 export default function HeroBanner({ onExploreClick, onSelectCategory, config }) {
+  const slides = config?.heroSlides && config.heroSlides.length > 0 ? config.heroSlides : SLIDES;
   const [currentSlide, setCurrentSlide] = useState(0);
 
   // Auto-advance slides every 6 seconds
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % SLIDES.length);
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 6000);
     return () => clearInterval(timer);
-  }, []);
+  }, [slides.length]);
 
-  const slide = SLIDES[currentSlide];
+  const slide = slides[currentSlide] || slides[0];
   const groupInvite = config?.whatsappGroupInvite || STORE_CONFIG.whatsappGroupInvite;
   const catalogUrl = config?.whatsappCatalogUrl || "https://wa.me/c/254748094795";
 
-  const handleNext = () => setCurrentSlide((prev) => (prev + 1) % SLIDES.length);
-  const handlePrev = () => setCurrentSlide((prev) => (prev - 1 + SLIDES.length) % SLIDES.length);
+  const handleNext = () => setCurrentSlide((prev) => (prev + 1) % slides.length);
+  const handlePrev = () => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
 
   const handleSlideCta = (catId) => {
     if (onSelectCategory) onSelectCategory(catId);

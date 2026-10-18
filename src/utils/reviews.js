@@ -91,3 +91,38 @@ export function addReview(reviewData) {
     return null;
   }
 }
+
+export function deleteReview(reviewId) {
+  try {
+    const all = getReviews();
+    const updated = all.filter((r) => r.id !== reviewId);
+    localStorage.setItem(REVIEWS_STORAGE_KEY, JSON.stringify(updated));
+    return updated;
+  } catch (err) {
+    console.error('Error deleting review:', err);
+    return getReviews();
+  }
+}
+
+export function getProductRatingStats(productId, baselineRating = 4.8, baselineCount = 25) {
+  const productReviews = getReviewsForProduct(productId);
+  if (productReviews.length === 0) {
+    return {
+      average: baselineRating,
+      count: baselineCount,
+      breakdown: { 5: 80, 4: 15, 3: 5, 2: 0, 1: 0 }
+    };
+  }
+  const total = productReviews.reduce((sum, r) => sum + (Number(r.rating) || 5), 0);
+  const avg = (total / productReviews.length).toFixed(1);
+  const breakdown = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+  productReviews.forEach((r) => {
+    const star = Math.min(5, Math.max(1, Math.round(Number(r.rating) || 5)));
+    breakdown[star] = (breakdown[star] || 0) + 1;
+  });
+  return {
+    average: Number(avg),
+    count: productReviews.length,
+    breakdown
+  };
+}

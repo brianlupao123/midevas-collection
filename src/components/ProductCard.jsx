@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShoppingBag, MessageCircle, Check, Star, Tag, MessageSquare, Heart } from 'lucide-react';
+import { ShoppingBag, MessageCircle, Check, Star, Tag, MessageSquare, Heart, Eye } from 'lucide-react';
 import { STORE_CONFIG } from '../data/products';
 import { trackEvent } from '../utils/analytics';
 import { getLikes, isProductLikedByUser, toggleProductLike } from '../utils/likes';
@@ -7,7 +7,7 @@ import { formatPrice } from '../utils/storeConfig';
 
 const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=600&q=80';
 
-export default function ProductCard({ product, onAddToCart, currency, onOpenReviews, config }) {
+export default function ProductCard({ product, onAddToCart, currency, onOpenReviews, onOpenDetail, config }) {
   const [added, setAdded] = useState(false);
   const [imgSrc, setImgSrc] = useState(product.image);
   const [likeCount, setLikeCount] = useState(() => (getLikes()[product.id] || 0));
@@ -56,7 +56,10 @@ export default function ProductCard({ product, onAddToCart, currency, onOpenRevi
     <div className="group bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-xs hover:shadow-xl hover:border-amber-300 transition-all duration-300 flex flex-col justify-between">
       
       {/* Product Image & Badges */}
-      <div className="relative aspect-4/3 w-full overflow-hidden bg-slate-100">
+      <div 
+        onClick={() => onOpenDetail && onOpenDetail(product)}
+        className="relative aspect-4/3 w-full overflow-hidden bg-slate-100 cursor-pointer"
+      >
         <img
           src={imgSrc}
           alt={product.name}
@@ -65,8 +68,15 @@ export default function ProductCard({ product, onAddToCart, currency, onOpenRevi
           loading="lazy"
         />
 
+        {/* Hover Quick View Overlay (Amazon style) */}
+        <div className="absolute inset-0 bg-slate-900/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+          <span className="bg-white/95 text-slate-900 text-xs font-black px-3.5 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 transform translate-y-2 group-hover:translate-y-0 transition-transform">
+            <Eye className="w-3.5 h-3.5 text-amber-600" /> Quick View &amp; Comments
+          </span>
+        </div>
+
         {/* Badges on image */}
-        <div className="absolute top-2.5 left-2.5 flex flex-col gap-1 items-start">
+        <div className="absolute top-2.5 left-2.5 flex flex-col gap-1 items-start pointer-events-none">
           {product.badge && (
             <span className="bg-slate-900/90 text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full backdrop-blur-xs shadow-xs">
               {product.badge}
@@ -93,7 +103,7 @@ export default function ProductCard({ product, onAddToCart, currency, onOpenRevi
         </button>
 
         {/* Stock status indicator */}
-        <div className="absolute bottom-2.5 right-2.5">
+        <div className="absolute bottom-2.5 right-2.5 pointer-events-none">
           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border shadow-xs flex items-center gap-1 ${
             product.inStock !== false
               ? 'bg-white/95 text-emerald-800 border-emerald-200/80'
@@ -128,8 +138,11 @@ export default function ProductCard({ product, onAddToCart, currency, onOpenRevi
             </span>
           </div>
 
-          {/* Title */}
-          <h3 className="font-bold text-slate-900 text-sm sm:text-base leading-snug line-clamp-1 group-hover:text-amber-700 transition">
+          {/* Title - clickable to open product detail */}
+          <h3 
+            onClick={() => onOpenDetail && onOpenDetail(product)}
+            className="font-bold text-slate-900 text-sm sm:text-base leading-snug line-clamp-1 group-hover:text-amber-700 transition cursor-pointer"
+          >
             {product.name}
           </h3>
 

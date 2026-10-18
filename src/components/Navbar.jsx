@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShoppingBag, Search, Sparkles, MessageCircle, Heart, Lock, Smartphone, Download } from 'lucide-react';
+import { ShoppingBag, Search, Sparkles, MessageCircle, Heart, Lock, Smartphone, Download, Menu } from 'lucide-react';
 import { STORE_CONFIG } from '../data/products';
 
 export default function Navbar({ 
@@ -10,6 +10,7 @@ export default function Navbar({
   currency, 
   onToggleCurrency, 
   onOpenAdmin, 
+  onOpenSidebar,
   config,
   onOpenFlyers,
   installPrompt,
@@ -21,9 +22,19 @@ export default function Navbar({
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 py-3 flex items-center justify-between gap-4">
         
-        {/* Brand identity */}
-        <div className="flex items-center gap-3">
-          <div className="relative w-11 h-11 rounded-full bg-gradient-to-tr from-amber-500 to-accent-600 p-0.5 shadow-md flex-shrink-0">
+        {/* Brand identity & Amazon Sidebar Toggle */}
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          <button
+            type="button"
+            onClick={onOpenSidebar}
+            title="All Departments & Comrade Filters"
+            className="flex items-center gap-1 p-2 sm:px-2.5 sm:py-1.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-amber-50 hover:border-amber-300 text-slate-700 font-black text-xs transition"
+          >
+            <Menu className="w-4 h-4 text-slate-800" />
+            <span className="hidden sm:inline">All</span>
+          </button>
+
+          <div className="relative w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gradient-to-tr from-amber-500 to-accent-600 p-0.5 shadow-md flex-shrink-0">
             <div className="w-full h-full bg-white rounded-full flex items-center justify-center font-black text-amber-600 text-lg tracking-tighter">
               MC
             </div>

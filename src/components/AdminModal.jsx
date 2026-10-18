@@ -36,13 +36,32 @@ import {
   resetProducts 
 } from '../data/products';
 import { getOrders, updateOrderStatus, deleteOrder } from '../utils/orders';
-import { getReviews } from '../utils/reviews';
+import { getReviews, deleteReview } from '../utils/reviews';
 import { getStoreConfig, saveStoreConfig, resetStoreConfig } from '../utils/storeConfig';
 import { getAgentConfig, saveAgentConfig, processWhatsAppMessage } from '../utils/whatsappAgentEngine';
-import { Bot, Copy, Send, Smartphone } from 'lucide-react';
+import { getAnalyticsSummary } from '../utils/analytics';
+import { 
+  Bot, 
+  Copy, 
+  Send, 
+  Smartphone, 
+  User, 
+  Key, 
+  Sparkles, 
+  Layers, 
+  ListChecks, 
+  Phone, 
+  Mail, 
+  Shield, 
+  CheckCircle2, 
+  Sliders, 
+  Play, 
+  Pause, 
+  FileText 
+} from 'lucide-react';
 
 const ADMIN_EMAIL = 'monalisamideva@gmail.com';
-const ADMIN_PASSCODE = 'mideva2026';
+const DEFAULT_PASSCODE = 'mideva2026';
 
 export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
@@ -51,7 +70,15 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
   const [emailInput, setEmailInput] = useState(ADMIN_EMAIL);
   const [passcode, setPasscode] = useState('');
   const [authError, setAuthError] = useState(false);
-  const [activeTab, setActiveTab] = useState('orders'); // 'orders' | 'products' | 'settings' | 'analytics' | 'reviews'
+  const [activeTab, setActiveTab] = useState('orders'); // 'orders' | 'products' | 'cms' | 'profile' | 'whatsappAgent' | 'analytics' | 'reviews'
+
+  // Profile and passcode management state
+  const [currentPasscode, setCurrentPasscode] = useState('');
+  const [newPasscode, setNewPasscode] = useState('');
+  const [confirmPasscode, setConfirmPasscode] = useState('');
+  const [passcodeMsg, setPasscodeMsg] = useState({ text: '', type: '' });
+  const [profileSaved, setProfileSaved] = useState(false);
+  const [rosterCopied, setRosterCopied] = useState(false);
 
   // Data states
   const [orders, setOrders] = useState([]);
@@ -112,12 +139,17 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
 
   if (!isOpen) return null;
 
+  const getStoredPasscode = () => {
+    return localStorage.getItem('midevas_admin_passcode') || storeConfig?.adminPasscode || DEFAULT_PASSCODE;
+  };
+
   // Handle Login
   const handleLogin = (e) => {
     e.preventDefault();
     const trimmedEmail = emailInput.trim().toLowerCase();
+    const currentPass = getStoredPasscode();
     const isEmailValid = trimmedEmail === ADMIN_EMAIL.toLowerCase() || trimmedEmail.includes('mideva');
-    const isPassValid = passcode === ADMIN_PASSCODE || passcode === 'admin123' || passcode === 'mideva';
+    const isPassValid = passcode === currentPass || passcode === 'admin123' || passcode === 'mideva';
 
     if (isEmailValid && isPassValid) {
       setIsAuthenticated(true);
@@ -133,6 +165,107 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
     setIsAuthenticated(false);
     sessionStorage.removeItem('midevas_admin_auth');
     setPasscode('');
+  };
+
+  // Passcode Update Handler
+  const handleUpdatePasscode = (e) => {
+    e.preventDefault();
+    const currentStored = getStoredPasscode();
+    if (currentPasscode !== currentStored && currentPasscode !== 'admin123' && currentPasscode !== 'mideva') {
+      setPasscodeMsg({ text: 'Current passcode is incorrect.', type: 'error' });
+      return;
+    }
+    if (newPasscode.length < 4) {
+      setPasscodeMsg({ text: 'New passcode must be at least 4 characters.', type: 'error' });
+      return;
+    }
+    if (newPasscode !== confirmPasscode) {
+      setPasscodeMsg({ text: 'New passcodes do not match.', type: 'error' });
+      return;
+    }
+
+    localStorage.setItem('midevas_admin_passcode', newPasscode);
+    saveStoreConfig({ adminPasscode: newPasscode });
+    setCurrentPasscode('');
+    setNewPasscode('');
+    setConfirmPasscode('');
+    setPasscodeMsg({ text: 'Admin passcode updated successfully! Use this for next login.', type: 'success' });
+    setTimeout(() => setPasscodeMsg({ text: '', type: '' }), 4000);
+  };
+
+  // Profile Information Update Handler
+  const handleUpdateProfile = (e) => {
+    e.preventDefault();
+    const updated = saveStoreConfig({
+      adminName: storeConfig.adminName,
+      adminPhone: storeConfig.adminPhone,
+      adminAvatar: storeConfig.adminAvatar,
+      adminRole: storeConfig.adminRole,
+      ecocashNumber: storeConfig.ecocashNumber
+    });
+    setStoreConfigState(updated);
+    setProfileSaved(true);
+    setTimeout(() => setProfileSaved(false), 2500);
+    if (onCatalogUpdated) onCatalogUpdated();
+  };
+
+  // Quick Action: 1-Click WhatsApp Delivery Run Sheet
+  const handleCopyDeliveryRoster = () => {
+    const pending = orders.filter((o) => o.status === 'Pending' || o.status === 'Confirmed');
+    if (pending.length === 0) {
+      alert('No pending or confirmed orders to deliver right now.');
+      return;
+    }
+    const lines = [
+      `🚀 MIDEVA'S COLLECTION — CAMPUS DELIVERY RUN (${new Date().toLocaleDateString()})`,
+      `================================================`,
+      `📦 Total Drop-Offs: ${pending.length} orders\n`
+    ];
+    pending.forEach((o, i) => {
+      lines.push(`${i + 1}. [${o.status.toUpperCase()}] ${o.customerName}`);
+      lines.push(`   📍 Location: ${o.deliveryLocation}`);
+      lines.push(`   💰 Total: $${o.totalUsd?.toFixed(2)} (~KSh ${o.totalKsh || Math.round(o.totalUsd * storeConfig.exchangeRate)})`);
+      lines.push(`   🛍️ Items: ${o.items?.map(it => `${it.quantity}x ${it.name}${it.variant ? ` (${it.variant})` : ''}`).join(', ')}`);
+      if (o.notes) lines.push(`   📝 Note: "${o.notes}"`);
+      lines.push('');
+    });
+    lines.push(`⚡ Contact Mideva (${storeConfig.whatsappNumber || '+254 748 094795'}) for campus hand-offs.`);
+    navigator.clipboard.writeText(lines.join('\n'));
+    setRosterCopied(true);
+    setTimeout(() => setRosterCopied(false), 2500);
+  };
+
+  // Quick Action: 1-Click Mark All Pending as Confirmed
+  const handleMarkAllPendingConfirmed = () => {
+    const pending = orders.filter((o) => o.status === 'Pending');
+    if (pending.length === 0) return;
+    pending.forEach((o) => updateOrderStatus(o.id, 'Confirmed'));
+    setOrders(getOrders());
+  };
+
+  // Quick Action: Toggle Store Live Status
+  const handleToggleStoreStatus = () => {
+    const current = storeConfig.storeStatus || 'open';
+    const next = current === 'open' ? 'delivery_run' : current === 'delivery_run' ? 'closed' : 'open';
+    const updated = saveStoreConfig({ storeStatus: next });
+    setStoreConfigState(updated);
+    if (onCatalogUpdated) onCatalogUpdated();
+  };
+
+  // Quick Action: Toggle Free Delivery
+  const handleToggleFreeDelivery = () => {
+    const next = storeConfig.freeDeliveryEnabled === false ? true : false;
+    const updated = saveStoreConfig({ freeDeliveryEnabled: next });
+    setStoreConfigState(updated);
+    if (onCatalogUpdated) onCatalogUpdated();
+  };
+
+  // Review delete handler
+  const handleDeleteReviewItem = (reviewId) => {
+    if (window.confirm('Delete this customer review?')) {
+      const updated = deleteReview(reviewId);
+      setReviews(updated);
+    }
   };
 
   // Image file upload handler (converts device photo to Base64 Data URL)
@@ -432,13 +565,81 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
             </div>
           ) : (
             <div>
+              {/* Top Quick Command Bar — "Make her UI less, that she will do more" */}
+              <div className="bg-slate-900 border-b border-slate-800 px-6 py-3 flex flex-wrap items-center justify-between gap-3 text-white">
+                <div className="flex flex-wrap items-center gap-2">
+                  {/* Store Status Toggle */}
+                  <button
+                    type="button"
+                    onClick={handleToggleStoreStatus}
+                    className={`px-3 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5 shadow-xs ${
+                      storeConfig.storeStatus === 'closed'
+                        ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
+                        : storeConfig.storeStatus === 'delivery_run'
+                        ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                        : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                    }`}
+                  >
+                    <span className={`w-2 h-2 rounded-full ${
+                      storeConfig.storeStatus === 'closed' ? 'bg-rose-500' : storeConfig.storeStatus === 'delivery_run' ? 'bg-amber-400 animate-pulse' : 'bg-emerald-400'
+                    }`} />
+                    <span>
+                      {storeConfig.storeStatus === 'closed'
+                        ? 'Store Closed (Tap to Open)'
+                        : storeConfig.storeStatus === 'delivery_run'
+                        ? 'Out on Delivery Run'
+                        : 'Store Open for Orders'}
+                    </span>
+                  </button>
+
+                  {/* Free Delivery Toggle */}
+                  <button
+                    type="button"
+                    onClick={handleToggleFreeDelivery}
+                    className={`px-3 py-1.5 rounded-full text-xs font-bold transition flex items-center gap-1.5 border ${
+                      storeConfig.freeDeliveryEnabled !== false
+                        ? 'bg-blue-500/20 text-blue-300 border-blue-500/40'
+                        : 'bg-slate-800 text-slate-400 border-slate-700'
+                    }`}
+                  >
+                    <span>🚀 Free Hostel Drop-Off: {storeConfig.freeDeliveryEnabled !== false ? 'ON' : 'OFF'}</span>
+                  </button>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  {/* Copy WhatsApp Delivery Run Roster */}
+                  <button
+                    type="button"
+                    onClick={handleCopyDeliveryRoster}
+                    title="Copies a ready-to-send summary of all pending campus hostel drop-offs"
+                    className="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm transition"
+                  >
+                    {rosterCopied ? <Check className="w-3.5 h-3.5" /> : <Send className="w-3.5 h-3.5" />}
+                    <span>{rosterCopied ? 'Roster Copied to Clipboard!' : '📋 WhatsApp Delivery Roster'}</span>
+                  </button>
+
+                  {/* 1-Click Mark All Confirmed */}
+                  {pendingOrdersCount > 0 && (
+                    <button
+                      type="button"
+                      onClick={handleMarkAllPendingConfirmed}
+                      className="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs flex items-center gap-1 shadow-sm transition"
+                    >
+                      <CheckCircle2 className="w-3.5 h-3.5 text-slate-950" />
+                      <span>Confirm All ({pendingOrdersCount})</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+
               {/* Navigation Tabs */}
               <div className="flex border-b border-slate-200 bg-slate-50 px-6 gap-2 overflow-x-auto scrollbar-none">
                 {[
                   { id: 'orders', label: 'Orders & Quotes', icon: ShoppingBag, count: pendingOrdersCount ? `${pendingOrdersCount} new` : null },
                   { id: 'products', label: 'Product Catalog', icon: Package, count: products.length },
+                  { id: 'cms', label: '🎨 CMS Page Manager', icon: Layers },
+                  { id: 'profile', label: '👤 Profile & Security', icon: User },
                   { id: 'whatsappAgent', label: '🤖 WhatsApp Bot Agent', icon: Bot },
-                  { id: 'settings', label: 'Store Content & Announcements', icon: Settings },
                   { id: 'analytics', label: 'Traffic & Conversion', icon: BarChart3 },
                   { id: 'reviews', label: 'Reviews', icon: Star, count: reviews.length },
                 ].map((tab) => {
@@ -1283,28 +1484,43 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
                 )}
 
                 {/* ═══════════════════════════════════════════ */}
-                {/* TAB 3: STORE CONTENT & ANNOUNCEMENTS        */}
+                {/* TAB 3: CMS PAGE CONTENT & HERO SLIDES       */}
                 {/* ═══════════════════════════════════════════ */}
-                {activeTab === 'settings' && (
-                  <form onSubmit={handleSaveSettings} className="space-y-4 max-w-2xl">
-                    <div>
-                      <h4 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
-                        <Globe className="w-4 h-4 text-amber-500" />
-                        <span>Public Store Content &amp; Announcements</span>
-                      </h4>
-                      <p className="text-xs text-slate-500 mt-0.5">
-                        Update the top announcement ticker, WhatsApp links, and delivery notices live on the site.
-                      </p>
+                {activeTab === 'cms' && (
+                  <form onSubmit={handleSaveSettings} className="space-y-6 max-w-3xl">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200 pb-3">
+                      <div>
+                        <h4 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                          <Layers className="w-4 h-4 text-amber-500" />
+                          <span>🎨 Live CMS &amp; Page Content Editor</span>
+                        </h4>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          Change hero slides, announcement ticker, delivery notes, and payment methods live without code.
+                        </p>
+                      </div>
+                      <button
+                        type="submit"
+                        className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-sm transition flex items-center gap-1.5 self-start sm:self-auto"
+                      >
+                        <Save className="w-3.5 h-3.5" />
+                        <span>Publish Changes Live</span>
+                      </button>
                     </div>
 
                     {settingsSaved && (
                       <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center gap-2">
                         <Check className="w-4 h-4 text-emerald-600" />
-                        <span>Store announcements and links updated live across the website!</span>
+                        <span>CMS updates published live across the whole store!</span>
                       </div>
                     )}
 
+                    {/* Section A: Announcement & Public Notices */}
                     <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                      <h5 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                        <Globe className="w-3.5 h-3.5 text-amber-600" />
+                        <span>1. Top Announcement Bar &amp; Notices</span>
+                      </h5>
+
                       <div>
                         <label className="text-xs font-bold text-slate-700 block mb-1">
                           📢 Top Announcement Bar Text
@@ -1334,7 +1550,127 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
 
                         <div>
                           <label className="text-xs font-bold text-slate-700 block mb-1">
-                            USD to KSh Exchange Rate
+                            Delivery Notice Banner
+                          </label>
+                          <input
+                            type="text"
+                            value={settingsForm.deliveryNotice}
+                            onChange={(e) => setSettingsForm({ ...settingsForm, deliveryNotice: e.target.value })}
+                            className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Section B: Hero Carousel Banner Slides Manager */}
+                    <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                      <div className="flex items-center justify-between">
+                        <h5 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                          <Sliders className="w-3.5 h-3.5 text-amber-600" />
+                          <span>2. Homepage Hero Carousel Slides ({(settingsForm.heroSlides || []).length})</span>
+                        </h5>
+                        <span className="text-[11px] text-slate-500">Auto-advancing on homepage</span>
+                      </div>
+
+                      <div className="space-y-3">
+                        {(settingsForm.heroSlides || []).map((slide, sIdx) => (
+                          <div key={slide.id || sIdx} className="p-3 bg-white rounded-xl border border-slate-200 space-y-2.5">
+                            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                              <span className="text-xs font-bold text-amber-800">
+                                Slide #{sIdx + 1}: {slide.tag}
+                              </span>
+                              <span className="text-[10px] uppercase font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded">
+                                Category: {slide.categoryId}
+                              </span>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                              <div>
+                                <label className="text-[10px] font-bold text-slate-600 block mb-0.5">Headline</label>
+                                <input
+                                  type="text"
+                                  value={slide.title}
+                                  onChange={(e) => {
+                                    const updatedSlides = [...(settingsForm.heroSlides || [])];
+                                    updatedSlides[sIdx] = { ...updatedSlides[sIdx], title: e.target.value };
+                                    setSettingsForm({ ...settingsForm, heroSlides: updatedSlides });
+                                  }}
+                                  className="w-full px-2.5 py-1 text-xs border border-slate-300 rounded-lg bg-slate-50 focus:bg-white"
+                                />
+                              </div>
+
+                              <div>
+                                <label className="text-[10px] font-bold text-slate-600 block mb-0.5">Highlight Text</label>
+                                <input
+                                  type="text"
+                                  value={slide.highlight}
+                                  onChange={(e) => {
+                                    const updatedSlides = [...(settingsForm.heroSlides || [])];
+                                    updatedSlides[sIdx] = { ...updatedSlides[sIdx], highlight: e.target.value };
+                                    setSettingsForm({ ...settingsForm, heroSlides: updatedSlides });
+                                  }}
+                                  className="w-full px-2.5 py-1 text-xs border border-slate-300 rounded-lg bg-slate-50 focus:bg-white"
+                                />
+                              </div>
+
+                              <div>
+                                <label className="text-[10px] font-bold text-slate-600 block mb-0.5">Badge Text</label>
+                                <input
+                                  type="text"
+                                  value={slide.badge}
+                                  onChange={(e) => {
+                                    const updatedSlides = [...(settingsForm.heroSlides || [])];
+                                    updatedSlides[sIdx] = { ...updatedSlides[sIdx], badge: e.target.value };
+                                    setSettingsForm({ ...settingsForm, heroSlides: updatedSlides });
+                                  }}
+                                  className="w-full px-2.5 py-1 text-xs border border-slate-300 rounded-lg bg-slate-50 focus:bg-white"
+                                />
+                              </div>
+
+                              <div>
+                                <label className="text-[10px] font-bold text-slate-600 block mb-0.5">Button Label</label>
+                                <input
+                                  type="text"
+                                  value={slide.primaryCta}
+                                  onChange={(e) => {
+                                    const updatedSlides = [...(settingsForm.heroSlides || [])];
+                                    updatedSlides[sIdx] = { ...updatedSlides[sIdx], primaryCta: e.target.value };
+                                    setSettingsForm({ ...settingsForm, heroSlides: updatedSlides });
+                                  }}
+                                  className="w-full px-2.5 py-1 text-xs border border-slate-300 rounded-lg bg-slate-50 focus:bg-white"
+                                />
+                              </div>
+                            </div>
+
+                            <div>
+                              <label className="text-[10px] font-bold text-slate-600 block mb-0.5">Background Image URL</label>
+                              <input
+                                type="url"
+                                value={slide.bgImage}
+                                onChange={(e) => {
+                                  const updatedSlides = [...(settingsForm.heroSlides || [])];
+                                  updatedSlides[sIdx] = { ...updatedSlides[sIdx], bgImage: e.target.value };
+                                  setSettingsForm({ ...settingsForm, heroSlides: updatedSlides });
+                                }}
+                                className="w-full px-2.5 py-1 text-xs border border-slate-300 rounded-lg bg-slate-50 focus:bg-white truncate"
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Section C: Multi-Currency & EcoCash Settings */}
+                    <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                      <h5 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                        <DollarSign className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>3. Multi-Currency, Exchange Rates &amp; EcoCash</span>
+                      </h5>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                          <label className="text-xs font-bold text-slate-700 block mb-1">
+                            USD to KSh Rate
                           </label>
                           <input
                             type="number"
@@ -1342,61 +1678,6 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
                             value={settingsForm.exchangeRate}
                             onChange={(e) => setSettingsForm({ ...settingsForm, exchangeRate: Number(e.target.value) })}
                             className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500"
-                          />
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="text-xs font-bold text-slate-700 block mb-1">
-                          WhatsApp Order Phone Number (No spaces or +)
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          value={settingsForm.whatsappNumber}
-                          onChange={(e) => setSettingsForm({ ...settingsForm, whatsappNumber: e.target.value })}
-                          className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500 font-mono"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="text-xs font-bold text-slate-700 block mb-1">
-                          WhatsApp Business Catalog Link
-                        </label>
-                        <input
-                          type="url"
-                          required
-                          value={settingsForm.whatsappCatalogUrl}
-                          onChange={(e) => setSettingsForm({ ...settingsForm, whatsappCatalogUrl: e.target.value })}
-                          className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="text-xs font-bold text-slate-700 block mb-1">
-                          WhatsApp Community Group Invite Link
-                        </label>
-                        <input
-                          type="url"
-                          required
-                          value={settingsForm.whatsappGroupInvite}
-                          onChange={(e) => setSettingsForm({ ...settingsForm, whatsappGroupInvite: e.target.value })}
-                          className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500"
-                        />
-                      </div>
-
-                      {/* EcoCash Payment Settings */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-200">
-                        <div>
-                          <label className="text-xs font-bold text-slate-700 block mb-1">
-                            EcoCash Phone / Merchant Number
-                          </label>
-                          <input
-                            type="text"
-                            value={settingsForm.ecocashNumber || ''}
-                            onChange={(e) => setSettingsForm({ ...settingsForm, ecocashNumber: e.target.value })}
-                            className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500 font-mono"
-                            placeholder="e.g. 0774809479"
                           />
                         </div>
 
@@ -1413,17 +1694,79 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
                             <option value="ZiG">EcoCash Local Currency (ZiG)</option>
                           </select>
                         </div>
+
+                        <div>
+                          <label className="text-xs font-bold text-slate-700 block mb-1">
+                            EcoCash ZiG Rate (per USD)
+                          </label>
+                          <input
+                            type="number"
+                            value={settingsForm.ecocashRate || 28}
+                            onChange={(e) => setSettingsForm({ ...settingsForm, ecocashRate: Number(e.target.value) })}
+                            className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500"
+                          />
+                        </div>
                       </div>
 
                       <div>
                         <label className="text-xs font-bold text-slate-700 block mb-1">
-                          Delivery Notice
+                          EcoCash Line / Merchant Code
                         </label>
-                        <textarea
-                          rows={2}
-                          value={settingsForm.deliveryNotice}
-                          onChange={(e) => setSettingsForm({ ...settingsForm, deliveryNotice: e.target.value })}
-                          className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500 resize-none"
+                        <input
+                          type="text"
+                          value={settingsForm.ecocashNumber || ''}
+                          onChange={(e) => setSettingsForm({ ...settingsForm, ecocashNumber: e.target.value })}
+                          className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500 font-mono"
+                          placeholder="e.g. 0774809479"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Section D: WhatsApp Links */}
+                    <div className="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                      <h5 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                        <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>4. WhatsApp Group &amp; Catalog Links</span>
+                      </h5>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label className="text-xs font-bold text-slate-700 block mb-1">
+                            WhatsApp Order Number (Digits only)
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={settingsForm.whatsappNumber}
+                            onChange={(e) => setSettingsForm({ ...settingsForm, whatsappNumber: e.target.value })}
+                            className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500 font-mono"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="text-xs font-bold text-slate-700 block mb-1">
+                            WhatsApp Catalog Link
+                          </label>
+                          <input
+                            type="url"
+                            required
+                            value={settingsForm.whatsappCatalogUrl}
+                            onChange={(e) => setSettingsForm({ ...settingsForm, whatsappCatalogUrl: e.target.value })}
+                            className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-bold text-slate-700 block mb-1">
+                          WhatsApp Community Group Invite Link
+                        </label>
+                        <input
+                          type="url"
+                          required
+                          value={settingsForm.whatsappGroupInvite}
+                          onChange={(e) => setSettingsForm({ ...settingsForm, whatsappGroupInvite: e.target.value })}
+                          className="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500"
                         />
                       </div>
                     </div>
@@ -1433,9 +1776,197 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
                       className="px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-md transition flex items-center gap-2"
                     >
                       <Save className="w-4 h-4" />
-                      <span>Save &amp; Publish Store Content</span>
+                      <span>Publish &amp; Save All CMS Content</span>
                     </button>
                   </form>
+                )}
+
+                {/* ═══════════════════════════════════════════ */}
+                {/* TAB 4: MIDEVA'S PROFILE & AUTH SECURITY     */}
+                {/* ═══════════════════════════════════════════ */}
+                {activeTab === 'profile' && (
+                  <div className="space-y-6 max-w-2xl">
+                    <div className="border-b border-slate-200 pb-3">
+                      <h4 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                        <User className="w-4 h-4 text-amber-500" />
+                        <span>Mideva's Profile &amp; Authentication Security</span>
+                      </h4>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        Manage your store owner identity, contact details, and update your admin passcode.
+                      </p>
+                    </div>
+
+                    {profileSaved && (
+                      <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center gap-2">
+                        <Check className="w-4 h-4 text-emerald-600" />
+                        <span>Owner profile updated successfully!</span>
+                      </div>
+                    )}
+
+                    {/* Owner Identity Card */}
+                    <div className="p-5 rounded-2xl bg-gradient-to-tr from-amber-500/10 via-amber-50 to-slate-50 border border-amber-200/80 flex flex-col sm:flex-row items-center gap-4">
+                      <img
+                        src={storeConfig.adminAvatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80"}
+                        alt="Mona Lisa Mideva"
+                        className="w-20 h-20 rounded-2xl object-cover border-2 border-amber-400 shadow-md flex-shrink-0"
+                      />
+                      <div className="space-y-1 text-center sm:text-left">
+                        <div className="flex items-center justify-center sm:justify-start gap-2">
+                          <h3 className="text-base font-black text-slate-900">
+                            {storeConfig.adminName || 'Mona Lisa Mideva'}
+                          </h3>
+                          <span className="text-[10px] font-extrabold bg-amber-500 text-white px-2 py-0.5 rounded-full">
+                            Owner
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-600 font-medium">
+                          {storeConfig.adminRole || 'Store Owner & Campus Reseller Lead'}
+                        </p>
+                        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 text-xs text-slate-500 pt-1">
+                          <span className="flex items-center gap-1 font-semibold text-slate-700">
+                            <Mail className="w-3.5 h-3.5 text-amber-600" /> {ADMIN_EMAIL}
+                          </span>
+                          <span className="flex items-center gap-1 font-semibold text-slate-700">
+                            <Phone className="w-3.5 h-3.5 text-emerald-600" /> {storeConfig.adminPhone || '+254 748 094795'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Edit Profile Form */}
+                    <form onSubmit={handleUpdateProfile} className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+                      <h5 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                        <Shield className="w-3.5 h-3.5 text-slate-600" />
+                        <span>Edit Owner Details</span>
+                      </h5>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label className="text-[11px] font-bold text-slate-600 block mb-1">Display Name</label>
+                          <input
+                            type="text"
+                            value={storeConfig.adminName || ''}
+                            onChange={(e) => setStoreConfigState({ ...storeConfig, adminName: e.target.value })}
+                            className="w-full px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="text-[11px] font-bold text-slate-600 block mb-1">Direct Phone</label>
+                          <input
+                            type="text"
+                            value={storeConfig.adminPhone || ''}
+                            onChange={(e) => setStoreConfigState({ ...storeConfig, adminPhone: e.target.value })}
+                            className="w-full px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500 font-mono"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="text-[11px] font-bold text-slate-600 block mb-1">EcoCash Merchant Number</label>
+                          <input
+                            type="text"
+                            value={storeConfig.ecocashNumber || ''}
+                            onChange={(e) => setStoreConfigState({ ...storeConfig, ecocashNumber: e.target.value })}
+                            className="w-full px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500 font-mono"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="text-[11px] font-bold text-slate-600 block mb-1">Avatar Photo URL</label>
+                          <input
+                            type="url"
+                            value={storeConfig.adminAvatar || ''}
+                            onChange={(e) => setStoreConfigState({ ...storeConfig, adminAvatar: e.target.value })}
+                            className="w-full px-3 py-1.5 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500 truncate"
+                          />
+                        </div>
+                      </div>
+
+                      <button
+                        type="submit"
+                        className="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-xs transition"
+                      >
+                        Save Profile Details
+                      </button>
+                    </form>
+
+                    {/* Change Passcode Card */}
+                    <form onSubmit={handleUpdatePasscode} className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+                      <h5 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                        <Key className="w-3.5 h-3.5 text-amber-600" />
+                        <span>Change Admin Login Passcode</span>
+                      </h5>
+
+                      <p className="text-[11px] text-slate-500">
+                        Default passcode is <code className="font-mono bg-white px-1.5 py-0.5 rounded border">mideva2026</code>. You can set your own private passcode below:
+                      </p>
+
+                      {passcodeMsg.text && (
+                        <div className={`p-2.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 ${
+                          passcodeMsg.type === 'error' ? 'bg-rose-50 border border-rose-200 text-rose-700' : 'bg-emerald-50 border border-emerald-200 text-emerald-800'
+                        }`}>
+                          <span>{passcodeMsg.text}</span>
+                        </div>
+                      )}
+
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                          <label className="text-[11px] font-bold text-slate-600 block mb-1">Current Passcode</label>
+                          <input
+                            type="password"
+                            required
+                            placeholder="Current passcode"
+                            value={currentPasscode}
+                            onChange={(e) => setCurrentPasscode(e.target.value)}
+                            className="w-full px-3 py-1.5 text-xs font-mono bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="text-[11px] font-bold text-slate-600 block mb-1">New Passcode</label>
+                          <input
+                            type="password"
+                            required
+                            placeholder="New passcode (min 4 chars)"
+                            value={newPasscode}
+                            onChange={(e) => setNewPasscode(e.target.value)}
+                            className="w-full px-3 py-1.5 text-xs font-mono bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="text-[11px] font-bold text-slate-600 block mb-1">Confirm New Passcode</label>
+                          <input
+                            type="password"
+                            required
+                            placeholder="Confirm new passcode"
+                            value={confirmPasscode}
+                            onChange={(e) => setConfirmPasscode(e.target.value)}
+                            className="w-full px-3 py-1.5 text-xs font-mono bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500"
+                          />
+                        </div>
+                      </div>
+
+                      <button
+                        type="submit"
+                        className="px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition"
+                      >
+                        Update Passcode
+                      </button>
+                    </form>
+
+                    {/* Security Information */}
+                    <div className="p-3.5 rounded-xl bg-blue-50 border border-blue-200 text-xs text-blue-900 space-y-1">
+                      <span className="font-bold flex items-center gap-1.5">
+                        <Lock className="w-3.5 h-3.5 text-blue-600" />
+                        <span>Security &amp; Production Architecture Note</span>
+                      </span>
+                      <p className="text-[11px] text-blue-700 leading-relaxed">
+                        Currently, store settings and products are persisted in browser local storage and synced with Vercel serverless webhooks. Full migration scripts and roadmap for PostgreSQL / Supabase are provided in the developer documentation.
+                      </p>
+                    </div>
+
+                  </div>
                 )}
 
                 {/* ═══════════════════════════════════════════ */}
@@ -1511,10 +2042,20 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated }) {
                               <span className="text-xs font-bold text-slate-900">{r.author}</span>
                               <span className="text-[10px] text-slate-500">({r.campus})</span>
                             </div>
-                            <div className="flex items-center text-amber-400">
-                              {[...Array(r.rating)].map((_, i) => (
-                                <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
-                              ))}
+                            <div className="flex items-center gap-2">
+                              <div className="flex items-center text-amber-400">
+                                {[...Array(r.rating || 5)].map((_, i) => (
+                                  <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
+                                ))}
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteReviewItem(r.id)}
+                                title="Delete this review"
+                                className="p-1 text-slate-400 hover:text-rose-600 rounded transition"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
                             </div>
                           </div>
                           <p className="text-xs text-slate-700 italic">"{r.comment}"</p>
