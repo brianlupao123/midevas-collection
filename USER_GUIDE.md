@@ -1,10 +1,10 @@
 # 🛍️ MIDEVA'S COLLECTION — BEGINNER-FRIENDLY STORE OWNER GUIDE
-### *The Complete, Step-by-Step Handbook for Mona Lisa Mideva*
+### *The Complete, Illustrated Handbook for Mona Lisa Mideva*
 **Store Name:** Mideva's Collection  
 **Live Website:** [https://midevas-collection.vercel.app](https://midevas-collection.vercel.app)  
 **Private Admin Link:** [https://midevas-collection.vercel.app/#admin](https://midevas-collection.vercel.app/#admin)  
 **Official WhatsApp Order Line:** `+254 748 094795` | **EcoCash Merchant:** `0774809479`  
-**Document Version:** 4.0.0 (Beginner Edition) | **Updated:** 19 October 2026  
+**Document Version:** 4.1.0 (Illustrated Edition) | **Updated:** 19 October 2026  
 
 ---
 
@@ -14,7 +14,7 @@ Welcome to your brand new digital store!
 
 If you have never run an online website before, **do not worry at all**. This system was specifically designed to be as easy to use as WhatsApp and Instagram. You do **not** need any coding knowledge or technical computer skills.
 
-This manual walks you through everything step-by-step: how to log in, how to view student orders, how to add new clothes or perfumes with your phone camera, how to change prices, and how to pack your bags for hostel delivery runs.
+This manual walks you through everything step-by-step with real visual screenshots: how to log in, how to view student orders, how to add new clothes or perfumes with your phone camera, how to change prices, and how to pack your bags for hostel delivery runs.
 
 ---
 
@@ -56,6 +56,8 @@ You can access your store management anytime on your phone or laptop.
 └────────────────────────────────────────────────────────┘
 ```
 
+![Staff & Admin Sign In](./docs/screenshots/handover-13-admin-signin.png)
+
 > 🔒 **Direct Shortcut:** You can also simply type `#admin` at the end of your link:  
 > [https://midevas-collection.vercel.app/#admin](https://midevas-collection.vercel.app/#admin)
 
@@ -63,7 +65,10 @@ You can access your store management anytime on your phone or laptop.
 
 ## 🧭 CHAPTER 3: Understanding What You See on the Screen
 
-### A. The Top Header Bar (What every button does)
+### A. The Public Storefront (What Students See)
+Students arrive at your clean, high-contrast store featuring your moving announcement ticker, category pills, and full-bleed hero promotional banner.
+
+![Desktop Storefront Overview](./docs/screenshots/handover-01-storefront-hero.png)
 
 ```
 [ All ]  [ MC Logo ]  [ 👤 Sign In / Profile ]  [ 🔍 Search... ]  [ $ USD ▾ ]  [ 🌙 ]  [ 🛒 Quote ]
@@ -80,9 +85,10 @@ You can access your store management anytime on your phone or laptop.
 
 ---
 
-### B. The 8 Tabs Inside Your Admin Dashboard
+### B. The Admin Master Dashboard Workspace
+Once logged in, your full-width store control center opens:
 
-When you are logged into your Admin Workspace, you have 8 tabs at your fingertips:
+![Admin Master Dashboard Overview](./docs/screenshots/handover-14-admin-dashboard.png)
 
 | Tab Name | What It Does | When You Use It |
 |:---|:---|:---|
@@ -112,8 +118,15 @@ Here is the simple daily routine to run your campus business like a professional
 ---
 
 ### 💬 2. Daytime Routine (12:00 PM) — Receiving Student Orders
-When a student browses your site and clicks **"Send Order via WhatsApp"**, your WhatsApp will buzz with a message that looks like this:
+Students browse items in the Amazon-style quick-view modal and add items to their Quote cart.
 
+![Product Detail Inspection Modal](./docs/screenshots/handover-04-product-detail.png)
+
+When a student taps **"Send Order via WhatsApp"**, the slide-out cart formats an itemized message:
+
+![Slide-Out Cart Drawer](./docs/screenshots/handover-05-cart-drawer.png)
+
+Your WhatsApp will buzz with an order receipt:
 ```text
 Hello Mideva! 🛍️
 I'd like to place an order from Mideva's Collection:
@@ -142,7 +155,9 @@ When you are ready to walk across campus and deliver items:
    **🟡 Out on Delivery Run** *(Students will see you are currently walking campus dropping orders!)*
 2. In the top command strip, tap **📋 WhatsApp Delivery Roster**.
 3. A complete delivery checklist is instantly copied to your phone clipboard!
-4. Paste it into your personal WhatsApp notes. It looks like this:
+4. Paste it into your personal WhatsApp notes or chat:
+
+![Orders and Quotes Manager](./docs/screenshots/handover-16-admin-orders.png)
 
 ```text
 📋 MIDEVA'S COLLECTION — CAMPUS DELIVERY RUN
@@ -196,7 +211,10 @@ Want to sell a new dress, shoes, or snack you just brought to campus?
 
 ### Guide 2: How to Change Prices or Mark an Item "Sold Out"
 1. Tap the **📊 Live Stock & Pricing** tab.
-2. You will see a neat table of all your products.
+2. You will see a neat table of all your products with steppers:
+
+![Live Stock and Rapid Price Steppers](./docs/screenshots/handover-15-admin-livestock.png)
+
 3. **To change a price:**
    - Find the item in the list.
    - Tap into the **Reg ($)** box or **Comrade ($)** box and type the new price (e.g. `6.50`).
@@ -214,6 +232,9 @@ Want to sell a new dress, shoes, or snack you just brought to campus?
 The moving text bar at the very top of your website tells students what’s happening today.
 
 1. Go to **🎨 CMS Content** tab.
+
+![CMS Content Manager](./docs/screenshots/handover-17-admin-cms.png)
+
 2. Under **Top Announcement Ticker**, you will see the text box.
 3. Type whatever announcement you want, for example:  
    *"🔥 WEEKEND SALE: ALL LADIES HANDBAGS UNDER $6 • FREE DELIVERY TO HALL 4 & HALL 2 TODAY!"*
@@ -237,20 +258,21 @@ To make sure nobody else on campus can log into your admin:
 
 ## 🎓 CHAPTER 6: What Your Student Customers Experience
 
-Understanding what students see helps you answer their questions:
+### 1. Student Registration & Email Photo Avatar
+When a student creates an account, their profile photo is fetched automatically from their email or uploaded:
 
-1. **Browsing as a Guest:**
-   - Any student can open [https://midevas-collection.vercel.app](https://midevas-collection.vercel.app) and browse immediately.
-   - They do **not** need to create an account or enter a password just to look at clothes or snacks.
+![Comrade Registration Form](./docs/screenshots/handover-10-auth-modal.png)
 
-2. **Comrade Registration (1-Minute Setup):**
-   - When a student taps **"Sign In"** at the top left, they enter their Name, WhatsApp number, Hostel Room, and Email.
-   - The system automatically loads their profile photo from their email (or lets them upload a photo from their phone) and puts their photo right in the top header bar!
-   - Their hostel room is saved permanently on their phone, so every time they order, their room number is already filled in.
+Once registered, their photo replaces the generic icon in the header bar:
 
-3. **Student Privileges are Strictly Limited:**
-   - Students have **zero ability** to change prices, edit stock, or see your admin controls.
-   - They can only view items, write reviews, and send orders to your WhatsApp.
+![Signed-In Comrade Header Profile](./docs/screenshots/handover-11-customer-logged-in.png)
+
+---
+
+### 2. Mobile Smartphone Shopping
+On mobile screens, students enjoy a sticky touch navigation bar for seamless browsing between classes:
+
+![Mobile Smartphone Experience](./docs/screenshots/handover-07-mobile-view.png)
 
 ---
 
@@ -293,4 +315,4 @@ Print or screenshot this table on your phone for quick reference:
 
 ---
 
-*Mideva's Collection — Written with care for Mona Lisa Mideva. You are ready to start selling! 🚀*
+*Mideva's Collection — Illustrated Beginner Guide. Certified and Ready for Production 🚀*
