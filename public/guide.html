@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <title>Mideva's Collection — Interactive Phone Guide</title>
+  <meta name="description" content="Step-by-step interactive mobile handbook for Mona Lisa Mideva to run Mideva's Collection on her phone.">
+  <meta name="theme-color" content="#b45309">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛍️</text></svg>">
+  <style>
+    :root {
+      --amber: #f59e0b;
+      --amber-dark: #b45309;
+      --amber-light: #fef3c7;
+      --bg: #090d16;
+      --surface: #131c2e;
+      --surface-card: #1e293b;
+      --border: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --green: #10b981;
+      --green-light: #d1fae5;
+      --rose: #f43f5e;
+      --radius: 16px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding-bottom: 90px;
+    }
+    a { color: var(--amber); text-decoration: none; }
+    
+    /* Top Sticky Mobile Header */
+    .mobile-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(19, 28, 46, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-icon {
+      font-size: 24px;
+      background: var(--amber-dark);
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .brand-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.2;
+    }
+    .brand-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .status-pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--green);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { opacity: 0.4; }
+      50% { opacity: 1; }
+      100% { opacity: 0.4; }
+    }
+
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    /* Hero Banner */
+    .hero-card {
+      background: linear-gradient(135deg, #78350f, #b45309, #be123c);
+      border-radius: 20px;
+      padding: 24px 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.4);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+    }
+    .hero-title {
+      font-size: 22px;
+      font-weight: 900;
+      line-height: 1.25;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+    .hero-lead {
+      font-size: 13px;
+      color: var(--amber-light);
+      margin-bottom: 16px;
+    }
+
+    /* Fast Action Buttons Grid */
+    .action-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .btn-action {
+      background: #fff;
+      color: #0f172a;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 12px 14px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      border: none;
+      cursor: pointer;
+      text-align: center;
+      transition: transform 0.1s;
+    }
+    .btn-action:active { transform: scale(0.97); }
+    .btn-action.primary {
+      background: #0f172a;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    /* Credentials Card */
+    .credentials-box {
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+    .cred-header {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--amber);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .cred-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(0,0,0,0.25);
+      padding: 10px 12px;
+      border-radius: 10px;
+      margin-bottom: 8px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .cred-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .cred-value {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      font-family: monospace;
+      word-break: break-all;
+      margin: 0 8px;
+    }
+    .btn-copy {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: var(--amber);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .btn-copy.copied {
+      background: var(--green);
+      color: #fff;
+      border-color: var(--green);
+    }
+
+    /* Daily Checklist Card */
+    .checklist-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 16px;
+      margin-bottom: 20px;
+    }
+    .check-title {
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .progress-bar-bg {
+      background: rgba(255,255,255,0.1);
+      height: 6px;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 10px 0 16px;
+    }
+    .progress-bar-fill {
+      background: linear-gradient(90deg, var(--amber), var(--green));
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      cursor: pointer;
+    }
+    .check-item:last-child { border-bottom: none; }
+    .custom-checkbox {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+      transition: all 0.2s;
+    }
+    .check-item.done .custom-checkbox {
+      background: var(--green);
+      border-color: var(--green);
+      color: #fff;
+    }
+    .check-item.done .check-text {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+    .check-text h4 { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 2px; }
+    .check-text p { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+
+    /* Accordion Chapters */
+    .chapter {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 12px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .chapter-header {
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      background: var(--surface-card);
+      user-select: none;
+    }
+    .chapter-header h3 {
+      font-size: 15px;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .chapter-arrow {
+      font-size: 18px;
+      color: var(--amber);
+      transition: transform 0.25s ease;
+    }
+    .chapter.open .chapter-arrow { transform: rotate(180deg); }
+    .chapter-body {
+      padding: 16px;
+      display: none;
+      border-top: 1px solid var(--border);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .chapter.open .chapter-body { display: block; }
+
+    /* Screenshot Images */
+    .screenshot-frame {
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin: 14px 0;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+    }
+    .screenshot-frame img {
+      width: 100%;
+      height: auto;
+      display: block;
+      cursor: zoom-in;
+    }
+    .screenshot-cap {
+      padding: 8px 12px;
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+      background: #0a0f1d;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    /* Template Copy Boxes */
+    .copy-template {
+      background: #0b1120;
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      margin: 12px 0;
+      position: relative;
+    }
+    .copy-template pre {
+      font-family: inherit;
+      font-size: 12px;
+      white-space: pre-wrap;
+      color: #e2e8f0;
+      margin-bottom: 10px;
+    }
+
+    /* Fixed Bottom Action Bar for Phone */
+    .mobile-bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(19, 28, 46, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
+      padding: 10px 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      z-index: 1000;
+      box-shadow: 0 -10px 25px rgba(0,0,0,0.5);
+    }
+    .bottom-btn {
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 800;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .bottom-btn.store {
+      background: var(--surface-card);
+      color: #fff;
+      border: 1px solid var(--border);
+    }
+    .bottom-btn.admin {
+      background: linear-gradient(135deg, var(--amber-dark), var(--amber));
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+    }
+
+    /* Image Lightbox Modal */
+    .lightbox-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      z-index: 2000;
+      padding: 20px;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+    .lightbox-modal.active { display: flex; }
+    .lightbox-modal img {
+      max-width: 100%;
+      max-height: 85vh;
+      border-radius: 12px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+    }
+    .lightbox-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      font-size: 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sticky Top Mobile Bar -->
+  <header class="mobile-header">
+    <div class="header-brand">
+      <div class="brand-icon">🛍️</div>
+      <div>
+        <div class="brand-title">Mideva's Collection</div>
+        <div class="brand-sub">Owner Phone Handbook</div>
+      </div>
+    </div>
+    <div class="status-pill">
+      <span class="status-dot"></span> Store Live
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- Hero Card -->
+    <div class="hero-card">
+      <span class="hero-badge">Welcome, Mona Lisa! 🌟</span>
+      <h1 class="hero-title">Your Complete Mobile Guide</h1>
+      <p class="hero-lead">
+        Designed specially for your phone. Tap any button below to jump into your store, copy your secret passcode, or manage orders without touching a computer.
+      </p>
+
+      <div class="action-grid">
+        <a href="https://midevas-collection.vercel.app" target="_blank" class="btn-action primary">
+          <span>🌐 View Store</span>
+        </a>
+        <a href="https://midevas-collection.vercel.app/#admin" target="_blank" class="btn-action">
+          <span>👑 Open Admin</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Quick Credentials Box -->
+    <div class="credentials-box">
+      <div class="cred-header">
+        <span>🔑 Secret Owner Credentials</span>
+        <span style="font-size:10px; color:var(--text-muted);">TAP TO COPY</span>
+      </div>
+
+      <div class="cred-row">
+        <span class="cred-label">Passcode</span>
+        <span class="cred-value" id="val-passcode">mideva2026</span>
+        <button class="btn-copy" onclick="copyText('mideva2026', this)">Copy</button>
+      </div>
+
+      <div class="cred-row">
+        <span class="cred-label">Email</span>
+        <span class="cred-value" id="val-email">monalisamideva@gmail.com</span>
+        <button class="btn-copy" onclick="copyText('monalisamideva@gmail.com', this)">Copy</button>
+      </div>
+
+      <div class="cred-row">
+        <span class="cred-label">Store Link</span>
+        <span class="cred-value">midevas-collection.vercel.app</span>
+        <button class="btn-copy" onclick="copyText('https://midevas-collection.vercel.app', this)">Copy Link</button>
+      </div>
+
+      <div class="cred-row">
+        <span class="cred-label">WhatsApp</span>
+        <span class="cred-value">+254 748 094795</span>
+        <a href="https://wa.me/254748094795" target="_blank" class="btn-copy" style="text-align:center;">Chat</a>
+      </div>
+    </div>
+
+    <!-- Interactive Daily Routine Checklist -->
+    <div class="checklist-box">
+      <div class="check-title">
+        <span>☀️ Daily Campus Routine</span>
+        <span id="progress-text" style="font-size:12px; color:var(--amber); font-weight:700;">0/4 Done</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progress-bar"></div>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this, 'task1')">
+        <div class="custom-checkbox">✓</div>
+        <div class="check-text">
+          <h4>08:00 AM — Morning: Open Store & Post Flyer</h4>
+          <p>Check status is 🟢 Open. Tap 🎨 Flyers, save WhatsApp Story poster, and share on your status.</p>
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this, 'task2')">
+        <div class="custom-checkbox">✓</div>
+        <div class="check-text">
+          <h4>12:00 PM — Daytime: Check Incoming Orders</h4>
+          <p>Review student requests on WhatsApp. Reply with drop-off time. View saved orders in Admin.</p>
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this, 'task3')">
+        <div class="custom-checkbox">✓</div>
+        <div class="check-text">
+          <h4>04:00 PM — Afternoon: Hostel Delivery Run</h4>
+          <p>Switch status to 🟡 Delivery Run. Copy 📋 WhatsApp Delivery Roster, pack bag, and collect payments.</p>
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleCheck(this, 'task4')">
+        <div class="custom-checkbox">✓</div>
+        <div class="check-text">
+          <h4>08:00 PM — Evening: Confirm Delivered & Close</h4>
+          <p>Mark completed orders as Delivered. Reduce stock for sold-out items. Tap 🔴 Store Closed to study.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Accordion Chapters -->
+
+    <!-- Chapter 1 -->
+    <div class="chapter open">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <h3><span>📱</span> Chapter 1: The Two Links You Need</h3>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <p>Save these two links in your phone’s starred messages:</p>
+        <br>
+        <p><strong>1. Public Storefront (Share with Students):</strong><br>
+          <a href="https://midevas-collection.vercel.app" target="_blank">https://midevas-collection.vercel.app</a><br>
+          <small style="color:var(--text-muted)">Send this link on campus WhatsApp groups and status.</small>
+        </p>
+        <br>
+        <p><strong>2. Private Admin Dashboard (For You Only):</strong><br>
+          <a href="https://midevas-collection.vercel.app/#admin" target="_blank">https://midevas-collection.vercel.app/#admin</a><br>
+          <small style="color:var(--text-muted)">Your secret back-office where you manage products and orders.</small>
+        </p>
+
+        <div style="margin-top:14px; background:rgba(245,158,11,0.1); border-left:3px solid var(--amber); padding:10px 12px; border-radius:8px;">
+          <strong>💡 Add Store to Your Phone Home Screen:</strong><br>
+          Open the website in Chrome or Safari. Tap the menu dots (or Share button) -> select <strong>"Add to Home Screen"</strong>. It becomes an app on your phone!
+        </div>
+      </div>
+    </div>
+
+    <!-- Chapter 2 -->
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <h3><span>🔑</span> Chapter 2: How to Log Into Admin</h3>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <p>You can unlock your store anytime from your phone:</p>
+        <ol style="margin-left: 20px; margin-top: 8px;">
+          <li>Open <strong>https://midevas-collection.vercel.app</strong> on your phone.</li>
+          <li>Tap the <strong>Sign In</strong> profile icon at top left.</li>
+          <li>Tap <strong>"Store Staff & Admin Sign In"</strong>.</li>
+          <li>Enter Email: <code>monalisamideva@gmail.com</code></li>
+          <li>Enter Passcode: <code>mideva2026</code></li>
+          <li>Tap <strong>Unlock Workspace</strong>. 🎉 You are in!</li>
+        </ol>
+
+        <div class="screenshot-frame">
+          <img src="screenshots/handover-13-admin-signin.png" alt="Admin Passcode Screen" onclick="openLightbox(this.src)">
+          <div class="screenshot-cap">Tap image to enlarge: The Admin Passcode Screen</div>
+        </div>
+
+        <p><em>Direct Shortcut:</em> You can also just type <code>#admin</code> at the end of the website URL to go straight to login.</p>
+      </div>
+    </div>
+
+    <!-- Chapter 3 -->
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <h3><span>🧭</span> Chapter 3: What You See on Screen</h3>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <p><strong>A. What Students See:</strong></p>
+        <p>Clean, high-contrast store with moving announcement bar, category shortcuts, and live search.</p>
+
+        <div class="screenshot-frame">
+          <img src="screenshots/handover-01-storefront-hero.png" alt="Storefront View" onclick="openLightbox(this.src)">
+          <div class="screenshot-cap">What students see when shopping</div>
+        </div>
+
+        <p><strong>B. Your Admin Control Center:</strong></p>
+        <p>Top status bar shows live revenue, active orders, and 8 control tabs:</p>
+
+        <div class="screenshot-frame">
+          <img src="screenshots/handover-14-admin-dashboard.png" alt="Admin Dashboard" onclick="openLightbox(this.src)">
+          <div class="screenshot-cap">Your Admin Workspace Dashboard</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chapter 4 -->
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <h3><span>💬</span> Chapter 4: Student Orders & WhatsApp</h3>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <p>Students browse items, pick their size and color, and tap <strong>"Send Order via WhatsApp"</strong>.</p>
+
+        <div class="screenshot-frame">
+          <img src="screenshots/handover-05-cart-drawer.png" alt="Cart Drawer" onclick="openLightbox(this.src)">
+          <div class="screenshot-cap">The WhatsApp Order Cart Drawer</div>
+        </div>
+
+        <p>Your WhatsApp will receive an itemized receipt like this:</p>
+        
+        <div class="copy-template">
+          <pre>Hello Mideva! 🛍️
+I'd like to place an order from Mideva's Collection:
+• 1× Classic Button-Up Cotton Shirt (Size: L) - $7.00
+• 1× Vanilla Scent EDP Pocket Perfume - $2.50
+Total: $9.50 (approx KSh 1,235)
+Delivery: Hall 4 Room 204
+Customer: Tariro Moyo (+254 748 094 795)
+Payment: Cash on Delivery / EcoCash</pre>
+          <button class="btn-copy" onclick="copyTemplate(this)">Copy Reply Template</button>
+        </div>
+
+        <p><strong>What you do:</strong> Reply with your delivery time (e.g. <em>"Order received! I will drop off at Hall 4 at 4:30 PM"</em>). The order is already safely saved in your Admin!</p>
+      </div>
+    </div>
+
+    <!-- Chapter 5 -->
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <h3><span>🚶‍♀️</span> Chapter 5: Packing for Hostel Delivery</h3>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <p>When you are ready to walk across campus and deliver items:</p>
+        <ol style="margin-left:20px; margin-top:8px;">
+          <li>Switch store status button to <strong>🟡 Out on Delivery Run</strong>.</li>
+          <li>Tap <strong>📋 WhatsApp Delivery Roster</strong> in your Admin.</li>
+          <li>A clean packing list is copied to your phone clipboard!</li>
+          <li>Paste it into your personal WhatsApp notes:</li>
+        </ol>
+
+        <div class="copy-template">
+          <pre>📋 MIDEVA'S COLLECTION — CAMPUS DELIVERY RUN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📍 DROP-OFF 1: Tariro Moyo (Hall 4 Room 204)
+   📦 1× Classic Button-Up Shirt (L)
+   💰 Collect: $9.50 (or KSh 1,235 / EcoCash)
+   📞 0774 809 479
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Total to collect: $9.50</pre>
+        </div>
+
+        <div class="screenshot-frame">
+          <img src="screenshots/handover-16-admin-orders.png" alt="Orders Manager" onclick="openLightbox(this.src)">
+          <div class="screenshot-cap">Orders & Quotes Manager</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chapter 6 -->
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <h3><span>🛠️</span> Chapter 6: Fast "How-To" Steps</h3>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <p><strong>📸 Add a New Item with Your Phone Camera:</strong></p>
+        <p>1. In Admin, tap <strong>🛍️ Product Catalog</strong> ➔ <strong>+ Add New Product</strong>.<br>
+           2. Type name, price, and category.<br>
+           3. Tap <strong>Upload Photo</strong> ➔ snap a photo with your phone camera!<br>
+           4. Tap <strong>Save Product</strong> — it is immediately live for students to buy!
+        </p>
+        <br>
+        <p><strong>💰 Change Prices or Mark Sold Out:</strong></p>
+        <p>1. Tap <strong>📊 Live Stock & Pricing</strong>.<br>
+           2. Type new price in the box — saves automatically.<br>
+           3. Type <strong>0</strong> in the stock box to mark it <strong>"Sold Out"</strong>.
+        </p>
+
+        <div class="screenshot-frame">
+          <img src="screenshots/handover-15-admin-livestock.png" alt="Live Stock Controls" onclick="openLightbox(this.src)">
+          <div class="screenshot-cap">Live Stock & Fast Price Controls</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chapter 7 -->
+    <div class="chapter">
+      <div class="chapter-header" onclick="toggleChapter(this)">
+        <h3><span>❓</span> Chapter 7: Beginner FAQ</h3>
+        <span class="chapter-arrow">▼</span>
+      </div>
+      <div class="chapter-body">
+        <p><strong>Q: How do students pay me?</strong><br>
+        Cash on Delivery when you hand them their bag at their hostel, or EcoCash/M-Pesa to your phone number.</p>
+        <br>
+        <p><strong>Q: Can students see my profits or change prices?</strong><br>
+        <strong>Never.</strong> Student accounts have customer-only access. Only you have the secret passcode.</p>
+        <br>
+        <p><strong>Q: What if I make a typo in a product name?</strong><br>
+        Go to <strong>Product Catalog</strong>, tap yellow <strong>Edit</strong> button, fix it, and tap <strong>Update</strong>.</p>
+        <br>
+        <p><strong>Q: What if I mess up my catalog?</strong><br>
+        Tap the red button in Product Catalog: <strong>"Reset to Factory Catalog"</strong> to safely restore all 52 original items.</p>
+      </div>
+    </div>
+
+    <!-- Share Card -->
+    <div style="background:linear-gradient(135deg, #1e1b4b, #312e81); border:1px solid #4338ca; border-radius:var(--radius); padding:18px; margin-top:20px; text-align:center;">
+      <h3 style="font-size:16px; font-weight:800; color:#fff; margin-bottom:8px;">📢 Share Store on WhatsApp</h3>
+      <p style="font-size:12px; color:#c7d2fe; margin-bottom:14px;">Tap below to instantly open WhatsApp and post your store announcement:</p>
+      <a href="https://wa.me/?text=%F0%9F%9B%8D%EF%B8%8F%20*MIDEVA'S%20COLLECTION*%20is%20now%20live%20on%20campus!%20Shop%20clothes,%20perfumes,%20bags%20and%20snacks%20delivered%20straight%20to%20your%20hostel%20room.%20Order%20here:%20https://midevas-collection.vercel.app" target="_blank" class="btn-action" style="background:#25d366; color:#fff; justify-content:center;">
+        <span>📲 Share Store to WhatsApp</span>
+      </a>
+    </div>
+
+    <footer style="text-align:center; padding:30px 10px 10px; font-size:11px; color:var(--text-muted);">
+      Mideva's Collection — Interactive Phone Handbook v4.2<br>
+      Certified Production Ready • Mona Lisa Mideva
+    </footer>
+
+  </div>
+
+  <!-- Bottom Floating Navigation for Quick Access on Phone -->
+  <div class="mobile-bottom-bar">
+    <a href="https://midevas-collection.vercel.app" target="_blank" class="bottom-btn store">
+      <span>🌐 Visit Store</span>
+    </a>
+    <a href="https://midevas-collection.vercel.app/#admin" target="_blank" class="bottom-btn admin">
+      <span>👑 Open Admin</span>
+    </a>
+  </div>
+
+  <!-- Lightbox Modal for Tap-to-Zoom Screenshots -->
+  <div class="lightbox-modal" id="lightbox" onclick="closeLightbox()">
+    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+    <img id="lightbox-img" src="" alt="Enlarged screenshot">
+  </div>
+
+  <script>
+    // Copy helper with visual feedback
+    function copyText(text, btn) {
+      navigator.clipboard.writeText(text).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = 'Copied! ✓';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.innerText = orig;
+          btn.classList.remove('copied');
+        }, 2000);
+      }).catch(err => {
+        alert('Copied: ' + text);
+      });
+    }
+
+    function copyTemplate(btn) {
+      const pre = btn.previousElementSibling;
+      if (pre) copyText(pre.innerText, btn);
+    }
+
+    // Interactive Accordion
+    function toggleChapter(header) {
+      const chapter = header.parentElement;
+      chapter.classList.toggle('open');
+    }
+
+    // Daily Checklist State Persistence in Phone LocalStorage
+    const CHECK_KEY = 'mideva_daily_routine_state_v1';
+    function loadChecklist() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(CHECK_KEY) || '{}');
+        const items = document.querySelectorAll('.check-item');
+        let count = 0;
+        items.forEach((item, idx) => {
+          const key = 'task' + (idx + 1);
+          if (saved[key]) {
+            item.classList.add('done');
+            count++;
+          } else {
+            item.classList.remove('done');
+          }
+        });
+        updateProgress(count, items.length);
+      } catch (e) {}
+    }
+
+    function toggleCheck(item, key) {
+      item.classList.toggle('done');
+      try {
+        const saved = JSON.parse(localStorage.getItem(CHECK_KEY) || '{}');
+        saved[key] = item.classList.contains('done');
+        localStorage.setItem(CHECK_KEY, JSON.stringify(saved));
+      } catch (e) {}
+      
+      const all = document.querySelectorAll('.check-item');
+      const done = document.querySelectorAll('.check-item.done');
+      updateProgress(done.length, all.length);
+    }
+
+    function updateProgress(done, total) {
+      const pct = Math.round((done / total) * 100);
+      const bar = document.getElementById('progress-bar');
+      const txt = document.getElementById('progress-text');
+      if (bar) bar.style.width = pct + '%';
+      if (txt) {
+        if (done === total) {
+          txt.innerText = '🎉 All Done Today!';
+          txt.style.color = 'var(--green)';
+        } else {
+          txt.innerText = done + '/' + total + ' Done';
+          txt.style.color = 'var(--amber)';
+        }
+      }
+    }
+
+    // Lightbox modal for phone zooming
+    function openLightbox(src) {
+      const modal = document.getElementById('lightbox');
+      const img = document.getElementById('lightbox-img');
+      img.src = src;
+      modal.classList.add('active');
+    }
+
+    function closeLightbox() {
+      const modal = document.getElementById('lightbox');
+      modal.classList.remove('active');
+    }
+
+    // Auto-init
+    window.addEventListener('DOMContentLoaded', loadChecklist);
+  </script>
+</body>
+</html>
