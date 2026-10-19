@@ -56,7 +56,7 @@ You can access your store management anytime on your phone or laptop.
 └────────────────────────────────────────────────────────┘
 ```
 
-![Staff & Admin Sign In](./docs/screenshots/handover-13-admin-signin.png)
+![Staff & Admin Sign In](https://midevas-collection.vercel.app/screenshots/handover-13-admin-signin.png)
 
 > 🔒 **Direct Shortcut:** You can also simply type `#admin` at the end of your link:  
 > [https://midevas-collection.vercel.app/#admin](https://midevas-collection.vercel.app/#admin)
@@ -68,7 +68,7 @@ You can access your store management anytime on your phone or laptop.
 ### A. The Public Storefront (What Students See)
 Students arrive at your clean, high-contrast store featuring your moving announcement ticker, category pills, and full-bleed hero promotional banner.
 
-![Desktop Storefront Overview](./docs/screenshots/handover-01-storefront-hero.png)
+![Desktop Storefront Overview](https://midevas-collection.vercel.app/screenshots/handover-01-storefront-hero.png)
 
 ```
 [ All ]  [ MC Logo ]  [ 👤 Sign In / Profile ]  [ 🔍 Search... ]  [ $ USD ▾ ]  [ 🌙 ]  [ 🛒 Quote ]
@@ -88,7 +88,7 @@ Students arrive at your clean, high-contrast store featuring your moving announc
 ### B. The Admin Master Dashboard Workspace
 Once logged in, your full-width store control center opens:
 
-![Admin Master Dashboard Overview](./docs/screenshots/handover-14-admin-dashboard.png)
+![Admin Master Dashboard Overview](https://midevas-collection.vercel.app/screenshots/handover-14-admin-dashboard.png)
 
 | Tab Name | What It Does | When You Use It |
 |:---|:---|:---|
@@ -120,11 +120,11 @@ Here is the simple daily routine to run your campus business like a professional
 ### 💬 2. Daytime Routine (12:00 PM) — Receiving Student Orders
 Students browse items in the Amazon-style quick-view modal and add items to their Quote cart.
 
-![Product Detail Inspection Modal](./docs/screenshots/handover-04-product-detail.png)
+![Product Detail Inspection Modal](https://midevas-collection.vercel.app/screenshots/handover-04-product-detail.png)
 
 When a student taps **"Send Order via WhatsApp"**, the slide-out cart formats an itemized message:
 
-![Slide-Out Cart Drawer](./docs/screenshots/handover-05-cart-drawer.png)
+![Slide-Out Cart Drawer](https://midevas-collection.vercel.app/screenshots/handover-05-cart-drawer.png)
 
 Your WhatsApp will buzz with an order receipt:
 ```text
@@ -157,7 +157,7 @@ When you are ready to walk across campus and deliver items:
 3. A complete delivery checklist is instantly copied to your phone clipboard!
 4. Paste it into your personal WhatsApp notes or chat:
 
-![Orders and Quotes Manager](./docs/screenshots/handover-16-admin-orders.png)
+![Orders and Quotes Manager](https://midevas-collection.vercel.app/screenshots/handover-16-admin-orders.png)
 
 ```text
 📋 MIDEVA'S COLLECTION — CAMPUS DELIVERY RUN
@@ -213,7 +213,7 @@ Want to sell a new dress, shoes, or snack you just brought to campus?
 1. Tap the **📊 Live Stock & Pricing** tab.
 2. You will see a neat table of all your products with steppers:
 
-![Live Stock and Rapid Price Steppers](./docs/screenshots/handover-15-admin-livestock.png)
+![Live Stock and Rapid Price Steppers](https://midevas-collection.vercel.app/screenshots/handover-15-admin-livestock.png)
 
 3. **To change a price:**
    - Find the item in the list.
@@ -233,7 +233,7 @@ The moving text bar at the very top of your website tells students what’s happ
 
 1. Go to **🎨 CMS Content** tab.
 
-![CMS Content Manager](./docs/screenshots/handover-17-admin-cms.png)
+![CMS Content Manager](https://midevas-collection.vercel.app/screenshots/handover-17-admin-cms.png)
 
 2. Under **Top Announcement Ticker**, you will see the text box.
 3. Type whatever announcement you want, for example:  
@@ -261,18 +261,18 @@ To make sure nobody else on campus can log into your admin:
 ### 1. Student Registration & Email Photo Avatar
 When a student creates an account, their profile photo is fetched automatically from their email or uploaded:
 
-![Comrade Registration Form](./docs/screenshots/handover-10-auth-modal.png)
+![Comrade Registration Form](https://midevas-collection.vercel.app/screenshots/handover-10-auth-modal.png)
 
 Once registered, their photo replaces the generic icon in the header bar:
 
-![Signed-In Comrade Header Profile](./docs/screenshots/handover-11-customer-logged-in.png)
+![Signed-In Comrade Header Profile](https://midevas-collection.vercel.app/screenshots/handover-11-customer-logged-in.png)
 
 ---
 
 ### 2. Mobile Smartphone Shopping
 On mobile screens, students enjoy a sticky touch navigation bar for seamless browsing between classes:
 
-![Mobile Smartphone Experience](./docs/screenshots/handover-07-mobile-view.png)
+![Mobile Smartphone Experience](https://midevas-collection.vercel.app/screenshots/handover-07-mobile-view.png)
 
 ---
 
