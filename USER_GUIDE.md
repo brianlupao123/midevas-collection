@@ -1,175 +1,296 @@
-# 🛍️ MIDEVA'S COLLECTION — OFFICIAL USER MANUAL & ACCESS GUIDE
-### *Complete Operational Manual for Store Owners, Campus Resellers, Comrades & Guests*
-**Written for:** Mona Lisa Mideva (`monalisamideva@gmail.com`)  
-**Production Store URL:** [https://midevas-collection.vercel.app](https://midevas-collection.vercel.app)  
-**WhatsApp Order Line:** `+254 748 094795`  
-**EcoCash Line:** `0774809479`  
-**Documentation Version:** 3.2.0 | **Updated:** 19 October 2026  
+# 🛍️ MIDEVA'S COLLECTION — BEGINNER-FRIENDLY STORE OWNER GUIDE
+### *The Complete, Step-by-Step Handbook for Mona Lisa Mideva*
+**Store Name:** Mideva's Collection  
+**Live Website:** [https://midevas-collection.vercel.app](https://midevas-collection.vercel.app)  
+**Private Admin Link:** [https://midevas-collection.vercel.app/#admin](https://midevas-collection.vercel.app/#admin)  
+**Official WhatsApp Order Line:** `+254 748 094795` | **EcoCash Merchant:** `0774809479`  
+**Document Version:** 4.0.0 (Beginner Edition) | **Updated:** 19 October 2026  
 
 ---
 
-## 🔑 1. Complete Login Credentials & Access Matrix
+## 🌟 Welcome, Mona Lisa!
 
-Mideva's Collection enforces **strict Role-Based Access Control (RBAC)** across four tiers of users:
+Welcome to your brand new digital store! 
 
-| User Tier | Target Audience | Login / Activation Method | Credentials | Privileges & Boundaries |
-|:---|:---|:---|:---|:---|
-| **1. Guest / Visitor** | First-time students, campus browsers | No login needed. Default unauthenticated state on page load. | None required | • Browse 52+ catalog items<br/>• Filter by category & price<br/>• Add items to Quote cart<br/>• Generate pre-filled WhatsApp quotes<br/>• Toggle USD / KSh / EcoCash |
-| **2. Comrade (Customer)** | Registered university students living in halls | Click **Sign In** on header → **Create Account** | • Full Name<br/>• WhatsApp Phone<br/>• Hostel & Room No.<br/>• Email *(syncs avatar photo)* | • All Guest privileges<br/>• **Saved Hostel Delivery Pass** (no retyping room/phone)<br/>• **1-Click WhatsApp Checkout**<br/>• **Order & Quote History**<br/>• **Email Photo in Header**<br/>• *Strictly 0 admin rights (cannot edit prices or stock)* |
-| **3. Campus Reseller (Seller)** | Student sales assistants & hostel delivery runners | Header profile dropdown → **Store Staff & Admin Sign In** | **Email:** `seller@midevas.co.ke`<br/>**Passcode:** `seller123` | • All Comrade privileges<br/>• **Manage Inventory & Stock Steppers** (±1, ±5, ±10)<br/>• **Update Product Prices**<br/>• **View & Update Customer Orders**<br/>• **Export WhatsApp Delivery Roster**<br/>• *Cannot edit CMS or change admin master passcode* |
-| **4. System Lead (Admin)** | Mona Lisa Mideva (Store Owner & Founder) | Header profile dropdown → **Store Staff & Admin Sign In** | **Email:** `monalisamideva@gmail.com`<br/>**Passcode:** `mideva2026`<br/>*(Passcode customizable in Profile tab)* | • **Unrestricted Full System Control**<br/>• Complete Catalog CRUD (Add, Edit, Delete products)<br/>• Device Photo Uploads (Camera / File)<br/>• Full CMS Editor (Hero slides, ticker, store bio)<br/>• Live WhatsApp AI Sales Bot Configuration<br/>• Change Admin Master Passcode & Security<br/>• Real-time Analytics & Revenue Overview |
+If you have never run an online website before, **do not worry at all**. This system was specifically designed to be as easy to use as WhatsApp and Instagram. You do **not** need any coding knowledge or technical computer skills.
+
+This manual walks you through everything step-by-step: how to log in, how to view student orders, how to add new clothes or perfumes with your phone camera, how to change prices, and how to pack your bags for hostel delivery runs.
 
 ---
 
-## 🗺️ 2. Step-by-Step Navigation Workflows for All Users
+## 📱 CHAPTER 1: Your Two Important Links
 
-### A. The Guest / Visitor Workflow
-1. **Arriving at Storefront:**
-   - On page load, the visitor arrives at the full-bleed hero banner and announcement ticker.
-   - The top header starts from the farthest left margin with the Department **Menu ("All")**, brand logo **MC**, and a clean **Sign In** button.
-2. **Browsing Products:**
-   - Tap any category pill (e.g. *Men's Fashion*, *Ladies' Bags*, *Perfumes & Beauty*, *Snacks & Drinks*).
-   - Use the search bar to find specific products (e.g. *"shirt"*, *"Always pads"*, *"Mazoe"*).
-   - Toggle currency pill between **USD ($)**, **Kenyan Shilling (KSh)**, or **EcoCash (USD/ZiG)**.
-3. **Ordering via WhatsApp:**
-   - Click any product to open the Amazon-style Quick-View modal.
-   - Choose variant (e.g. Size "L" or Scent "Vanilla"), pick quantity, and tap **"Add to Quote Drawer"**.
-   - Click the **Quote** pill in the top header.
-   - Review total and tap **"Send Order via WhatsApp"** — WhatsApp opens instantly with a formatted itemized quote ready to send to Mideva!
+Save these two links in your phone’s notes or WhatsApp starred messages:
 
----
+1. **The Public Storefront Link (Share this with Students):**
+   > [https://midevas-collection.vercel.app](https://midevas-collection.vercel.app)  
+   > *This is what students and comrades see when they shop. Post this on your WhatsApp Status and campus groups.*
 
-### B. The Comrade Customer Workflow (Registration & Photo Avatar)
-1. **Creating a Comrade Account:**
-   - Click the **Sign In** button located on the top left navigation bar.
-   - Click **"Sign In / Create Account"** to open the Comrade Pass modal.
-   - Enter:
-     - **Email Address:** *(e.g. `comrade@gmail.com`)* — your profile photo is instantly previewed!
-     - **Your Full Name:** *(e.g. `Tariro Moyo`)*
-     - **WhatsApp Phone:** *(e.g. `0774 809 479`)*
-     - **Campus Hostel & Room:** *(e.g. `Hall 4 Room 204`)*
-     - **Campus / Area:** *(e.g. `Main Campus Hostels`)*
-     - *(Optional)* Tap **"Upload Custom Photo"** to pick a photo from your phone/laptop.
-   - Tap **"Save & Activate Comrade Account"**.
-2. **Instant Header Photo Avatar:**
-   - The generic "Sign In" button is **immediately replaced** by the customer's email photo/avatar with an online status indicator!
-   - Tapping the avatar opens the Comrade Profile menu with quick links to **Browse Catalog**, **My Cart**, and **Saved Delivery Details**.
-3. **1-Click Hostel Drop-Off Checkout:**
-   - Next time the comrade adds items to quote, their room number and WhatsApp number are already pre-filled.
-   - When Mideva receives the WhatsApp order, the delivery destination is clear without any back-and-forth messaging.
+2. **Your Private Admin Dashboard Link (For You Only):**
+   > [https://midevas-collection.vercel.app/#admin](https://midevas-collection.vercel.app/#admin)  
+   > *This is your secret back-office where you manage products, prices, stock, and orders.*
+
+> 💡 **Tip — Put the Store on Your Phone Home Screen:**  
+> Open [https://midevas-collection.vercel.app](https://midevas-collection.vercel.app) on your phone in Google Chrome or Safari.  
+> Tap the three dots (or Share button) and select **"Add to Home Screen"**.  
+> An app icon named **Mideva's** will appear right on your phone just like WhatsApp or TikTok!
 
 ---
 
-### C. The Campus Reseller (Seller) Workflow
-1. **Accessing the Seller Desk:**
-   - Click the header profile button → tap **"Store Staff & Admin Sign In"**.
-   - Select the **Campus Reseller** demo account or enter `seller@midevas.co.ke` with passcode `seller123`.
-   - Tap **"Unlock Workspace"**.
-2. **Managing Live Stock on Delivery Runs:**
-   - Navigate to the **📦 Live Stock & Pricing** tab.
-   - Use the rapid steppers `[-1]`, `[+1]`, `[+5]`, `[+10]` beside any item to adjust counts after making sales.
-   - Low-stock items automatically highlight in amber; sold-out items show in red.
-3. **Generating Delivery Run Sheets:**
-   - From the top command strip, click **"📋 WhatsApp Delivery Roster"**.
-   - The system formats all active pending orders into an organized room-by-room drop-off sheet and copies it to your clipboard.
-   - Paste directly into WhatsApp to coordinate hostel deliveries.
+## 🔑 CHAPTER 2: How to Log Into Your Admin Dashboard
+
+You can access your store management anytime on your phone or laptop.
+
+```
+┌────────────────────────────────────────────────────────┐
+│ STEP 1: Open https://midevas-collection.vercel.app     │
+│ STEP 2: Look at the top left header bar.               │
+│         Tap the "Sign In" profile button.              │
+│ STEP 3: In the menu that pops up, tap:                │
+│         "Store Staff & Admin Sign In"                  │
+│ STEP 4: Enter your credentials:                        │
+│         • Email: monalisamideva@gmail.com              │
+│         • Passcode: mideva2026                         │
+│ STEP 5: Tap "Unlock Workspace"                         │
+│         🎉 You are in! The Admin Workspace opens.      │
+└────────────────────────────────────────────────────────┘
+```
+
+> 🔒 **Direct Shortcut:** You can also simply type `#admin` at the end of your link:  
+> [https://midevas-collection.vercel.app/#admin](https://midevas-collection.vercel.app/#admin)
 
 ---
 
-### D. The Store Owner (Admin) Workflow
-1. **Logging into Master Admin Dashboard:**
-   - Open `#admin` or click the profile button → **Store Staff & Admin Sign In**.
-   - Enter `monalisamideva@gmail.com` with passcode `mideva2026`.
-   - The full-width, expansive Admin Workspace opens with 8 comprehensive control tabs:
-     1. **📊 Overview:** Live revenue counter, total quotes logged, top-performing products, and conversion metrics.
-     2. **📦 Orders & Quotes:** Real-time customer quote tracking with status controls (`Pending` ➔ `Confirmed` ➔ `Delivered` ➔ `Cancelled`).
-     3. **🛍️ Product Catalog:** Add new items with live photo uploads from phone camera or file picker.
-     4. **📊 Live Stock & Pricing:** Rapid price adjustments and batch restock controls (`Restock Low Stock (+10 all)`).
-     5. **🎨 CMS Content:** Edit the announcement ticker, hero carousel slides, store bio, exchange rates, and EcoCash modes live.
-     6. **🤖 WhatsApp Bot:** Configure auto-reply rules, test customer conversation flows in the simulator, and link the Meta webhook.
-     7. **👤 Profile & Security:** Change admin photo, phone, and update master login passcode.
-     8. **Storefront Switcher:** 1-click button in navbar to toggle back to the public view without logging out.
+## 🧭 CHAPTER 3: Understanding What You See on the Screen
+
+### A. The Top Header Bar (What every button does)
+
+```
+[ All ]  [ MC Logo ]  [ 👤 Sign In / Profile ]  [ 🔍 Search... ]  [ $ USD ▾ ]  [ 🌙 ]  [ 🛒 Quote ]
+  (1)        (2)                 (3)                  (4)            (5)        (6)       (7)
+```
+
+1. **`[ All ]` (Department Menu):** Opens the slide-out sidebar showing all categories (*Men's Fashion, Handbags, Perfumes, Hygiene, Snacks*).
+2. **`[ MC Logo ]`:** Tapping this always takes you back to the home page.
+3. **`[ 👤 Sign In / Avatar ]`:** Shows who is logged in. When you log in as Admin, it shows a purple **Admin Crown** badge. For students who sign in, it shows their photo.
+4. **`[ 🔍 Search ]`:** Lets students type words like *"shirt"*, *"Always"*, or *"Mazoe"* to find items instantly.
+5. **`[ $ USD ▾ ]` (Currency Switcher):** Switches prices between **USD ($)**, **Kenyan Shillings (KSh)**, and **EcoCash (Zimbabwe)**.
+6. **`[ 🌙 / ☀️ ]` (Theme Switcher):** Switches between Bright Day Mode and Dark Night Mode.
+7. **`[ 🛒 Quote ]`:** Opens the cart drawer showing items selected for checkout.
 
 ---
 
-## ⚡ 3. The 1-Click Fast Command Center
+### B. The 8 Tabs Inside Your Admin Dashboard
 
-Located prominently at the top of the Admin Workspace:
+When you are logged into your Admin Workspace, you have 8 tabs at your fingertips:
 
-1. **Store Status Switcher (3 Modes):**
-   - 🟢 **Store Open for Orders:** Visitors see regular shopping and instant delivery.
-   - 🟡 **Out on Delivery Run:** Alerts students that Mideva is currently walking campus delivering orders.
-   - 🔴 **Store Closed (Exam/Night):** Pauses immediate delivery expectations during lectures or late night.
-2. **Free Campus Delivery Toggle:**
-   - 1-click toggle to enable or disable free hostel delivery campus-wide.
-3. **📋 1-Click WhatsApp Delivery Roster:**
-   - Instantly compiles all pending quotes into an organized text roster ready to paste into WhatsApp groups.
-4. **⚡ Confirm All Pending:**
-   - 1-tap bulk confirmation of all new student orders.
-
----
-
-## 📦 4. Live Stock & Auto-Decrement Rules
-
-1. **Automatic Inventory Subtraction:**
-   - Whenever an order is submitted via WhatsApp, M-Pesa, EcoCash, or Cash on Delivery, the ordered quantities are automatically subtracted from inventory.
-2. **Sold Out Safety Lock:**
-   - When an item hits `0 units`, the system displays a prominent **"Sold Out"** badge on the storefront.
-   - The "Add to Quote" button is safely locked so students cannot order depleted stock.
-3. **Restocking Options:**
-   - **Single Item:** Click `[+5]` or `[+10]` or type the new quantity into the box.
-   - **Batch Restock:** Click `Restock Low Stock (+10 all)` to boost all depleted items at once.
-
----
-
-## 🎨 5. WhatsApp Status Flyer Generator
-
-Promote today's arrivals and deals directly on WhatsApp Status:
-1. Click the **🎨 Flyers** button in the header bar.
-2. Select your layout:
-   - **9:16 Vertical:** Perfectly sized for WhatsApp Status & Instagram Stories.
-   - **1:1 Square:** Sized for Instagram Feed & WhatsApp profile pictures.
-3. Pick up to 3 catalog items to feature on the flyer.
-4. Customize headline (e.g. *"🔥 New Campus Arrivals — Hall Drop-Offs Today!"*).
-5. Tap **"Download PNG Poster"** — saves the graphic directly to your device ready to post!
-
----
-
-## 📸 6. Complete UI Navigation Screenshot Directory
-
-All 17 navigation views have been verified and captured:
-
-| # | Screenshot File | View Description |
+| Tab Name | What It Does | When You Use It |
 |:---|:---|:---|
-| 01 | `handover-01-storefront-hero.png` | Desktop Storefront: full-bleed hero banner, announcement marquee, edge-to-edge header |
-| 02 | `handover-02-product-catalog.png` | Product Grid: category pills, price filters, responsive product cards |
-| 03 | `handover-03-sidebar-nav.png` | Slide-out Department Sidebar Drawer with comrade deal shortcuts |
-| 04 | `handover-04-product-detail.png` | Amazon-Style Product Detail Modal with variant picker and customer reviews |
-| 05 | `handover-05-cart-drawer.png` | Quote Drawer with multi-currency subtotals and WhatsApp generator |
-| 06 | `handover-06-dark-mode.png` | Full Storefront rendered in Night/Dark Mode |
-| 07 | `handover-07-mobile-view.png` | Mobile Viewport (375×812) with sticky touch bottom bar |
-| 08 | `handover-08-footer.png` | Storefront Footer with department shortcuts, contacts, and admin trigger |
-| 09 | `handover-09-signin-dropdown.png` | Unauthenticated Guest Dropdown with Sign In & Staff Portal buttons |
-| 10 | `handover-10-auth-modal.png` | Comrade Customer Registration Modal with live email photo preview |
-| 11 | `handover-11-customer-logged-in.png` | Signed-In Customer: email photo avatar in header & saved delivery details |
-| 12 | `handover-12-seller-workspace.png` | Campus Reseller (Seller) Workspace with inventory controls |
-| 13 | `handover-13-admin-signin.png` | Staff & Admin Passcode Authentication Screen |
-| 14 | `handover-14-admin-dashboard.png` | Admin Master Workspace Overview with revenue metrics & command strip |
-| 15 | `handover-15-admin-livestock.png` | Admin Live Stock & Rapid Price Control Steppers |
-| 16 | `handover-16-admin-orders.png` | Admin Orders & Quotes Management Hub |
-| 17 | `handover-17-admin-cms.png` | Admin CMS Page Content Manager (Hero slides, ticker, store bio) |
+| **1. ⚡ Quick Commands** | 1-click buttons at the very top of your screen | Change store status (Open, Delivery Run, Closed) or copy the delivery list. |
+| **2. 📊 Overview** | Shows your total sales numbers and most popular items | Check how much money you’ve made and what students like. |
+| **3. 📦 Orders & Quotes** | Lists every order sent by students | See customer names, hostel rooms, items ordered, and update order statuses. |
+| **4. 🛍️ Product Catalog** | Full list of your 52 products | Add new items, upload photos from your phone camera, or edit descriptions. |
+| **5. 📊 Live Stock & Pricing** | Fast +/- stock steppers and price editor | Change prices or update how many shirts/perfumes you have left in stock. |
+| **6. 🎨 CMS Content** | Website text editor | Change the moving announcement text, hero slides, and exchange rates. |
+| **7. 🤖 WhatsApp Bot** | Automated customer assistant | Test or change automated replies for common student questions. |
+| **8. 👤 Profile & Security** | Your owner profile | Change your phone number or set a new secret login passcode. |
 
 ---
 
-## 🔒 7. Security Best Practices for Mideva
+## ☀️ CHAPTER 4: A Day in the Life of Mona Lisa Mideva
 
-1. **Keep Your Passcode Confidential:**
-   - Your initial passcode is `mideva2026`. Change it upon first login via the **👤 Profile & Security** tab.
-2. **Never Clear Browser Data Without Backing Up:**
-   - Because custom items and orders are stored in your device's browser `localStorage`, do not select *"Clear site data"* for `midevas-collection.vercel.app` unless you intend to reset to factory baseline.
-3. **Cloud Database Migration:**
-   - When order volume exceeds 30 orders/day, execute the free Supabase migration provided in [DEVELOPER_GUIDE.md](./DEVELOPER_GUIDE.md) to enable automatic multi-device cloud synchronization.
+Here is the simple daily routine to run your campus business like a professional:
+
+### 🌅 1. Morning Routine (08:00 AM) — Opening the Store
+1. Open [https://midevas-collection.vercel.app/#admin](https://midevas-collection.vercel.app/#admin) on your phone.
+2. In the top command strip, make sure the status is **🟢 Store Open for Orders**.
+3. Tap **🎨 Flyers** on the top menu.
+4. Choose **WhatsApp Story (9:16)**, pick 2 or 3 hot items for today, and tap **"Download PNG Poster"**.
+5. Post the flyer image on your **WhatsApp Status** with the caption:  
+   *"🔥 New arrivals delivered directly to your hostel room today! Order here: https://midevas-collection.vercel.app"*
 
 ---
 
-*Mideva's Collection User Manual — Document Reference MC-UG-3.2*
+### 💬 2. Daytime Routine (12:00 PM) — Receiving Student Orders
+When a student browses your site and clicks **"Send Order via WhatsApp"**, your WhatsApp will buzz with a message that looks like this:
+
+```text
+Hello Mideva! 🛍️
+I'd like to place an order from Mideva's Collection:
+
+• 1× Classic Button-Up Cotton Shirt (Size: L, Color: Sky Blue) - $7.00
+• 1× Vanilla Scent EDP Pocket Perfume (35ml) - $2.50
+
+Total: $9.50 (approx KSh 1,235)
+Delivery: Hall 4 Room 204 (Main Campus)
+Customer: Tariro Moyo (+254 748 094 795)
+Payment: Cash on Delivery / EcoCash
+
+Please confirm availability and drop-off time! 🎓
+```
+
+**What you do:**
+- Reply to the student on WhatsApp: *"Hi Tariro! Order received! I have both in stock. I will drop them off to Hall 4 Room 204 at 4:30 PM."*
+- You don't need to write anything on loose paper — the order is already saved in your **Orders & Quotes** tab!
+
+---
+
+### 🚶‍♀️ 3. Afternoon Routine (04:00 PM) — The Hostel Delivery Run
+When you are ready to walk across campus and deliver items:
+
+1. Open your Admin dashboard and tap the store status button once to switch it to:  
+   **🟡 Out on Delivery Run** *(Students will see you are currently walking campus dropping orders!)*
+2. In the top command strip, tap **📋 WhatsApp Delivery Roster**.
+3. A complete delivery checklist is instantly copied to your phone clipboard!
+4. Paste it into your personal WhatsApp notes. It looks like this:
+
+```text
+📋 MIDEVA'S COLLECTION — CAMPUS DELIVERY RUN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📍 DROP-OFF 1: Tariro Moyo (Hall 4 Room 204)
+   📦 1× Classic Button-Up Shirt (L)
+   📦 1× Vanilla Pocket Perfume (35ml)
+   💰 Collect: $9.50 (or KSh 1,235 / EcoCash)
+   📞 0774 809 479
+
+📍 DROP-OFF 2: Kelvin K. (Riverside Court B3)
+   📦 1× Diamond Quilted Chain Sling Bag
+   💰 Collect: $6.00
+   📞 0771 234 567
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Total to collect: $15.50
+```
+5. Pack your delivery bag according to the list, walk to the hostels, hand over the items, and collect the cash or mobile money.
+
+---
+
+### 🌙 4. Evening Routine (08:00 PM) — Updating Stock & Wrapping Up
+1. Open **📦 Orders & Quotes** in your Admin.
+2. Next to Tariro’s and Kelvin’s orders, change the dropdown from `Pending` to **`Delivered`** (or tap **⚡ Confirm All**).
+3. If you sold out of any item during the day, open **📊 Live Stock & Pricing** and tap `[-1]` or type `0` next to that item.
+4. If you want to pause orders while studying or sleeping, tap the status button to **🔴 Store Closed**.
+
+---
+
+## 🛠️ CHAPTER 5: Step-by-Step "How To" Guides
+
+### Guide 1: How to Add a New Product with Your Phone Camera
+Want to sell a new dress, shoes, or snack you just brought to campus?
+
+1. Go to **🛍️ Product Catalog** tab.
+2. Tap the blue button: **+ Add New Product**.
+3. Fill in the simple form:
+   - **Product Name:** e.g., *"Gentleman Ribbed Knit Polo Shirt"*
+   - **Category:** Select from dropdown (*Men's Fashion, Ladies' Bags, Perfumes, etc.*)
+   - **Regular Price ($):** e.g., `8.00`
+   - **Comrade Price ($):** e.g., `7.00` *(Student discounted price)*
+   - **Short Description:** e.g., *"Comfortable ribbed polo, great for classes and church."*
+4. **Add the Photo:**
+   - Tap **"Upload Photo"**.
+   - Your phone will ask: *"Take Photo"* or *"Choose from Photo Library"*.
+   - Snap a picture of the item on a clean surface or hanger!
+5. Tap **"Save Product to Catalog"**.
+6. That's it! The new item is instantly visible on your live website for students to buy!
+
+---
+
+### Guide 2: How to Change Prices or Mark an Item "Sold Out"
+1. Tap the **📊 Live Stock & Pricing** tab.
+2. You will see a neat table of all your products.
+3. **To change a price:**
+   - Find the item in the list.
+   - Tap into the **Reg ($)** box or **Comrade ($)** box and type the new price (e.g. `6.50`).
+   - Tap outside the box — it saves automatically with a green confirmation alert!
+4. **To adjust stock quantity:**
+   - Tap `[+1]`, `[+5]`, or `[+10]` to add units when you buy new wholesale inventory.
+   - Tap `[-1]` when you sell an item in person.
+5. **To mark an item Sold Out:**
+   - Type `0` in the stock quantity box.
+   - The website will immediately put a red **"Sold Out"** badge on that item and stop students from ordering it until you restock!
+
+---
+
+### Guide 3: How to Edit the Moving Announcement Text at the Top
+The moving text bar at the very top of your website tells students what’s happening today.
+
+1. Go to **🎨 CMS Content** tab.
+2. Under **Top Announcement Ticker**, you will see the text box.
+3. Type whatever announcement you want, for example:  
+   *"🔥 WEEKEND SALE: ALL LADIES HANDBAGS UNDER $6 • FREE DELIVERY TO HALL 4 & HALL 2 TODAY!"*
+4. Tap **Save Announcement**.
+5. Refresh your page — your new message is scrolling across the top!
+
+---
+
+### Guide 4: How to Change Your Secret Login Passcode
+To make sure nobody else on campus can log into your admin:
+
+1. Go to **👤 Profile & Security** tab.
+2. Under **Change Passcode**:
+   - **Current Passcode:** Type your existing passcode (default is `mideva2026`).
+   - **New Passcode:** Type your new secret passcode (e.g. `mideva@2027` or any word you remember).
+   - **Confirm New Passcode:** Type the same new passcode again.
+3. Tap **"Update Passcode"**.
+4. A green message will confirm your new passcode is saved.
+
+---
+
+## 🎓 CHAPTER 6: What Your Student Customers Experience
+
+Understanding what students see helps you answer their questions:
+
+1. **Browsing as a Guest:**
+   - Any student can open [https://midevas-collection.vercel.app](https://midevas-collection.vercel.app) and browse immediately.
+   - They do **not** need to create an account or enter a password just to look at clothes or snacks.
+
+2. **Comrade Registration (1-Minute Setup):**
+   - When a student taps **"Sign In"** at the top left, they enter their Name, WhatsApp number, Hostel Room, and Email.
+   - The system automatically loads their profile photo from their email (or lets them upload a photo from their phone) and puts their photo right in the top header bar!
+   - Their hostel room is saved permanently on their phone, so every time they order, their room number is already filled in.
+
+3. **Student Privileges are Strictly Limited:**
+   - Students have **zero ability** to change prices, edit stock, or see your admin controls.
+   - They can only view items, write reviews, and send orders to your WhatsApp.
+
+---
+
+## ❓ CHAPTER 7: "Don't Panic" Troubleshooting & FAQ
+
+### Q1: "I made a typo in a product name or price. How do I fix it?"
+> **Answer:** Go to **🛍️ Product Catalog**, find the product, and tap the yellow **"Edit"** button. Fix the spelling or price, and tap **"Update Product"**. It fixes immediately!
+
+### Q2: "A student messaged me on WhatsApp but cancelled before delivery. What do I do?"
+> **Answer:** Go to **📦 Orders & Quotes**, find that student's order, and change the status dropdown to **`Cancelled`**. If you want to delete test orders completely, click the red trash can icon next to the order.
+
+### Q3: "I added an item on my laptop, but when I open the site on my phone, I don't see it. Why?"
+> **Answer:** Your store currently runs on your device's private storage (which is why it has zero monthly server bills!). 
+> When you want to manage products from both your phone and laptop seamlessly, tell your developer to turn on the free **Supabase Cloud Sync** (all code and database tables are already written in your `DEVELOPER_GUIDE.md`).
+
+### Q4: "I accidentally clicked something wrong and messed up the catalog. Can I fix it?"
+> **Answer:** Yes! In **🛍️ Product Catalog**, there is a red button at the top called **"Reset to Factory Catalog"**. Clicking it will safely restore all 52 original products with their clean photos and baseline prices.
+
+### Q5: "I forgot my passcode. How do I get into Admin?"
+> **Answer:** If you ever get locked out, clear your browser history/cache for `midevas-collection.vercel.app`, and the passcode will automatically reset to the factory default: `mideva2026`.
+
+---
+
+## 📋 CHAPTER 8: Quick Reference Pocket Cheat Sheet
+
+Print or screenshot this table on your phone for quick reference:
+
+| Item | Details |
+|:---|:---|
+| **Public Store Website** | [https://midevas-collection.vercel.app](https://midevas-collection.vercel.app) |
+| **Admin Login Link** | [https://midevas-collection.vercel.app/#admin](https://midevas-collection.vercel.app/#admin) |
+| **Admin Email** | `monalisamideva@gmail.com` |
+| **Default Admin Passcode** | `mideva2026` |
+| **Seller Demo Login** | `seller@midevas.co.ke` / `seller123` |
+| **Customer WhatsApp Line** | `+254 748 094 795` |
+| **EcoCash Merchant Line** | `0774 809 479` |
+| **Default KSh Exchange Rate** | 130 KSh per 1 USD |
+| **Default EcoCash ZiG Rate** | 28 ZiG per 1 USD |
+| **Emergency Catalog Reset** | Admin ➔ Product Catalog ➔ "Reset to Factory Catalog" |
+
+---
+
+*Mideva's Collection — Written with care for Mona Lisa Mideva. You are ready to start selling! 🚀*
