@@ -35,6 +35,11 @@ export default function UserProfileDropdown({
   const [avatarError, setAvatarError] = useState(false);
   const menuRef = useRef(null);
 
+  // Reset avatar error when avatar changes
+  useEffect(() => {
+    setAvatarError(false);
+  }, [user?.avatar]);
+
   // Close on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {

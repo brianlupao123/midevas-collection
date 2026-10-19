@@ -24,6 +24,11 @@ Because the system handles campus customer inquiries and orders without storing 
   - **Client-Side Auth Limitation:** The current admin authentication validates the passcode (`mideva2026`) in client-side JavaScript. Any developer opening browser DevTools can inspect the source code.
   - **Storage Clearing:** If Mideva clears her browser cache or history, custom products and local order logs stored only in that browser will be reset to defaults.
 
+### Role-Based Access Control (RBAC) Enforcement
+- **Customer Isolation:** Customers/Comrades registered via `AuthModal` are assigned strictly `role: 'customer'`. They possess **zero modification privileges**; client-side helper functions (`canAccessAdmin`, `canEditStock`, `canEditPrices`, `canManageCMS`) return `false` unconditionally.
+- **Passcode-Protected Elevation:** Only staff accounts (`admin` and `seller`) with valid passcodes can unlock administrative controls.
+- **Client Boot Storage Sanitizer:** On every application mount, the system inspects `localStorage` and purges any deprecated or unauthorized session keys before rendering components.
+
 ---
 
 ## 3. Recommended Production Hardening Path

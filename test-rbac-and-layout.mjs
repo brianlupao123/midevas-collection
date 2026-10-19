@@ -4,7 +4,9 @@ import fs from 'node:fs';
 
 const CHROME_PATH = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 const APP_URL = 'http://localhost:5180';
-const ARTIFACTS_DIR = 'C:\\Users\\BRIAN LUPAO\\.gemini\\antigravity\\brain\\796e2400-706b-49a0-8424-2f8af0202094';
+const ARTIFACTS_DIR = process.env.USERPROFILE 
+  ? path.join(process.env.USERPROFILE, '.gemini', 'antigravity', 'brain', '796e2400-706b-49a0-8424-2f8af0202094')
+  : './test-artifacts';
 
 console.log('🚀 Starting Automated Verification for RBAC (Guest by default), Edge-to-Edge Farthest Ends Layout & Full Slide Banner...');
 

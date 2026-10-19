@@ -83,6 +83,19 @@ export default function App() {
 
   // Initialize theme and global event listeners
   useEffect(() => {
+    // Purge legacy test accounts from client browser localStorage on mount
+    try {
+      const authRaw = localStorage.getItem('midevas_auth_user');
+      if (authRaw && (authRaw.toLowerCase().includes('brian') || authRaw.toLowerCase().includes('lupao'))) {
+        localStorage.removeItem('midevas_auth_user');
+        sessionStorage.removeItem('midevas_admin_auth');
+      }
+      const custRaw = localStorage.getItem('midevas_customer_user');
+      if (custRaw && (custRaw.toLowerCase().includes('brian') || custRaw.toLowerCase().includes('lupao'))) {
+        localStorage.removeItem('midevas_customer_user');
+      }
+    } catch (e) {}
+
     initTheme();
     const handleThemeChange = (e) => setTheme(e.detail.theme);
     const handleCatalogUpdate = () => setProductsList(getStoredProducts());

@@ -57,8 +57,12 @@ export function getActiveUser() {
   try {
     const raw = localStorage.getItem(AUTH_USER_KEY);
     if (raw) {
-      const parsed = JSON.parse(raw);
-      if (parsed && parsed.role) return parsed;
+      if (raw.toLowerCase().includes('brian') || raw.toLowerCase().includes('lupao')) {
+        localStorage.removeItem(AUTH_USER_KEY);
+      } else {
+        const parsed = JSON.parse(raw);
+        if (parsed && parsed.role) return parsed;
+      }
     }
   } catch (err) {
     // fallback
@@ -68,18 +72,22 @@ export function getActiveUser() {
   try {
     const custRaw = localStorage.getItem('midevas_customer_user');
     if (custRaw) {
-      const cust = JSON.parse(custRaw);
-      if (cust && cust.name) {
-        return {
-          id: cust.id || 'cust_' + Date.now().toString(36),
-          role: ROLES.CUSTOMER,
-          name: cust.name,
-          email: cust.email || '',
-          phone: cust.phone || '',
-          hostel: cust.hostel || 'Campus Hostel',
-          title: 'Comrade Shopper',
-          avatar: ''
-        };
+      if (custRaw.toLowerCase().includes('brian') || custRaw.toLowerCase().includes('lupao')) {
+        localStorage.removeItem('midevas_customer_user');
+      } else {
+        const cust = JSON.parse(custRaw);
+        if (cust && cust.name) {
+          return {
+            id: cust.id || 'cust_' + Date.now().toString(36),
+            role: ROLES.CUSTOMER,
+            name: cust.name,
+            email: cust.email || '',
+            phone: cust.phone || '',
+            hostel: cust.hostel || 'Campus Hostel',
+            title: 'Comrade Shopper',
+            avatar: cust.avatar || (cust.email ? `https://unavatar.io/${encodeURIComponent(cust.email.trim().toLowerCase())}?fallback=https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(cust.name)}` : '')
+          };
+        }
       }
     }
   } catch (err) {
@@ -110,7 +118,8 @@ export function setActiveUser(user) {
         phone: user.phone || '',
         hostel: user.hostel || '',
         email: user.email || '',
-        campus: 'Main Campus'
+        avatar: user.avatar || '',
+        campus: user.campus || 'Main Campus'
       }));
     }
 
