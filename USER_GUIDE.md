@@ -294,6 +294,21 @@ On mobile screens, students enjoy a sticky touch navigation bar for seamless bro
 ### Q5: "I forgot my passcode. How do I get into Admin?"
 > **Answer:** If you ever get locked out, clear your browser history/cache for `midevas-collection.vercel.app`, and the passcode will automatically reset to the factory default: `mideva2026`.
 
+### Q6: "Can I change pictures of products from my phone without any code?"
+> **Answer:** **Yes, 100%!** In your Admin, go to **Product Catalog**, tap the yellow **Edit** button on any product, and tap **Upload File**. Your phone will open your camera to snap a live photo or let you pick from your gallery. Tap **Save Changes** and the new picture is live immediately!
+
+### Q7: "I see an order in 'Orders & Quotes', but I didn't get a WhatsApp buzz. What happened?"
+> **Answer:** The website logs every quote when a student taps "Send Order via WhatsApp". However, if a student closes WhatsApp before tapping the green "Send" arrow, the message won't reach your phone. **Always verify the actual WhatsApp chat message from the student before packing and walking to the hostel.**
+
+### Q8: "What if a student isn't in their hostel room when I arrive for drop-off?"
+> **Answer:** Before you leave your room, tap the **📋 WhatsApp Delivery Roster** button at the top of your Admin screen. It copies all student phone numbers and room numbers to your clipboard. Send each student a quick message 15 minutes before: *"Hi! On my way to your hall with your order in 15 mins!"*
+
+### Q9: "What if a student only has a big cash bill or wants to pay in mobile money?"
+> **Answer:** Always keep a small coin/cash pouch in your delivery bag with small notes ($1, $2, KSh 50, KSh 100). If they don't have exact cash, they can send EcoCash to `0774809479` or M-Pesa to `+254 748 094795` right in front of you upon inspecting the items!
+
+### Q10: "Will uploading photos from my high-resolution phone camera make the site slow?"
+> **Answer:** **No.** The system has built-in automatic photo compression. When you take a 10MB photo with your phone camera, the store automatically compresses and resizes it to a crisp ~70KB before saving. It loads instantly for students on campus WiFi or mobile data!
+
 ---
 
 ## 📲 CHAPTER 8: Setting Up Your WhatsApp Business Catalog & Auto-Reply Bot

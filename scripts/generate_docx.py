@@ -369,7 +369,16 @@ def create_document():
          "A: Go to 'Product Catalog', tap the yellow 'Edit' button on that product, correct it, and tap 'Update'. It updates immediately."),
 
         ("Q: What if I accidentally mess up my catalog?",
-         "A: There is a red button in 'Product Catalog' called 'Reset to Factory Catalog'. Tapping it safely restores all 52 original items with clean photos and prices.")
+         "A: There is a red button in 'Product Catalog' called 'Reset to Factory Catalog'. Tapping it safely restores all 52 original items with clean photos and prices."),
+
+        ("Q: Can I change product photos with my phone camera?",
+         "A: Yes! Tap Edit on any product, tap 'Upload File', and snap a photo. Photos are automatically compressed to ~70KB so they load instantly and never run out of space."),
+
+        ("Q: I see an order in the dashboard, but no WhatsApp message arrived?",
+         "A: The student might have closed WhatsApp before tapping the green send button. Always confirm the actual WhatsApp chat message before walking to the hostel."),
+
+        ("Q: What if a student isn't in their hostel room when I arrive?",
+         "A: Tap 'WhatsApp Delivery Roster' in your Admin to copy all student numbers. Send a quick WhatsApp 15 minutes before: 'On my way with your order!'")
     ]
 
     for q, a in faqs:
@@ -423,10 +432,12 @@ def create_document():
     # Save to locations
     dest1 = r"C:\Users\BRIAN LUPAO\Desktop\Midevas-Collection-Handover-Package\Midevas_Collection_Owner_Guide.docx"
     dest2 = r"C:\Users\BRIAN LUPAO\Desktop\Midevas_Collection_Owner_Guide.docx"
+    dest3 = r"D:\Projects\midevas-collection\handover\Midevas_Collection_Owner_Guide.docx"
     
     doc.save(dest1)
     doc.save(dest2)
-    print(f"Successfully generated Word documents:\n1. {dest1}\n2. {dest2}")
+    doc.save(dest3)
+    print(f"Successfully generated Word documents:\n1. {dest1}\n2. {dest2}\n3. {dest3}")
 
 if __name__ == "__main__":
     create_document()
