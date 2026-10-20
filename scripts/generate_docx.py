@@ -312,8 +312,50 @@ def create_document():
 
     doc.add_paragraph()
 
-    # Chapter 5: FAQ
-    h6 = doc.add_heading("❓ CHAPTER 5: Frequently Asked Questions (FAQ)", level=1)
+    # Chapter 5: WhatsApp Business Catalog & Auto-Reply Bot
+    h6_wa = doc.add_heading("📲 CHAPTER 5: WhatsApp Business Catalog & Auto-Reply Bot", level=1)
+    h6_wa.runs[0].font.color.rgb = RGBColor(180, 83, 9)
+
+    doc.add_paragraph(
+        "To make your business look truly professional and allow students to browse your catalog and chat with an automated assistant inside WhatsApp, follow these simple steps:"
+    )
+
+    wa_parts = [
+        ("Part A: Install WhatsApp Business (FREE from Meta)",
+         "1. Download 'WhatsApp Business' from Google Play Store or Apple App Store.\n"
+         "2. Register with your store number: +254 748 094795.\n"
+         "3. Set Business Name: Mideva's Collection | Category: Shopping & Retail.\n"
+         "4. Add your website: https://midevas-collection.vercel.app and description."),
+
+        ("Part B: Add Items to Your WhatsApp Catalog",
+         "1. In WhatsApp Business, tap Menu (three dots) -> Business Tools -> Catalog -> Add New Item.\n"
+         "2. Upload a photo, type the item name, price, and paste your website link.\n"
+         "3. Students can now tap your profile picture in WhatsApp and see your products immediately without leaving the app!"),
+
+        ("Part C: Set Up Auto-Reply Greeting & Away Messages",
+         "1. Greeting Message: Go to Business Tools -> Greeting Message -> Turn ON. Paste a welcome message with numbered menu options (1: Deals, 2: Bags, 3: Men's wear, 4: Perfumes, 5: Snacks, 6: Hygiene, 7: Payment, 8: Chat with Mideva).\n"
+         "2. Away Message: Go to Business Tools -> Away Message -> Turn ON for outside business hours.\n"
+         "3. Quick Replies: Add shortcuts like /thanks, /payment, /delivered, and /link for 1-tap replies."),
+
+        ("Part D: Built-In WhatsApp Bot Simulator on Website",
+         "1. In your Admin Dashboard (#admin), tap the '🤖 WhatsApp Bot' tab.\n"
+         "2. Test how customer queries get answered automatically.\n"
+         "3. Customize your greeting text, agent name, and M-Pesa / EcoCash payment details anytime!")
+    ]
+
+    for wa_t, wa_d in wa_parts:
+        p_w = doc.add_paragraph()
+        rw = p_w.add_run(wa_t)
+        rw.bold = True
+        rw.font.size = Pt(11.5)
+        rw.font.color.rgb = RGBColor(180, 83, 9)
+        p_wb = doc.add_paragraph(wa_d)
+        p_wb.paragraph_format.left_indent = Inches(0.25)
+
+    doc.add_paragraph()
+
+    # Chapter 6: FAQ
+    h6 = doc.add_heading("❓ CHAPTER 6: Frequently Asked Questions (FAQ)", level=1)
     h6.runs[0].font.color.rgb = RGBColor(180, 83, 9)
 
     faqs = [
@@ -341,7 +383,7 @@ def create_document():
     doc.add_paragraph()
 
     # Cheat Sheet Table
-    h7 = doc.add_heading("📋 CHAPTER 6: Quick Reference Pocket Cheat Sheet", level=1)
+    h7 = doc.add_heading("📋 CHAPTER 7: Quick Reference Pocket Cheat Sheet", level=1)
     h7.runs[0].font.color.rgb = RGBColor(180, 83, 9)
 
     cheat_table = doc.add_table(rows=8, cols=2)

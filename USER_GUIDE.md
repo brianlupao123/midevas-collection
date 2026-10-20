@@ -296,7 +296,181 @@ On mobile screens, students enjoy a sticky touch navigation bar for seamless bro
 
 ---
 
-## 📋 CHAPTER 8: Quick Reference Pocket Cheat Sheet
+## 📲 CHAPTER 8: Setting Up Your WhatsApp Business Catalog & Auto-Reply Bot
+
+Your website is already connected to WhatsApp — when students tap **"Send Order via WhatsApp"**, the order message is sent straight to your phone number (`+254 748 094795`). But to make your business look truly professional and let students browse products *inside WhatsApp itself*, follow these steps:
+
+---
+
+### Part A: Install WhatsApp Business (FREE — Required)
+
+WhatsApp Business is a **free app** from Meta (the company that owns WhatsApp). It is separate from regular WhatsApp and gives you a professional storefront inside the chat app.
+
+**Step 1:** On your phone, open the **Google Play Store** (Android) or **App Store** (iPhone).
+
+**Step 2:** Search for **"WhatsApp Business"** (it has a green icon with a **B** inside).
+
+**Step 3:** Tap **Install** and open it.
+
+**Step 4:** Register with your store phone number: `+254 748 094795`.
+> ⚠️ **Important:** If this number is already on regular WhatsApp, the app will ask you to migrate. Tap **"Continue"** — all your chats transfer safely.
+
+**Step 5:** Set up your **Business Profile** (this is what students see when they open your chat):
+| Field | What to Type |
+|:---|:---|
+| **Business Name** | Mideva's Collection |
+| **Category** | Shopping & Retail |
+| **Description** | Great Quality Everyday at Comrade Affordable Prices. Clothes, Perfumes, Bags & Snacks delivered to your hostel room! 🚀 |
+| **Address** | Campus / Your preferred location |
+| **Business Hours** | 08:00 AM – 10:00 PM |
+| **Email** | monalisamideva@gmail.com |
+| **Website** | https://midevas-collection.vercel.app |
+
+---
+
+### Part B: Add Products to Your WhatsApp Catalog (Students Browse Inside WhatsApp)
+
+This is the **WhatsApp Catalog** — students tap your profile picture in the chat, then tap **"Catalog"** to browse your items with photos and prices *without leaving WhatsApp*.
+
+**Step 1:** In WhatsApp Business, tap **⋮ Menu** (three dots) ➔ **Business Tools** ➔ **Catalog**.
+
+**Step 2:** Tap **"Add New Item"** (green + button).
+
+**Step 3:** For each product:
+| Field | Example |
+|:---|:---|
+| **Photo** | Snap a photo from your phone or use the same photos from your website |
+| **Name** | Classic Button-Up Cotton Shirt |
+| **Price** | 7.00 (USD) or 910 (KSh) |
+| **Description** | Premium cotton, available in Sky Blue, White & Black. Sizes M-XXL. Comrade Price! |
+| **Website Link** | https://midevas-collection.vercel.app |
+
+**Step 4:** Tap **"Save"**. Repeat for your top 10-20 best-selling items.
+
+> 💡 **Pro Tip:** You do NOT need to add all 52 items. Start with your 10 hottest sellers. Students will see these when they tap your profile, and they can browse the full catalog on your website.
+
+**Step 5:** Share your catalog! In any WhatsApp chat or status, tap the **📎 Attach** button ➔ **Catalog** ➔ select items to share as a beautiful product card.
+
+---
+
+### Part C: Set Up Quick Replies & Away Messages (Auto-Reply)
+
+WhatsApp Business has **built-in auto-reply** features that work immediately without any coding:
+
+#### 1. Greeting Message (Auto-Welcome)
+When a student messages you for the **first time** (or after 14 days of no chat), they automatically receive your welcome message.
+
+- Go to **⋮ Menu** ➔ **Business Tools** ➔ **Greeting Message**
+- Toggle it **ON**
+- Paste this message:
+```
+👋 Welcome to Mideva's Collection!
+
+Great Quality Everyday at Comrade Affordable Prices 🛍️
+
+📱 Browse our full catalog: https://midevas-collection.vercel.app
+
+Reply with a number to get started:
+1️⃣ Comrade Deals (under $4 & $8)
+2️⃣ Ladies' Handbags
+3️⃣ Men's Shirts & Tees
+4️⃣ Perfumes & Scents
+5️⃣ Campus Tuckshop Snacks
+6️⃣ Hygiene Essentials
+7️⃣ Delivery & Payment Info
+8️⃣ Chat with Mideva
+
+Or just type what you're looking for! 🔥
+```
+
+#### 2. Away Message (When You Are in Class or Sleeping)
+- Go to **⋮ Menu** ➔ **Business Tools** ➔ **Away Message**
+- Toggle it **ON**
+- Set the schedule to **"Outside of business hours"** (or **"Always send"** when studying)
+- Paste this message:
+```
+Hi comrade! 📚 Mideva is currently attending lectures or resting.
+
+Your message has been received! I will respond as soon as I'm available.
+
+🛒 In the meantime, browse and order here:
+https://midevas-collection.vercel.app
+
+🕐 Business Hours: 8:00 AM – 10:00 PM
+```
+
+#### 3. Quick Replies (Saved Shortcuts)
+Create shortcuts for messages you send every day:
+- Go to **⋮ Menu** ➔ **Business Tools** ➔ **Quick Replies**
+- Tap **"+"** to add each one:
+
+| Shortcut | Message |
+|:---|:---|
+| `/thanks` | Thank you for your order, comrade! 🎉 I will deliver to your hostel shortly. Please have cash or EcoCash ready! |
+| `/delivered` | Your order has been delivered! 📦 Thank you for shopping with Mideva's Collection. Leave a review on our website! ⭐ |
+| `/stock` | That item is currently out of stock 😔 But I am restocking this week! Want me to notify you when it arrives? |
+| `/payment` | 💵 Payment Options: Cash on Delivery, M-Pesa Till 254748094795, or EcoCash to 0774809479. |
+| `/link` | 🛒 Browse our full catalog with prices: https://midevas-collection.vercel.app |
+
+> To use a Quick Reply during a chat, type **/** and select the shortcut. It saves you from typing the same message 20 times a day!
+
+---
+
+### Part D: Your Website's Built-In WhatsApp Bot (Admin Dashboard)
+
+Your website also has a **WhatsApp Bot Simulator** built into your Admin dashboard. This is where you can:
+
+1. **Test automated replies** before they go live
+2. **Customize the bot's personality** (name, welcome message, payment details)
+3. **Preview how students will experience** the conversational agent
+
+**How to use it:**
+1. Log into your Admin at [https://midevas-collection.vercel.app/#admin](https://midevas-collection.vercel.app/#admin)
+2. Tap the **🤖 WhatsApp Bot** tab
+3. You will see a chat simulator where you can type student questions and see the bot's automated replies
+4. To edit the bot's settings, change the fields:
+   - **Agent Name:** (default: "Mideva's Campus Assistant")
+   - **Welcome Message:** The first thing students see
+   - **Out-of-Office Message:** Sent when you are offline
+   - **M-Pesa Till Number:** Your payment number
+   - **EcoCash Number:** Your Zimbabwe mobile money number
+
+> 💡 **How the bot works on the website:** When students visit your store and tap the green **WhatsApp** floating button at the bottom right, they see two options:
+> - **"Chat Directly with Mideva"** — Opens a WhatsApp message to your number
+> - **"Join WhatsApp Group (110+)"** — Opens your campus group invite link
+
+---
+
+### Part E: The Complete WhatsApp Student Journey (How It All Connects)
+
+Here is exactly what happens when a student discovers your store:
+
+```
+1. Student sees your WhatsApp Status flyer with the store link
+        ↓
+2. Student taps https://midevas-collection.vercel.app
+        ↓
+3. Student browses products, picks size/color, adds to cart
+        ↓
+4. Student taps "Send Order via WhatsApp"
+        ↓
+5. WhatsApp opens with a pre-filled order message to +254 748 094795
+        ↓
+6. YOUR PHONE BUZZES with the full order details!
+   (Student name, hostel room, items, prices, payment method)
+        ↓
+7. You reply: "Order received! Dropping off at 4:30 PM"
+        ↓
+8. You check your Admin dashboard → Orders & Quotes tab
+        ↓
+9. At 4PM: Copy the Delivery Roster → walk to hostels → deliver!
+```
+
+> **No monthly fees. No server costs. No coding needed.** The entire system works through free WhatsApp messages and your free website.
+
+---
+
+## 📋 CHAPTER 9: Quick Reference Pocket Cheat Sheet
 
 Print or screenshot this table on your phone for quick reference:
 
