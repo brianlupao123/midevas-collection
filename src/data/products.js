@@ -828,13 +828,29 @@ export function getStoredProducts() {
       return seeded;
     }
     const parsed = JSON.parse(raw);
-    // Ensure backwards compatibility with any products missing stockQuantity
-    return parsed.map((p, idx) => ({
-      ...p,
-      stockQuantity: p.stockQuantity ?? (p.inStock !== false ? (10 + (idx % 12)) : 0),
-      lowStockThreshold: p.lowStockThreshold || 5,
-      inStock: p.stockQuantity !== undefined ? p.stockQuantity > 0 : (p.inStock !== false)
-    }));
+    let hasUpdates = false;
+    // Auto-migrate cached Unsplash URLs to real tuckshop packaging photos
+    const updated = parsed.map((p, idx) => {
+      const baseMatch = BASELINE_PRODUCTS.find((b) => b.id === p.id);
+      let img = p.image;
+      if (baseMatch && baseMatch.image && baseMatch.image.startsWith('/tuckshop/') && (!img || img.includes('unsplash.com'))) {
+        img = baseMatch.image;
+        hasUpdates = true;
+      }
+      return {
+        ...p,
+        image: img,
+        stockQuantity: p.stockQuantity ?? (p.inStock !== false ? (10 + (idx % 12)) : 0),
+        lowStockThreshold: p.lowStockThreshold || 5,
+        inStock: p.stockQuantity !== undefined ? p.stockQuantity > 0 : (p.inStock !== false)
+      };
+    });
+    if (hasUpdates) {
+      try {
+        localStorage.setItem(CATALOG_STORAGE_KEY, JSON.stringify(updated));
+      } catch (e) {}
+    }
+    return updated;
   } catch (err) {
     return BASELINE_PRODUCTS;
   }
