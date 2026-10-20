@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mideva's Collection — Owner Handover Hub</title>
+  <style>
+    :root {
+      --primary: #f59e0b;
+      --primary-dark: #d97706;
+      --bg: #0f172a;
+      --card: #1e293b;
+      --card-border: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent-green: #10b981;
+      --accent-rose: #f43f5e;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 24px;
+    }
+    .container { max-width: 1200px; margin: 0 auto; }
+    header {
+      background: linear-gradient(135deg, #b45309, #d97706, #e11d48);
+      border-radius: 24px;
+      padding: 36px 32px;
+      margin-bottom: 28px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    h1 { font-size: 28px; font-weight: 900; line-height: 1.2; margin-bottom: 8px; }
+    p.lead { font-size: 14px; color: #fef3c7; max-width: 600px; }
+    .action-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .action-card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 20px;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.2s ease;
+      display: block;
+    }
+    .action-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--primary);
+      box-shadow: 0 10px 25px rgba(245, 158, 11, 0.15);
+    }
+    .action-card .icon { font-size: 28px; margin-bottom: 10px; }
+    .action-card h3 { font-size: 16px; font-weight: 800; margin-bottom: 4px; color: #fff; }
+    .action-card p { font-size: 12px; color: var(--text-muted); }
+    .action-card .tag {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 28px;
+    }
+    .panel h2 {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 12px;
+    }
+    .cred-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .cred-table th, .cred-table td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid #334155;
+    }
+    .cred-table th { color: var(--text-muted); font-size: 11px; text-transform: uppercase; }
+    .copy-pill {
+      background: #0f172a;
+      border: 1px solid #475569;
+      color: #f59e0b;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 18px;
+    }
+    .screenshot-card {
+      background: #0f172a;
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .screenshot-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+      border-bottom: 1px solid var(--card-border);
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .screenshot-card img:hover { opacity: 0.9; }
+    .screenshot-info { padding: 12px 14px; }
+    .screenshot-info h4 { font-size: 13px; font-weight: 800; margin-bottom: 3px; }
+    .screenshot-info p { font-size: 11px; color: var(--text-muted); }
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #334155;
+      font-size: 13px;
+    }
+    .checklist-item input { margin-top: 3px; cursor: pointer; accent-color: var(--primary); }
+    .faq-q { font-weight: 800; color: #fef3c7; font-size: 14px; margin-top: 14px; }
+    .faq-a { color: var(--text-muted); font-size: 13px; margin-top: 4px; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <header>
+    <div>
+      <span class="badge">Official Store Handover</span>
+      <h1>Welcome, Mona Lisa Mideva! 🛍️</h1>
+      <p class="lead">Your digital campus store is ready, verified, and deployed. This offline hub gives you 1-click access to your links, login details, screenshots, and daily routines.</p>
+    </div>
+    <div>
+      <a href="https://midevas-collection.vercel.app/#admin" target="_blank" style="background:#fff; color:#b45309; padding:12px 24px; border-radius:12px; font-weight:900; text-decoration:none; font-size:14px; display:inline-block; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+        Open My Admin Dashboard →
+      </a>
+    </div>
+  </header>
+
+  <!-- Quick Action Cards -->
+  <div class="action-grid">
+    <a href="https://midevas-collection.vercel.app" target="_blank" class="action-card">
+      <div class="icon">🛒</div>
+      <h3>Public Storefront</h3>
+      <p>The shopping website students see. Share this link on your WhatsApp status!</p>
+      <span class="tag">midevas-collection.vercel.app ↗</span>
+    </a>
+
+    <a href="https://midevas-collection.vercel.app/#admin" target="_blank" class="action-card">
+      <div class="icon">👑</div>
+      <h3>Private Admin Portal</h3>
+      <p>Your store command desk: manage products, change prices, and view orders.</p>
+      <span class="tag">midevas-collection.vercel.app/#admin ↗</span>
+    </a>
+
+    <a href="https://wa.me/254748094795" target="_blank" class="action-card">
+      <div class="icon">💬</div>
+      <h3>Official WhatsApp Line</h3>
+      <p>Where customer quotes and orders arrive directly to your phone.</p>
+      <span class="tag">+254 748 094 795 ↗</span>
+    </a>
+
+    <a href="https://chat.whatsapp.com/GuRW4nzqO251oyPcC5MRwH" target="_blank" class="action-card">
+      <div class="icon">🎓</div>
+      <h3>Student Group (110+ Comrades)</h3>
+      <p>Your official student shopping community for campus announcements.</p>
+      <span class="tag">Open WhatsApp Group ↗</span>
+    </a>
+  </div>
+
+  <!-- Credentials Panel -->
+  <div class="panel">
+    <h2>🔑 Your Login Credentials Card</h2>
+    <table class="cred-table">
+      <thead>
+        <tr>
+          <th>User Role</th>
+          <th>Login Email</th>
+          <th>Secret Passcode</th>
+          <th>What You Can Do</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong style="color:#a855f7;">👑 System Lead (Admin - You)</strong></td>
+          <td><span class="copy-pill">monalisamideva@gmail.com</span></td>
+          <td><span class="copy-pill">mideva2026</span></td>
+          <td>Full control: add products with camera, change prices, manage orders, update announcement ticker.</td>
+        </tr>
+        <tr>
+          <td><strong style="color:#f59e0b;">💼 Campus Reseller (Seller)</strong></td>
+          <td><span class="copy-pill">seller@midevas.co.ke</span></td>
+          <td><span class="copy-pill">seller123</span></td>
+          <td>Inventory steppers (+/-) on delivery runs, view orders, update prices.</td>
+        </tr>
+        <tr>
+          <td><strong style="color:#10b981;">🎓 Comrade (Student Customer)</strong></td>
+          <td>Student's own email</td>
+          <td><em>No passcode needed!</em></td>
+          <td>Save room delivery pass, order via WhatsApp, view order history. Zero admin access.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Daily Routine Checklist -->
+  <div class="panel">
+    <h2>☀️ Daily Checklist for Mona Lisa Mideva</h2>
+    
+    <div class="checklist-item">
+      <input type="checkbox">
+      <div>
+        <strong>08:00 AM — Morning Store Open & WhatsApp Status</strong><br>
+        <span style="color:var(--text-muted);">Open Admin, check status is 🟢 Store Open, tap "Flyers" to download today's WhatsApp story poster, and post it to WhatsApp Status with your store link.</span>
+      </div>
+    </div>
+
+    <div class="checklist-item">
+      <input type="checkbox">
+      <div>
+        <strong>12:00 PM — Receive WhatsApp Orders</strong><br>
+        <span style="color:var(--text-muted);">Reply to student quotes on WhatsApp: "Hi! Order received, I have your size in stock. I will drop it off at your hostel at 4:30 PM."</span>
+      </div>
+    </div>
+
+    <div class="checklist-item">
+      <input type="checkbox">
+      <div>
+        <strong>04:00 PM — Campus Delivery Run</strong><br>
+        <span style="color:var(--text-muted);">Switch status to 🟡 Out on Delivery Run. Tap "📋 WhatsApp Delivery Roster" to copy your room drop-off list, pack your bag, and deliver without paper notebooks.</span>
+      </div>
+    </div>
+
+    <div class="checklist-item">
+      <input type="checkbox">
+      <div>
+        <strong>08:00 PM — Evening Wrap-Up</strong><br>
+        <span style="color:var(--text-muted);">Change delivered orders to "Delivered" in Admin. In "Live Stock & Pricing", tap [-1] for any sold-out items. Tap 🔴 Store Closed during study hours.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Visual Screenshot Gallery -->
+  <div class="panel">
+    <h2>📸 Verified Visual Tour (17 Real System Screenshots)</h2>
+    <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">Click any screenshot to open it full size. These were captured using browser automation directly from your live system.</p>
+
+    <div class="gallery-grid">
+      
+      <div class="screenshot-card">
+        <a href="screenshots/handover-01-storefront-hero.png" target="_blank">
+          <img src="screenshots/handover-01-storefront-hero.png" alt="Storefront Hero">
+        </a>
+        <div class="screenshot-info">
+          <h4>01. Desktop Storefront & Hero</h4>
+          <p>Full-bleed banner, announcement ticker, and navigation header.</p>
+        </div>
+      </div>
+
+      <div class="screenshot-card">
+        <a href="screenshots/handover-02-product-catalog.png" target="_blank">
+          <img src="screenshots/handover-02-product-catalog.png" alt="Product Catalog">
+        </a>
+        <div class="screenshot-info">
+          <h4>02. Product Catalog Grid</h4>
+          <p>52 items across 9 categories with comrade deal badges.</p>
+        </div>
+      </div>
+
+      <div class="screenshot-card">
+        <a href="screenshots/handover-03-sidebar-nav.png" target="_blank">
+          <img src="screenshots/handover-03-sidebar-nav.png" alt="Department Sidebar">
+        </a>
+        <div class="screenshot-info">
+          <h4>03. Department Navigation Drawer</h4>
+          <p>Slide-out menu with category shortcuts and WhatsApp links.</p>
+        </div>
+      </div>
+
+      <div class="screenshot-card">
+        <a href="screenshots/handover-04-product-detail.png" target="_blank">
+          <img src="screenshots/handover-04-product-detail.png" alt="Product Detail Modal">
+        </a>
+        <div class="screenshot-info">
+          <h4>04. Amazon-Style Product Modal</h4>
+          <p>Variant pickers (size, color), savings badge, and reviews.</p>
+        </div>
+      </div>
+
+      <div class="screenshot-card">
+        <a href="screenshots/handover-05-cart-drawer.png" target="_blank">
+          <img src="screenshots/handover-05-cart-drawer.png" alt="Cart Drawer">
+        </a>
+        <div class="screenshot-info">
+          <h4>05. Slide-Out Quote Cart</h4>
+          <p>Calculates multi-currency totals and generates WhatsApp quote.</p>
+        </div>
+      </div>
+
+      <div class="screenshot-card">
+        <a href="screenshots/handover-06-dark-mode.png" target="_blank">
+          <img src="screenshots/handover-06-dark-mode.png" alt="Dark Mode">
+        </a>
+        <div class="screenshot-info">
+          <h4>06. Night / Dark Theme</h4>
+          <p>Comfortable viewing for students shopping in hostels late at night.</p>
+        </div>
+      </div>
+
+      <div class="screenshot-card">
+        <a href="screenshots/handover-07-mobile-view.png" target="_blank">
+          <img src="screenshots/handover-07-mobile-view.png" alt="Mobile View">
+        </a>
+        <div class="screenshot-info">
+          <h4>07. Mobile Smartphone View</h4>
+          <p>Sticky touch bottom bar for fast one-handed shopping.</p>
+        </div>
+      </div>
+
+      <div class="screenshot-card">
+        <a href="screenshots/handover-10-auth-modal.png" target="_blank">
+          <img src="screenshots/handover-10-auth-modal.png" alt="Comrade Sign In">
+        </a>
+        <div class="screenshot-info">
+          <h4>08. Student Registration & Avatar</h4>
+          <p>Syncs student photo from email and saves hostel room number.</p>
+        </div>
+      </div>
+
+      <div class="screenshot-card">
+        <a href="screenshots/handover-11-customer-logged-in.png" target="_blank">
+          <img src="screenshots/handover-11-customer-logged-in.png" alt="Customer Profile">
+        </a>
+        <div class="screenshot-info">
+          <h4>09. Header Profile Avatar</h4>
+          <p>Student's photo immediately replaces the generic Sign In icon.</p>
+        </div>
+      </div>
+
+      <div class="screenshot-card">
+        <a href="screenshots/handover-13-admin-signin.png" target="_blank">
+          <img src="screenshots/handover-13-admin-signin.png" alt="Admin Sign In">
+        </a>
+        <div class="screenshot-info">
+          <h4>10. Admin Passcode Screen</h4>
+          <p>Enter monalisamideva@gmail.com and mideva2026 to unlock.</p>
+        </div>
+      </div>
+
+      <div class="screenshot-card">
+        <a href="screenshots/handover-14-admin-dashboard.png" target="_blank">
+          <img src="screenshots/handover-14-admin-dashboard.png" alt="Admin Dashboard">
+        </a>
+        <div class="screenshot-info">
+          <h4>11. Admin Master Workspace</h4>
+          <p>Top command strip, live revenue metrics, and 8 control tabs.</p>
+        </div>
+      </div>
+
+      <div class="screenshot-card">
+        <a href="screenshots/handover-15-admin-livestock.png" target="_blank">
+          <img src="screenshots/handover-15-admin-livestock.png" alt="Live Stock">
+        </a>
+        <div class="screenshot-info">
+          <h4>12. Live Stock & Price Controls</h4>
+          <p>Fast +/- steppers, inline price edits, and 1-click restock button.</p>
+        </div>
+      </div>
+
+      <div class="screenshot-card">
+        <a href="screenshots/handover-16-admin-orders.png" target="_blank">
+          <img src="screenshots/handover-16-admin-orders.png" alt="Orders Manager">
+        </a>
+        <div class="screenshot-info">
+          <h4>13. Customer Orders & Quotes</h4>
+          <p>Customer names, hostel rooms, items, and status controls.</p>
+        </div>
+      </div>
+
+      <div class="screenshot-card">
+        <a href="screenshots/handover-17-admin-cms.png" target="_blank">
+          <img src="screenshots/handover-17-admin-cms.png" alt="CMS Manager">
+        </a>
+        <div class="screenshot-info">
+          <h4>14. CMS Page Content Editor</h4>
+          <p>Edit the moving announcement ticker, hero slides, and bio text.</p>
+        </div>
+      </div>
+
+      <div class="screenshot-card">
+        <a href="screenshots/handover-12-seller-workspace.png" target="_blank">
+          <img src="screenshots/handover-12-seller-workspace.png" alt="Seller Workspace">
+        </a>
+        <div class="screenshot-info">
+          <h4>15. Campus Reseller Desk</h4>
+          <p>Restricted workspace for assistants to manage stock on campus runs.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FAQ & Help Panel -->
+  <div class="panel">
+    <h2>❓ Frequently Asked Questions (Beginner FAQ)</h2>
+
+    <div class="faq-q">Q: How do students pay me?</div>
+    <div class="faq-a">Students pay you via <strong>Cash on Hostel Delivery</strong> when you hand them their bag, or via <strong>EcoCash / M-Pesa</strong> to your phone number (+254 748 094 795 / 0774809479).</div>
+
+    <div class="faq-q">Q: What if I run out of a shirt or perfume?</div>
+    <div class="faq-a">Go to <strong>Live Stock & Pricing</strong> in your Admin and type <strong>0</strong> next to that item. The website will immediately put a red "Sold Out" badge on it and stop students from ordering it.</div>
+
+    <div class="faq-q">Q: How do I add new items I bought?</div>
+    <div class="faq-a">Go to <strong>Product Catalog</strong> -> tap <strong>+ Add New Product</strong>. Snap a picture with your phone camera, type the price, and tap Save!</div>
+
+    <div class="faq-q">Q: Can a student see how much money I make or change my prices?</div>
+    <div class="faq-a"><strong>Never.</strong> Student accounts have zero admin access. Only you can enter the private dashboard using your secret passcode.</div>
+  </div>
+
+  <footer style="text-align:center; padding: 24px; color:var(--text-muted); font-size:12px;">
+    Mideva's Collection — Official Handover Hub • Prepared with care for Mona Lisa Mideva • Version 4.1
+  </footer>
+
+</div>
+
+</body>
+</html>
