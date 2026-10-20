@@ -355,21 +355,51 @@ export default function AdminModal({ isOpen, onClose, onCatalogUpdated, isPageVi
     }
   };
 
-  // Image file upload handler (converts device photo to Base64 Data URL)
+  // Image file upload handler (converts & compresses device photo to optimized JPEG Data URL)
   const handleImageFileUpload = (e, target = 'new') => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     const reader = new FileReader();
     reader.onload = (uploadEvent) => {
-      const dataUrl = uploadEvent.target?.result;
-      if (typeof dataUrl === 'string') {
-        if (target === 'new') {
-          setNewProdImg(dataUrl);
-        } else if (target === 'edit' && editingProduct) {
-          setEditingProduct((prev) => ({ ...prev, image: dataUrl }));
+      const rawDataUrl = uploadEvent.target?.result;
+      if (typeof rawDataUrl !== 'string') return;
+
+      // Automatically downscale and compress camera photos to prevent localStorage quota errors
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_DIM = 800;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_DIM) {
+            height = Math.round((height * MAX_DIM) / width);
+            width = MAX_DIM;
+          }
+        } else {
+          if (height > MAX_DIM) {
+            width = Math.round((width * MAX_DIM) / height);
+            height = MAX_DIM;
+          }
         }
-      }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Convert to lightweight 80% quality JPEG (~50KB-100KB instead of 10MB)
+        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.82);
+
+        if (target === 'new') {
+          setNewProdImg(compressedDataUrl);
+        } else if (target === 'edit' && editingProduct) {
+          setEditingProduct((prev) => ({ ...prev, image: compressedDataUrl }));
+        }
+      };
+      img.src = rawDataUrl;
     };
     reader.readAsDataURL(file);
   };
