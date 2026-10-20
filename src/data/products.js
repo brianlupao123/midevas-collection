@@ -236,7 +236,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.7,
     reviews: 36,
     description: "Rich moisturizing lotion for dry skin. Fresh masculine scent, non-greasy, long-lasting hydration.",
-    image: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/clere-men.jpg",
     inStock: true,
   },
   {
@@ -250,7 +250,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.3,
     reviews: 22,
     description: "Fast-acting gentle hair removal cream. Smooth skin in under 10 minutes.",
-    image: "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/Hair_Remover.jpg",
     inStock: true,
   },
 
@@ -268,7 +268,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.9,
     reviews: 95,
     description: "Ultra-soft absorbent sanitary pads. 6-pack for reliable monthly protection.",
-    image: "https://images.unsplash.com/photo-1583947215259-38e31be8751f?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/spads.webp",
     inStock: true,
   },
   {
@@ -282,7 +282,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.8,
     reviews: 120,
     description: "Everyday protection with ultra-thin design and leak-guard wings.",
-    image: "https://images.unsplash.com/photo-1584017911766-d451b3d0e843?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/always-pads.jpg",
     inStock: true,
   },
   {
@@ -296,7 +296,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.7,
     reviews: 55,
     description: "Premium soft tissue paper. 18-ply bulk pack perfect for the whole semester.",
-    image: "https://images.unsplash.com/photo-1584556812952-905ffd0c611a?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/tissue.jpg",
     inStock: true,
   },
   {
@@ -324,7 +324,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.8,
     reviews: 150,
     description: "Cavity protection fluoride toothpaste. Fresh minty breath throughout lectures.",
-    image: "https://images.unsplash.com/photo-1528740561666-dc2479dc08ab?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/colgate.jpg",
     inStock: true,
   },
   {
@@ -352,7 +352,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.6,
     reviews: 88,
     description: "Multi-purpose moisture barrier. Heals dry lips, knees, elbows, and minor cuts.",
-    image: "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/vaseline.jpg",
     inStock: true,
   },
   {
@@ -366,7 +366,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.7,
     reviews: 62,
     description: "Luxurious scented beauty soap bar for soft, silky smooth skin.",
-    image: "https://images.unsplash.com/photo-1600857544200-b2f666a9a2ec?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/lux.jpg",
     inStock: true,
   },
   {
@@ -380,7 +380,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.8,
     reviews: 97,
     description: "Powerful stain-busting laundry powder. 1kg pack handles 2+ weeks of hostel laundry.",
-    image: "https://images.unsplash.com/photo-1610557892470-55d9e80c0bce?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/boom-powder.jpg",
     inStock: true,
   },
   {
@@ -408,7 +408,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.6,
     reviews: 33,
     description: "48-hour freshness roll-on. Confidence from lecture hall to night out.",
-    image: "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/fun-n-fresh.jpg",
     inStock: true,
   },
 
@@ -426,7 +426,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.8,
     reviews: 200,
     description: "Crispy salted potato chips. The perfect study break and movie night companion.",
-    image: "https://images.unsplash.com/photo-1566478989037-eec170784d0b?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/lays.jpg",
     inStock: true,
   },
   {
@@ -440,7 +440,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.9,
     reviews: 300,
     description: "Ice-cold classic Coca-Cola in a 500ml bottle. Nothing beats it on a hot afternoon.",
-    image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/coke-500ml.jpg",
     inStock: true,
   },
   {
@@ -454,7 +454,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.9,
     reviews: 180,
     description: "2-litre sharing bottle. Perfect for hostel room hangouts and weekend get-togethers.",
-    image: "https://images.unsplash.com/photo-1554866585-cd94860890b7?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/coke-2l.jpg",
     inStock: true,
   },
   {
@@ -468,7 +468,7 @@ export const BASELINE_PRODUCTS = [
     rating: 5.0,
     reviews: 165,
     description: "Iconic orange drink concentrate. One bottle makes 20+ refreshing glasses for study sessions.",
-    image: "https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/mazoe.jpg",
     inStock: true,
   },
   {
@@ -482,7 +482,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.5,
     reviews: 72,
     description: "Fruity juice in assorted tropical flavors. Perfect for a quick lecture break.",
-    image: "https://images.unsplash.com/photo-1600271886742-f049cd451bba?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/minute-maid.jpg",
     inStock: true,
   },
   {
@@ -496,7 +496,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.6,
     reviews: 89,
     description: "Crunchy assorted biscuits for tea time. A campus breakfast favorite.",
-    image: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/irish-biscuits.jpg",
     inStock: true,
   },
   {
@@ -510,7 +510,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.9,
     reviews: 210,
     description: "Freshly popped salted maputi. The ultimate campus study and movie fuel!",
-    image: "https://images.unsplash.com/photo-1578849278619-e73505e9610f?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/maputi.jpg",
     inStock: true,
   },
   {
@@ -524,7 +524,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.4,
     reviews: 58,
     description: "Sliced polony cold meat. Quick protein for sandwiches and bread rolls.",
-    image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/polony.jpg",
     inStock: true,
   },
 
@@ -542,7 +542,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.8,
     reviews: 130,
     description: "Pure white sugar. 2kg bag lasts a full month for daily tea, porridge, and baking.",
-    image: "https://images.unsplash.com/photo-1581441363689-1f3c3c414635?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/sugar.jpg",
     inStock: true,
   },
   {
@@ -556,7 +556,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.7,
     reviews: 77,
     description: "Nutritious instant breakfast porridge. Just add warm water or milk for a quick filling start.",
-    image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/cerevita.jpg",
     inStock: true,
   },
   {
@@ -570,7 +570,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.6,
     reviews: 65,
     description: "Sweet fruit jam in a jar. Perfect on bread and scones for quick hostel mornings.",
-    image: "https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/sun-jam.png",
     inStock: true,
   },
   {
@@ -584,7 +584,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.5,
     reviews: 90,
     description: "Pilchards in rich tomato sauce. Protein-packed, pairs delicious with sadza, rice or bread.",
-    image: "https://images.unsplash.com/photo-1534483509719-3feaee7c30da?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/tinned-fish.jpg",
     inStock: true,
   },
   {
@@ -598,7 +598,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.7,
     reviews: 105,
     description: "Ready-to-eat baked beans in rich tomato sauce. Just heat and enjoy with toast or eggs!",
-    image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/beans.jpg",
     inStock: true,
   },
   {
@@ -612,7 +612,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.8,
     reviews: 140,
     description: "Iconic rich instant coffee. An absolute must-have for late-night study and early mornings.",
-    image: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/ricoffy.jpg",
     inStock: true,
   },
   {
@@ -626,7 +626,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.6,
     reviews: 48,
     description: "Naturally caffeine-free red bush tea. Soothing aroma and high in antioxidants.",
-    image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/rooibos-tea.jpg",
     inStock: true,
   },
   {
@@ -640,7 +640,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.5,
     reviews: 39,
     description: "Creamy mayonnaise in a clean squeeze bottle. Essential for chips, sandwiches, and salads.",
-    image: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/mayonnaise.jpg",
     inStock: true,
   },
 
@@ -658,7 +658,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.8,
     reviews: 180,
     description: "Durable 96-page ruled exercise book. Hardcover protects notes throughout semester backpack life.",
-    image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/2-quire-book.jpg",
     inStock: true,
   },
   {
@@ -672,7 +672,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.7,
     reviews: 95,
     description: "Smooth glide blue ink ballpoint pens. 10-pack will last you and your study group through exams.",
-    image: "https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/pen.jpg",
     inStock: true,
   },
   {
@@ -686,7 +686,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.5,
     reviews: 220,
     description: "Reliable blue ballpoint pen. Quick pickup right before your next lecture.",
-    image: "https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/pen.jpg",
     inStock: true,
   },
   {
@@ -700,7 +700,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.6,
     reviews: 85,
     description: "HB drawing and writing pencils. 5-pack for multiple-choice exams, math, and sketches.",
-    image: "https://images.unsplash.com/photo-1516962215378-7fa2e137ae93?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/pencils.jpg",
     inStock: true,
   },
   {
@@ -714,7 +714,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.4,
     reviews: 42,
     description: "Transparent 30cm shatter-resistant ruler with metric measurements.",
-    image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/ruler.jpg",
     inStock: true,
   },
 
@@ -777,7 +777,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.9,
     reviews: 500,
     description: "Pure purified drinking water. Stay hydrated throughout long lectures.",
-    image: "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/water.jpg",
     inStock: true,
   },
   {
@@ -791,7 +791,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.7,
     reviews: 140,
     description: "Fast-acting pain and headache relief. Keep a pack in your dorm drawer.",
-    image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/panado.jpg",
     inStock: true,
   },
   {
@@ -805,7 +805,7 @@ export const BASELINE_PRODUCTS = [
     rating: 4.3,
     reviews: 35,
     description: "Disposable twin-blade precision razors with lubricating strip for a smooth clean shave.",
-    image: "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=600&q=80",
+    image: "/tuckshop/shaving-razors.jpg",
     inStock: true,
   },
 ];
