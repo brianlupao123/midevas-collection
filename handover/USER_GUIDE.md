@@ -209,18 +209,36 @@ Want to sell a new dress, shoes, or snack you just brought to campus?
 
 ---
 
-### Guide 1B: How to Change an Existing Product's Photo (Replace Stock Photo with Real Photo)
-Want to replace a stock picture with your real tuckshop grocery photo or new clothing shipment?
+### Guide 1B: How to Change an Existing Product's Photo (Pick Preset or Snap Real Photo)
+Want to give any product a beautiful, authentic photo without searching the web or writing code?
 
 1. Tap the **🛍️ Product Catalog** tab in your Admin dashboard.
-2. Find the item you want to update (e.g., *Mazoe Orange Crush*, *Colgate Triple Action*, *Lays Chips*, or *Sun Jam*).
+2. Find the item you want to update (e.g., *Mazoe Orange Crush*, *Ladies Leather Handbag*, *Colgate*, or *Lays Chips*).
 3. Tap the yellow **✏️ Edit** button next to that product.
-4. Under the **Product Image** section, choose either:
-   - **Option A (Camera or Gallery Upload — Recommended):** Tap **"Upload File" / "Choose File"**. Your phone will open your camera to snap a live photo of the real packaging or let you choose a saved picture from your photo gallery.
-   - **Option B (Web Image Link):** If your supplier gave you an image link, simply paste it into the **Image URL** box.
-5. Notice the **Auto-Compression Indicator**: The system instantly resizes and optimizes your photo into a crisp ~70KB file so it never eats up phone storage or slows down students' phones on campus WiFi!
-6. Tap the blue **"Save Changes"** button.
-7. Done! The product immediately displays the real packaging photo across your entire live storefront.
+4. Under the **Product Image** section, choose from **THREE easy zero-code options**:
+   - **Option 1 (Preset Photo Library — EASIEST & FASTEST):**
+     - Tap the gold button: **"Pick Preset (420+)"**.
+     - An organized photo library opens right on your screen, categorized into:
+       * 👜 *Ladies' Bags (24 photos)*
+       * 👗 *Dresses & Outfits (27 photos)*
+       * 👠 *Shoes & Footwear (27 photos)*
+       * 👔 *Shirts & Tops (26 photos)*
+       * 👖 *Trousers & Pants (28 photos)*
+       * 👖 *Jeans & Denim (48 photos)*
+       * ✨ *Men's & General Fashion (92 photos)*
+       * 🌸 *Perfumes & Beauty (30 photos)*
+       * 🧼 *Hygiene & Care (32 photos)*
+       * 🥫 *Groceries & Kitchen (33 photos)*
+       * 🥤 *Snacks & Drinks (25 photos)*
+       * 📚 *Stationery & Study (31 photos)*
+     - Tap any photo you like! It immediately selects that image for your product!
+   - **Option 2 (Camera or Gallery Upload):**
+     - Tap **"Upload File"**. Your phone will open your camera to snap a live photo of your physical stock or let you choose a saved picture from your photo gallery.
+     - *Auto-Compression:* Automatically downscales to a lightweight ~70KB file so your phone and store stay lightning fast.
+   - **Option 3 (Web Image Link):**
+     - If you have an image link from your wholesale supplier, paste it into the **Image URL** box.
+5. Tap the blue **"Save Changes"** button.
+6. Done! The product immediately displays the selected packaging photo across your entire live storefront.
 
 ---
 
