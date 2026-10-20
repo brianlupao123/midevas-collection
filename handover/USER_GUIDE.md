@@ -209,6 +209,33 @@ Want to sell a new dress, shoes, or snack you just brought to campus?
 
 ---
 
+### Guide 1B: How to Change an Existing Product's Photo (Replace Stock Photo with Real Photo)
+Want to replace a stock picture with your real tuckshop grocery photo or new clothing shipment?
+
+1. Tap the **🛍️ Product Catalog** tab in your Admin dashboard.
+2. Find the item you want to update (e.g., *Mazoe Orange Crush*, *Colgate Triple Action*, *Lays Chips*, or *Sun Jam*).
+3. Tap the yellow **✏️ Edit** button next to that product.
+4. Under the **Product Image** section, choose either:
+   - **Option A (Camera or Gallery Upload — Recommended):** Tap **"Upload File" / "Choose File"**. Your phone will open your camera to snap a live photo of the real packaging or let you choose a saved picture from your photo gallery.
+   - **Option B (Web Image Link):** If your supplier gave you an image link, simply paste it into the **Image URL** box.
+5. Notice the **Auto-Compression Indicator**: The system instantly resizes and optimizes your photo into a crisp ~70KB file so it never eats up phone storage or slows down students' phones on campus WiFi!
+6. Tap the blue **"Save Changes"** button.
+7. Done! The product immediately displays the real packaging photo across your entire live storefront.
+
+---
+
+### Guide 1C: How to Change Your Admin Profile Picture / Store Avatar
+Want to put your real face or brand portrait on the website?
+
+1. In your Admin dashboard, tap the **👤 Profile & Security** tab (or tap your profile avatar circle in the top navigation bar).
+2. Under **Store Owner Profile**:
+   - Tap **"Change Avatar" / "Upload Photo"**.
+   - Snap a fresh photo or pick a high-quality portrait from your phone gallery.
+3. Tap **"Save Profile"**.
+4. Your portrait immediately replaces the placeholder avatar in the top header bar and greets students warmly when they browse your shop!
+
+---
+
 ### Guide 2: How to Change Prices or Mark an Item "Sold Out"
 1. Tap the **📊 Live Stock & Pricing** tab.
 2. You will see a neat table of all your products with steppers:
